@@ -1,8 +1,23 @@
 import Link from "next/link";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
+
 export default function Home() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "J",
+    url: siteUrl,
+    jobTitle: "Developer",
+    sameAs: ["https://github.com/Rhovian"],
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <h1 className="text-5xl font-bold mb-4">Hi, I&apos;m J</h1>
       <p className="text-xl text-zinc-600 dark:text-zinc-400 mb-8 max-w-xl">
         Developer, writer, and tinkerer. I build things and occasionally write

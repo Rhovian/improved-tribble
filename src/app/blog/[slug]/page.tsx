@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { getPostBySlug, getAllPosts } from "@/lib/posts";
 import Link from "next/link";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
+
 export async function generateStaticParams() {
   const posts = getAllPosts();
   return posts.map((post) => ({
@@ -22,6 +24,22 @@ export async function generateMetadata({
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: `/blog/${slug}`,
+    },
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.excerpt,
+      url: `${siteUrl}/blog/${slug}`,
+      publishedTime: post.date,
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary",
+      title: post.title,
+      description: post.excerpt,
+    },
   };
 }
 
@@ -37,8 +55,27 @@ export default async function BlogPost({
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    datePublished: post.date,
+    url: `${siteUrl}/blog/${slug}`,
+    author: {
+      "@type": "Person",
+      name: "J",
+      url: siteUrl,
+    },
+    ...(post.tags && { keywords: post.tags.join(", ") }),
+  };
+
   return (
     <article className="max-w-3xl mx-auto">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Link
         href="/blog"
         className="text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 mb-8 inline-block"
@@ -47,7 +84,10 @@ export default async function BlogPost({
       </Link>
 
       <header className="mb-8">
-        <time className="text-sm text-zinc-500 dark:text-zinc-500">
+        <time
+          className="text-sm text-zinc-500 dark:text-zinc-500"
+          dateTime={post.date}
+        >
           {new Date(post.date).toLocaleDateString("en-US", {
             year: "numeric",
             month: "long",

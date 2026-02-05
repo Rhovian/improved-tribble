@@ -3,9 +3,34 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
+
 export const metadata: Metadata = {
-  title: "Portfolio & Blog",
-  description: "A minimal portfolio and blog site",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "J — Portfolio & Blog",
+    template: "%s | J",
+  },
+  description:
+    "Developer, writer, and tinkerer. I build things and occasionally write about them.",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: siteUrl,
+    siteName: "J — Portfolio & Blog",
+    title: "J — Portfolio & Blog",
+    description:
+      "Developer, writer, and tinkerer. I build things and occasionally write about them.",
+  },
+  twitter: {
+    card: "summary",
+    title: "J — Portfolio & Blog",
+    description:
+      "Developer, writer, and tinkerer. I build things and occasionally write about them.",
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
