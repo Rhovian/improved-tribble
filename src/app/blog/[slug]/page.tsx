@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts } from "@/lib/posts";
+import { getPostBySlug, getAllPosts, getSeriesNavigation } from "@/lib/posts";
 import Link from "next/link";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
 
 export async function generateStaticParams() {
   const posts = getAllPosts();
@@ -21,24 +22,33 @@ export async function generateMetadata({
   if (!post) {
     return { title: "Post Not Found" };
   }
+
+  const title = post.series
+    ? `Part ${post.series.part}: ${post.title} | ${post.series.name}`
+    : post.title;
+
+  const description = post.series
+    ? `${post.series.name} - Part ${post.series.part} of ${post.series.total}. ${post.excerpt}`
+    : post.excerpt;
+
   return {
-    title: post.title,
-    description: post.excerpt,
+    title,
+    description,
     alternates: {
       canonical: `/blog/${slug}`,
     },
     openGraph: {
       type: "article",
-      title: post.title,
-      description: post.excerpt,
+      title,
+      description,
       url: `${siteUrl}/blog/${slug}`,
       publishedTime: post.date,
       tags: post.tags,
     },
     twitter: {
       card: "summary",
-      title: post.title,
-      description: post.excerpt,
+      title,
+      description,
     },
   };
 }
@@ -55,6 +65,8 @@ export default async function BlogPost({
     notFound();
   }
 
+  const { previousPost, nextPost } = getSeriesNavigation(slug);
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
@@ -68,6 +80,13 @@ export default async function BlogPost({
       url: siteUrl,
     },
     ...(post.tags && { keywords: post.tags.join(", ") }),
+    ...(post.series && {
+      isPartOf: {
+        "@type": "CreativeWorkSeries",
+        name: post.series.name,
+        position: post.series.part,
+      },
+    }),
   };
 
   return (
@@ -82,6 +101,29 @@ export default async function BlogPost({
       >
         ← Back to blog
       </Link>
+
+      {/* Series Context Bar */}
+      {post.series && (
+        <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              {post.series.name}
+            </span>
+            <span className="text-sm text-blue-600 dark:text-blue-400">
+              Part {post.series.part} of {post.series.total}
+            </span>
+          </div>
+          {/* Progress bar */}
+          <div className="w-full bg-blue-200 dark:bg-blue-900 rounded-full h-1.5">
+            <div
+              className="bg-blue-600 dark:bg-blue-400 h-1.5 rounded-full transition-all"
+              style={{
+                width: `${(post.series.part / post.series.total) * 100}%`,
+              }}
+            />
+          </div>
+        </div>
+      )}
 
       <header className="mb-8">
         <time
@@ -113,6 +155,45 @@ export default async function BlogPost({
         className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:bg-zinc-100 dark:prose-pre:bg-zinc-900 prose-img:rounded-lg"
         dangerouslySetInnerHTML={{ __html: post.contentHtml }}
       />
+
+      {/* Series Navigation */}
+      {(previousPost || nextPost) && (
+        <nav className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
+          <div className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
+            Continue reading
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {previousPost ? (
+              <Link
+                href={`/blog/${previousPost.slug}`}
+                className="group p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 transition-colors"
+              >
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+                  ← Previous
+                </div>
+                <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  Part {previousPost.series?.part}: {previousPost.title}
+                </div>
+              </Link>
+            ) : (
+              <div />
+            )}
+            {nextPost && (
+              <Link
+                href={`/blog/${nextPost.slug}`}
+                className="group p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 transition-colors text-right"
+              >
+                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
+                  Next →
+                </div>
+                <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                  Part {nextPost.series?.part}: {nextPost.title}
+                </div>
+              </Link>
+            )}
+          </div>
+        </nav>
+      )}
     </article>
   );
 }
