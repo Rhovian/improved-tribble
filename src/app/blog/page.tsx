@@ -98,13 +98,17 @@ export default function BlogPage() {
       ) : (
         <div className="space-y-6">
           {/* Series as dropdowns */}
-          {seriesGroups.map((group) => (
-            <SeriesDropdown
-              key={group.seriesSlug}
-              seriesName={group.seriesName}
-              posts={group.posts}
-            />
-          ))}
+          {seriesGroups.map((group) =>
+            group.posts.length === 1 ? (
+              <PostCard key={group.seriesSlug} post={group.posts[0]} inSeries={false} />
+            ) : (
+              <SeriesDropdown
+                key={group.seriesSlug}
+                seriesName={group.seriesName}
+                posts={group.posts}
+              />
+            )
+          )}
 
           {/* Standalone Posts */}
           {standalonePosts.map((post) => (

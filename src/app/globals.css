@@ -35,6 +35,20 @@ body {
   border-radius: 0.25rem;
 }
 
+/* Blog images - prevent oversized images from dominating the page */
+.prose img {
+  max-width: 60%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* KaTeX display math centering */
+.prose .katex-display {
+  display: block;
+  text-align: center;
+  margin: 1.5em 0;
+}
+
 /* KaTeX dark mode */
 .dark .katex {
   color: #ededed;
