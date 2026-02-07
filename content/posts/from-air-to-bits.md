@@ -14,13 +14,13 @@ If you've ever built an audio pipeline but didn't really understand the underlyi
 
 ![From Air to Bits](/blog/from-air-to-bits/air-to-bits-pyramid.png)
 
-This article will give a high level overview of each level in the pyramid above, aimed at developing an intution for the entire dependancy chain, following a single sound from the physical phenomena all the way to network packets.
+This article will give a high level overview of each level in the pyramid above, aimed at developing an intution for the entire audio lifecycle, following a single sound from the physical phenomena all the way to network packets.
 
-I find it best to learn with a simple example in mind:
+I find it best to learn with a simple example in mind, and a picture is worth a thousand words, so:
 
 ![From Air to Bits|full](/blog/from-air-to-bits/example-scenario.svg)
 
-In the example above, a person (source) says "hello world", a mic (sink) picks it up **mechanically**, then converts it to meaningful electrical signals and finally sent across the wire. 
+A person (source) says "hello world", a mic (sink) picks it up, then converts it to meaningful electrical signals and finally sent across the wire. 
 
 Intentionally this is all very hand-wavey, throughout the article we will break it down piecemeal. Note that the example shows the physical/mechanical side only, we will expand on it in later sections.
 
