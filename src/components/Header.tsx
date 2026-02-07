@@ -9,10 +9,6 @@ export function Header() {
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
       <nav className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-        <Link href="/" className="text-xl font-semibold">
-          J
-        </Link>
-
         <div className="flex items-center gap-6">
           <Link
             href="/blog"
