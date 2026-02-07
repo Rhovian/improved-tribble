@@ -14,37 +14,39 @@ If you've ever built an audio pipeline but didn't really understand the underlyi
 
 ![From Air to Bits](/blog/from-air-to-bits/air-to-bits-pyramid.png)
 
-In having to build an audio system in Rust for my DIY home automation project, I realized that while i was building a functional system, I lacked intuition on the fundamental physical phenomena behind the code. 
-
-This series is aimed at developing that intuition, following a single sound from the physical phenomena all the way to network packets.
-
----
-
-## Sound as Pressure Waves
+This article will give a high level overview of each level in the pyramid above, aimed at developing an intution for the entire dependancy chain, following a single sound from the physical phenomena all the way to network packets.
 
 I find it best to learn with a simple example in mind:
 
 ![From Air to Bits|full](/blog/from-air-to-bits/example-scenario.svg)
 
-A person (source) says "hello world", a mic (sink) picks it up, that gets converted to meaningful electrical signals and finally sent across the wire. Intentionally very hand-wavey, so we will break it down piecemeal. Since we are first focusing on the physics of it, the latter part isn't shown on the diagram; we'll add to it later.
+In the example above, a person (source) says "hello world", a mic (sink) picks it up **mechanically**, then converts it to meaningful electrical signals and finally sent across the wire. 
 
-In physics, sound is a pressure wave that moves through ambient air (≈ 101 kPa). The source of sound converts energy (eg human throat muscles) into pressure deviations from the ambient baseline.
+Intentionally this is all very hand-wavey, throughout the article we will break it down piecemeal. Note that the example shows the physical/mechanical side only, we will expand on it in later sections.
+
+---
+
+## Sound as Pressure Waves
+
+What we define as sound is really a conglomerate of molecules, *driven* through some external force at varying densities through a **medium**; in our case ambient air (≈ 101 kPa) at speed *c*.
+
+In our example the source speaks "hello world", convertig energy (eg human throat muscle contraction) ito particle excitation. The molecules propagate outwards in the form of a **pressure wave** through air (≈ 101 kPa).
 
 ![Sound pressure air molecules|full](/blog/from-air-to-bits/pressure-wave-molecules.svg)
 
-Above you can see the behavior these waves exhibit: compressions when air molecules come together and rarefactions when they spread out. 
+You can see the behavior these pressure waves exhibit as they permeate through the medium; **compressions** when air molecules come together and **rarefactions** when they spread out. 
 
-Mathematically, these pressure variations are expressed by the wave equation, shown below in one dimension for simplicity:
+Mathematically, this traversal through ambient air is expressed by the **wave equation**, shown below in one dimension for simplicity:
 
 $$
 \frac{\partial^2 p}{\partial t^2} = c^2 \frac{\partial^2 p}{\partial x^2}
 $$
 
-Another way of digesting this is the following: **at a given point the pressure variation through time is proportional to how the pressure curves in space around that point.** 
+If what this second order equation represents isn't immediately obvious, you aren't alone. Essentially, for a given point *p*, the pressure variation with respect to time *t* is proportional to how the wave curves in space *x* around that point.
 
-Take the act of speaking, we generate high pressure points, disturbing the surrounding air in the form of pressure variations permeating outwards. Meanwhile, at the original point, equilibrium is re-established almost instantly at ambient pressure. You don't keep hearing what you said.
+### The speed of Sound
 
-The medium on earth is air, and sound moves through it at the speed c:
+As discussed, the medium on earth is air, and sound moves through it at the speed c:
 
 $$
 c = \sqrt{\frac{\gamma R T}{M}}
@@ -52,9 +54,9 @@ $$
 
 here $\gamma$ is the heat capacity ratio of the gas (~1.4 for air), $R$ is the universal gas constant, $T$ is temperature in Kelvin, and $M$ is the molar mass of air. **The key takeaway: sound travels faster in hotter, lighter gases.**
 
- Why? Well hotter means more molecular activity, so ease of propagation. Lighter gases follow a similar principle: less inertia, easier to incite motion.
+Why? Well hotter means more molecular activity, so ease of propagation. Lighter gases follow a similar principle: less inertia, easier to incite motion.
 
-For a simple sinusoidal wave (shown above), the speed, frequency, and wavelength are related by:
+For a simple sinusoidal wave, the speed, frequency, and wavelength are related by:
 
 $$
 c = f\lambda
@@ -73,11 +75,13 @@ This is the relationship that connects what you hear (frequency, perceived as pi
 
 ## The Microphone: Pressure to Motion
 
-These pressure waves need to be understood somehow, and that's what microphones do. I had no idea how they actually worked until I dug in — there are, of course, different mic designs; below is the basic mechanism:
+So we now understand how sound travels through air a bit more, but how does that get turned into meaningful data? The microphone, of course. It is responsible for receiving the pressure waves and converting them from mechanical vibrations to electrical signals. 
+
+there are, of course, many different mic designs; we will focus on a basic mechanism to develop intuition for the device:
 
 ![Microphone Mechanics|full](/blog/from-air-to-bits/mic-schematic.svg)
 
-A microphone diaphragm is a thin membrane exposed to air on one side. The incoming pressure variations push the entire membrane in and out — think of a drum skin flexing as sound hits it. The force on the diaphragm is the pressure difference across it, integrated over its area:
+The star of the show is the microphone's **diaphragm**; a thin membrane exposed to air on one side. The incoming pressure variations push the entire membrane in and out — think of a drum skin flexing as sound hits it. The force on the diaphragm is the pressure difference across it, integrated over its area:
 
 $$
 F = \Delta p \cdot A
@@ -89,19 +93,27 @@ $$
 m\ddot{x} + b\dot{x} + kx = F(t)
 $$
 
-where $m$ is the diaphragm's mass, $k$ is its stiffness, $b$ is damping, and $F(t)$ is the **driving force** from the incoming pressure wave. While you're speaking, the sound wave continuously drives the diaphragm, and it tracks the pressure variations in real time. When you stop speaking, the damping term $b\dot{x}$ is what causes the diaphragm to settle back to rest rather than ringing indefinitely.
+where $m$ is the diaphragm's mass, $k$ is its stiffness, $b$ is damping, and $F(t)$ is the **driving force** from the incoming pressure wave. While you're speaking, the sound wave continuously drives the diaphragm, and it tracks the pressure variations in real time. 
 
-This model has a natural **resonant** frequency; or in other words the frequency at which an external force causes the maximum oscillatory response:
+When you stop speaking, the damping term $b\dot{x}$ is what causes the diaphragm to settle back to rest rather than ringing indefinitely.
+
+This model has a natural **resonant frequency** — the frequency at which the system oscillates most vigorously when driven by an external force:
 
 $$
 f_0 = \frac{1}{2\pi}\sqrt{\frac{k}{m}}
 $$
 
-If the microphone is underdamped and $f_0$ falls within the audible range, you get an undesirable peak in the frequency response. Cheap microphones often exhibit this. A well-designed mic is critically or slightly overdamped, giving a flat response across the audible range. Here's a visualization of the different damping scenarios:
+You've experienced resonance before: push a child on a swing at just the right rhythm and they soar; push at the wrong rhythm and you fight the motion. A diaphragm works the same way — frequencies near $f_0$ get amplified, while others don't.
+
+Whether this resonance is a problem depends on the **damping**. Remember the $b\dot{x}$ term from the equation above? The ratio of damping to the critical threshold determines how the diaphragm behaves:
 
 ![Damping Scenarios|full](/blog/from-air-to-bits/damping-graph.svg)
 
-For microphones, critically damped is the sweet spot — fastest faithful tracking without the resonant ringing.
+- **Underdamped**: the diaphragm rings like a struck bell, amplifying frequencies near $f_0$. Cheap microphones often exhibit this — you hear it as a harsh, tinny coloration on voices or a brittle sibilance on "s" sounds.
+- **Overdamped**: the diaphragm is sluggish, like pushing through honey. It can't keep up with rapid pressure changes, so high frequencies get rolled off and everything sounds muffled.
+- **Critically damped**: the sweet spot. The diaphragm tracks the incoming pressure wave as faithfully as possible and settles back to rest without overshooting. This produces a **flat** frequency response — meaning the mic reproduces all frequencies at roughly equal sensitivity, without artificially boosting or attenuating any part of the spectrum.
+
+In practice, well-designed microphones target critical or *slightly* overdamped behavior. A tiny bit of overdamping sacrifices negligible high-frequency response but adds a safety margin against resonant ringing — a worthwhile trade-off when the goal is accurate reproduction of the original sound.
 
 ---
 
