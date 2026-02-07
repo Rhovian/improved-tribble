@@ -1,0 +1,325 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 580" width="1100" height="580">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowRed">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="diaphragmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#c89040"/>
+      <stop offset="40%" stop-color="#d4a050"/>
+      <stop offset="100%" stop-color="#a07030"/>
+    </linearGradient>
+    <linearGradient id="magnetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a3a5e"/>
+      <stop offset="50%" stop-color="#2a2a4a"/>
+      <stop offset="100%" stop-color="#3a3a5e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1100" height="580" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="550" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">DYNAMIC MICROPHONE — TRANSDUCTION</text>
+  <text x="550" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Acoustic Energy → Mechanical Energy → Electrical Signal</text>
+
+  <!-- ==================== SOUND WAVES (left side) ==================== -->
+  <g transform="translate(95, 290)">
+    <path d="M 0,-100 A 100,100 0 0,1 0,100" fill="none" stroke="#00CEC9" stroke-width="3" opacity="0.7" filter="url(#glow)" stroke-linecap="round"/>
+    <path d="M -30,-80 A 80,80 0 0,1 -30,80" fill="none" stroke="#00CEC9" stroke-width="2.5" opacity="0.55" filter="url(#glowSoft)" stroke-linecap="round"/>
+    <path d="M -55,-58 A 58,58 0 0,1 -55,58" fill="none" stroke="#00CEC9" stroke-width="2" opacity="0.4" stroke-linecap="round"/>
+    <path d="M -75,-38 A 38,38 0 0,1 -75,38" fill="none" stroke="#00CEC9" stroke-width="1.5" opacity="0.28" stroke-linecap="round"/>
+  </g>
+
+  <!-- Sound label + leader line -->
+  <line x1="70" y1="115" x2="70" y2="170" stroke="#6c7a89" stroke-width="0.8"/>
+  <circle cx="70" cy="115" r="3" fill="#6c7a89"/>
+  <text x="70" y="100" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold">Sound</text>
+
+  <!-- ==================== DIAPHRAGM ==================== -->
+  <g transform="translate(175, 290)">
+    <!-- Diaphragm plate (thin vertical rectangle) -->
+    <rect x="0" y="-110" width="18" height="220" rx="2" fill="url(#diaphragmGrad)" stroke="#d4a050" stroke-width="0.8" opacity="0.9"/>
+    <!-- Highlight reflection -->
+    <rect x="3" y="-105" width="5" height="210" rx="1" fill="#e8c070" opacity="0.25"/>
+    <!-- Movement arrows (showing oscillation) -->
+    <path d="M -12,-90 L -4,-90" stroke="#55efc4" stroke-width="1" opacity="0.4" marker-end="none"/>
+    <path d="M 30,-90 L 22,-90" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+    <line x1="-14" y1="-95" x2="-14" y2="-85" stroke="#55efc4" stroke-width="0.8" opacity="0.3"/>
+    <line x1="32" y1="-95" x2="32" y2="-85" stroke="#55efc4" stroke-width="0.8" opacity="0.3"/>
+    <!-- Small arrows -->
+    <polygon points="-4,-90 -8,-93 -8,-87" fill="#55efc4" opacity="0.4"/>
+    <polygon points="22,-90 26,-93 26,-87" fill="#55efc4" opacity="0.4"/>
+  </g>
+
+  <!-- Diaphragm label + leader line -->
+  <line x1="184" y1="440" x2="184" y2="410" stroke="#6c7a89" stroke-width="0.8"/>
+  <circle cx="184" cy="440" r="3" fill="#6c7a89"/>
+  <text x="184" y="468" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold">Diaphragm</text>
+
+  <!-- ==================== COIL (attached to diaphragm) ==================== -->
+  <g transform="translate(200, 290)">
+    <!-- Coil windings - many tight vertical lines to simulate coil wrapping -->
+    <g stroke="#00CEC9" stroke-width="1.2" opacity="0.7">
+      <line x1="0" y1="-80" x2="0" y2="80"/>
+      <line x1="4" y1="-82" x2="4" y2="82"/>
+      <line x1="8" y1="-84" x2="8" y2="84"/>
+      <line x1="12" y1="-85" x2="12" y2="85"/>
+      <line x1="16" y1="-86" x2="16" y2="86"/>
+      <line x1="20" y1="-87" x2="20" y2="87"/>
+      <line x1="24" y1="-88" x2="24" y2="88"/>
+      <line x1="28" y1="-88" x2="28" y2="88"/>
+      <line x1="32" y1="-88" x2="32" y2="88"/>
+      <line x1="36" y1="-88" x2="36" y2="88"/>
+      <line x1="40" y1="-88" x2="40" y2="88"/>
+      <line x1="44" y1="-88" x2="44" y2="88"/>
+      <line x1="48" y1="-88" x2="48" y2="88"/>
+      <line x1="52" y1="-88" x2="52" y2="88"/>
+      <line x1="56" y1="-88" x2="56" y2="88"/>
+      <line x1="60" y1="-88" x2="60" y2="88"/>
+      <line x1="64" y1="-88" x2="64" y2="88"/>
+      <line x1="68" y1="-88" x2="68" y2="88"/>
+      <line x1="72" y1="-88" x2="72" y2="88"/>
+      <line x1="76" y1="-88" x2="76" y2="88"/>
+      <line x1="80" y1="-88" x2="80" y2="88"/>
+      <line x1="84" y1="-88" x2="84" y2="88"/>
+      <line x1="88" y1="-88" x2="88" y2="88"/>
+      <line x1="92" y1="-87" x2="92" y2="87"/>
+      <line x1="96" y1="-86" x2="96" y2="86"/>
+      <line x1="100" y1="-85" x2="100" y2="85"/>
+      <line x1="104" y1="-84" x2="104" y2="84"/>
+      <line x1="108" y1="-82" x2="108" y2="82"/>
+      <line x1="112" y1="-80" x2="112" y2="80"/>
+      <line x1="116" y1="-78" x2="116" y2="78"/>
+      <line x1="120" y1="-76" x2="120" y2="76"/>
+      <line x1="124" y1="-73" x2="124" y2="73"/>
+      <line x1="128" y1="-70" x2="128" y2="70"/>
+      <line x1="132" y1="-66" x2="132" y2="66"/>
+      <line x1="136" y1="-62" x2="136" y2="62"/>
+      <line x1="140" y1="-57" x2="140" y2="57"/>
+      <line x1="144" y1="-50" x2="144" y2="50"/>
+    </g>
+
+    <!-- Coil outline (cylindrical shape suggestion) -->
+    <path d="M 0,-88 Q -6,-88 -6,-80 L -6,80 Q -6,88 0,88" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.4"/>
+    <path d="M 144,-50 Q 150,-50 150,-42 L 150,42 Q 150,50 144,50" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.4"/>
+
+    <!-- Top coil edge highlight -->
+    <line x1="0" y1="-88" x2="144" y2="-50" stroke="#55efc4" stroke-width="0.6" opacity="0.3"/>
+    <!-- Bottom coil edge -->
+    <line x1="0" y1="88" x2="144" y2="50" stroke="#55efc4" stroke-width="0.6" opacity="0.3"/>
+  </g>
+
+  <!-- Coil label + leader line -->
+  <line x1="330" y1="115" x2="330" y2="178" stroke="#6c7a89" stroke-width="0.8"/>
+  <circle cx="330" cy="115" r="3" fill="#6c7a89"/>
+  <text x="330" y="100" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold">Coil</text>
+
+  <!-- ==================== MAGNET (inside coil) ==================== -->
+  <g transform="translate(260, 290)">
+    <!-- Magnet body -->
+    <rect x="10" y="-55" width="80" height="110" rx="4" fill="url(#magnetGrad)" stroke="#5a5a8a" stroke-width="1" opacity="0.7"/>
+    <!-- N/S pole indicators -->
+    <text x="50" y="-30" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" opacity="0.5">N</text>
+    <text x="50" y="42" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold" opacity="0.5">S</text>
+    <!-- Magnetic field lines (subtle) -->
+    <path d="M 50,-55 Q 80,-75 100,-55" fill="none" stroke="#5a5a8a" stroke-width="0.6" opacity="0.3" stroke-dasharray="3,3"/>
+    <path d="M 50,-55 Q 20,-75 0,-55" fill="none" stroke="#5a5a8a" stroke-width="0.6" opacity="0.3" stroke-dasharray="3,3"/>
+    <path d="M 50,55 Q 80,75 100,55" fill="none" stroke="#5a5a8a" stroke-width="0.6" opacity="0.3" stroke-dasharray="3,3"/>
+    <path d="M 50,55 Q 20,75 0,55" fill="none" stroke="#5a5a8a" stroke-width="0.6" opacity="0.3" stroke-dasharray="3,3"/>
+  </g>
+
+  <!-- Magnet label + leader line -->
+  <line x1="330" y1="440" x2="330" y2="405" stroke="#6c7a89" stroke-width="0.8"/>
+  <circle cx="330" cy="440" r="3" fill="#6c7a89"/>
+  <text x="330" y="468" text-anchor="middle" fill="#5a5a8a" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold">Magnet</text>
+
+  <!-- ==================== WIRE LEADS (coil to output) ==================== -->
+  <g>
+    <!-- Top wire -->
+    <path d="M 350,202 L 430,202 L 430,195 L 620,195" fill="none" stroke="#00CEC9" stroke-width="1.5" opacity="0.6"/>
+    <!-- Bottom wire -->
+    <path d="M 350,378 L 430,378 L 430,385 L 620,385" fill="none" stroke="#00CEC9" stroke-width="1.5" opacity="0.6"/>
+
+    <!-- Wire connection dots at coil end -->
+    <circle cx="350" cy="202" r="3" fill="#00CEC9" opacity="0.6"/>
+    <circle cx="350" cy="378" r="3" fill="#00CEC9" opacity="0.6"/>
+
+    <!-- Small dashed section (suggesting signal transition) -->
+    <line x1="610" y1="195" x2="640" y2="195" stroke="#00CEC9" stroke-width="1.5" opacity="0.4" stroke-dasharray="3,3"/>
+    <line x1="610" y1="385" x2="640" y2="385" stroke="#00CEC9" stroke-width="1.5" opacity="0.4" stroke-dasharray="3,3"/>
+
+    <!-- Terminal dots at output end -->
+    <circle cx="640" cy="195" r="2.5" fill="#E74C3C" opacity="0.7"/>
+    <circle cx="640" cy="385" r="2.5" fill="#E74C3C" opacity="0.7"/>
+  </g>
+
+  <!-- ==================== OUTPUT WAVEFORM ==================== -->
+  <g transform="translate(660, 290)">
+    <!-- Baseline -->
+    <line x1="0" y1="0" x2="380" y2="0" stroke="#4a5568" stroke-width="0.6" stroke-dasharray="4,4" opacity="0.4"/>
+
+    <!-- Waveform bars (varying amplitude like a speech signal - "hello world") -->
+    <!-- "h" onset - soft -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.75" stroke-linecap="round">
+      <line x1="5" y1="-8" x2="5" y2="10"/>
+      <line x1="10" y1="-15" x2="10" y2="18"/>
+      <line x1="15" y1="-22" x2="15" y2="25"/>
+      <line x1="20" y1="-18" x2="20" y2="20"/>
+    </g>
+    <!-- "e" - louder -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.8" stroke-linecap="round">
+      <line x1="27" y1="-40" x2="27" y2="38"/>
+      <line x1="32" y1="-62" x2="32" y2="58"/>
+      <line x1="37" y1="-78" x2="37" y2="75"/>
+      <line x1="42" y1="-90" x2="42" y2="85"/>
+      <line x1="47" y1="-72" x2="47" y2="68"/>
+      <line x1="52" y1="-55" x2="52" y2="50"/>
+    </g>
+    <!-- "ll" - sustained -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.82" stroke-linecap="round">
+      <line x1="59" y1="-65" x2="59" y2="60"/>
+      <line x1="64" y1="-80" x2="64" y2="78"/>
+      <line x1="69" y1="-95" x2="69" y2="90"/>
+      <line x1="74" y1="-85" x2="74" y2="82"/>
+      <line x1="79" y1="-70" x2="79" y2="65"/>
+      <line x1="84" y1="-55" x2="84" y2="52"/>
+      <line x1="89" y1="-42" x2="89" y2="40"/>
+    </g>
+    <!-- "o" - vowel peak -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.85" stroke-linecap="round">
+      <line x1="96" y1="-50" x2="96" y2="48"/>
+      <line x1="101" y1="-72" x2="101" y2="70"/>
+      <line x1="106" y1="-95" x2="106" y2="92"/>
+      <line x1="111" y1="-105" x2="111" y2="100"/>
+      <line x1="116" y1="-88" x2="116" y2="85"/>
+      <line x1="121" y1="-65" x2="121" y2="62"/>
+      <line x1="126" y1="-45" x2="126" y2="42"/>
+    </g>
+    <!-- gap between words -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.5" stroke-linecap="round">
+      <line x1="135" y1="-12" x2="135" y2="10"/>
+      <line x1="140" y1="-6" x2="140" y2="5"/>
+      <line x1="145" y1="-4" x2="145" y2="3"/>
+      <line x1="150" y1="-5" x2="150" y2="4"/>
+      <line x1="155" y1="-8" x2="155" y2="7"/>
+    </g>
+    <!-- "w" onset -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.75" stroke-linecap="round">
+      <line x1="164" y1="-20" x2="164" y2="18"/>
+      <line x1="169" y1="-35" x2="169" y2="32"/>
+      <line x1="174" y1="-50" x2="174" y2="48"/>
+      <line x1="179" y1="-42" x2="179" y2="40"/>
+    </g>
+    <!-- "or" - resonant -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.82" stroke-linecap="round">
+      <line x1="186" y1="-58" x2="186" y2="55"/>
+      <line x1="191" y1="-78" x2="191" y2="75"/>
+      <line x1="196" y1="-98" x2="196" y2="95"/>
+      <line x1="201" y1="-110" x2="201" y2="108"/>
+      <line x1="206" y1="-100" x2="206" y2="97"/>
+      <line x1="211" y1="-85" x2="211" y2="82"/>
+      <line x1="216" y1="-70" x2="216" y2="67"/>
+      <line x1="221" y1="-55" x2="221" y2="52"/>
+    </g>
+    <!-- "l" -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.8" stroke-linecap="round">
+      <line x1="228" y1="-62" x2="228" y2="60"/>
+      <line x1="233" y1="-80" x2="233" y2="78"/>
+      <line x1="238" y1="-92" x2="238" y2="88"/>
+      <line x1="243" y1="-78" x2="243" y2="75"/>
+      <line x1="248" y1="-60" x2="248" y2="57"/>
+      <line x1="253" y1="-42" x2="253" y2="40"/>
+    </g>
+    <!-- "d" - plosive ending -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.78" stroke-linecap="round">
+      <line x1="260" y1="-48" x2="260" y2="45"/>
+      <line x1="265" y1="-72" x2="265" y2="70"/>
+      <line x1="270" y1="-88" x2="270" y2="85"/>
+      <line x1="275" y1="-65" x2="275" y2="62"/>
+      <line x1="280" y1="-40" x2="280" y2="38"/>
+      <line x1="285" y1="-22" x2="285" y2="20"/>
+    </g>
+    <!-- Trailing silence -->
+    <g stroke="#E74C3C" stroke-width="2.5" opacity="0.45" stroke-linecap="round">
+      <line x1="292" y1="-12" x2="292" y2="10"/>
+      <line x1="297" y1="-8" x2="297" y2="7"/>
+      <line x1="302" y1="-5" x2="302" y2="4"/>
+      <line x1="307" y1="-3" x2="307" y2="2"/>
+    </g>
+
+    <!-- Glow overlay on waveform (thinner, brighter) -->
+    <g stroke="#FF6B6B" stroke-width="0.8" opacity="0.4" stroke-linecap="round" filter="url(#glowRed)">
+      <line x1="42" y1="-90" x2="42" y2="85"/>
+      <line x1="69" y1="-95" x2="69" y2="90"/>
+      <line x1="111" y1="-105" x2="111" y2="100"/>
+      <line x1="201" y1="-110" x2="201" y2="108"/>
+      <line x1="238" y1="-92" x2="238" y2="88"/>
+      <line x1="270" y1="-88" x2="270" y2="85"/>
+    </g>
+  </g>
+
+  <!-- Output label + leader line -->
+  <text x="850" y="100" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-weight="bold">Output</text>
+  <circle cx="850" cy="115" r="3" fill="#6c7a89"/>
+  <line x1="850" y1="115" x2="850" y2="165" stroke="#6c7a89" stroke-width="0.8"/>
+
+  <!-- Output sub-label -->
+  <text x="850" y="428" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" opacity="0.6">Analog electrical signal</text>
+
+  <!-- ==================== PROCESS FLOW ARROWS (bottom) ==================== -->
+  <g transform="translate(0, 520)">
+    <!-- Flow steps -->
+    <rect x="30" y="-12" width="130" height="24" rx="12" fill="#00CEC9" opacity="0.08" stroke="#00CEC9" stroke-width="0.6"/>
+    <text x="95" y="5" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" opacity="0.8">Pressure waves</text>
+
+    <!-- Arrow -->
+    <line x1="168" y1="0" x2="205" y2="0" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+    <polygon points="205,0 198,-3 198,3" fill="#55efc4" opacity="0.4"/>
+
+    <rect x="210" y="-12" width="160" height="24" rx="12" fill="#d4a050" opacity="0.06" stroke="#d4a050" stroke-width="0.6"/>
+    <text x="290" y="5" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" opacity="0.8">Mechanical vibration</text>
+
+    <!-- Arrow -->
+    <line x1="378" y1="0" x2="415" y2="0" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+    <polygon points="415,0 408,-3 408,3" fill="#55efc4" opacity="0.4"/>
+
+    <rect x="420" y="-12" width="195" height="24" rx="12" fill="#00CEC9" opacity="0.06" stroke="#00CEC9" stroke-width="0.6"/>
+    <text x="517" y="5" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" opacity="0.8">Electromagnetic induction</text>
+
+    <!-- Arrow -->
+    <line x1="623" y1="0" x2="660" y2="0" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+    <polygon points="660,0 653,-3 653,3" fill="#55efc4" opacity="0.4"/>
+
+    <rect x="665" y="-12" width="160" height="24" rx="12" fill="#E74C3C" opacity="0.06" stroke="#E74C3C" stroke-width="0.6"/>
+    <text x="745" y="5" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" opacity="0.8">Voltage fluctuations</text>
+
+    <!-- Arrow -->
+    <line x1="833" y1="0" x2="870" y2="0" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+    <polygon points="870,0 863,-3 863,3" fill="#55efc4" opacity="0.4"/>
+
+    <rect x="875" y="-12" width="180" height="24" rx="12" fill="#E74C3C" opacity="0.08" stroke="#E74C3C" stroke-width="0.6"/>
+    <text x="965" y="5" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="600" opacity="0.8">Analog audio signal</text>
+  </g>
+</svg>

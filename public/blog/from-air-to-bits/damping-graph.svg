@@ -1,0 +1,338 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowRed">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">DAMPING RESPONSE</text>
+  <text x="450" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Second-Order System Step Response — u(t) / u(0) vs t / Tₙ</text>
+
+  <!-- Grid -->
+  <g stroke="#2a2a4a" stroke-width="0.5" stroke-dasharray="4,6">
+    <!-- Horizontal -->
+    <line x1="100" y1="120" x2="840" y2="120"/>
+    <line x1="100" y1="200" x2="840" y2="200"/>
+    <!-- y=0 line drawn separately as axis -->
+    <line x1="100" y1="360" x2="840" y2="360"/>
+    <line x1="100" y1="440" x2="840" y2="440"/>
+    <!-- Vertical -->
+    <line x1="100" y1="80" x2="100" y2="470"/>
+    <line x1="330" y1="80" x2="330" y2="470"/>
+    <line x1="560" y1="80" x2="560" y2="470"/>
+    <line x1="790" y1="80" x2="790" y2="470"/>
+  </g>
+
+  <!--
+    Coordinate system:
+    Origin (0,0) at pixel (100, 280)
+    x: t/Tn from 0 to ~3.3, pixel range 100-840 → 1 unit = 230px (approx)
+    y: u(t)/u(0) from -1 to 1, pixel range 440 to 120 → 1 unit = 160px
+    y=0 is at pixel y=280
+    y=1 is at pixel y=120 (wait, let me recalc)
+
+    Let's define:
+    x_origin = 100, y_origin = 280 (this is y=0)
+    x_scale = 230 px per unit of t/Tn
+    y_scale = 160 px per unit (up is negative in SVG)
+    So y=1 → 280 - 160 = 120
+    y=-1 → 280 + 160 = 440
+    t/Tn=1 → 100 + 230 = 330
+    t/Tn=2 → 100 + 460 = 560
+    t/Tn=3 → 100 + 690 = 790
+  -->
+
+  <!-- Axes -->
+  <!-- X-axis (y=0 line) -->
+  <line x1="100" y1="280" x2="850" y2="280" stroke="#6c7a89" stroke-width="1.5"/>
+  <polygon points="850,280 842,276 842,284" fill="#6c7a89"/>
+  <!-- Y-axis -->
+  <line x1="100" y1="470" x2="100" y2="78" stroke="#6c7a89" stroke-width="1.5"/>
+  <polygon points="100,78 96,86 104,86" fill="#6c7a89"/>
+
+  <!-- Axis labels -->
+  <text x="860" y="275" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600">t / Tₙ</text>
+  <text x="42" y="285" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="600" transform="rotate(-90, 42, 285)">u(t) / u(0)</text>
+
+  <!-- Y-axis ticks -->
+  <line x1="95" y1="120" x2="105" y2="120" stroke="#6c7a89" stroke-width="1"/>
+  <text x="88" y="125" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">1</text>
+
+  <text x="88" y="285" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">0</text>
+
+  <line x1="95" y1="440" x2="105" y2="440" stroke="#6c7a89" stroke-width="1"/>
+  <text x="88" y="445" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">-1</text>
+
+  <!-- X-axis ticks -->
+  <line x1="330" y1="275" x2="330" y2="285" stroke="#6c7a89" stroke-width="1"/>
+  <text x="330" y="300" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">1</text>
+
+  <line x1="560" y1="275" x2="560" y2="285" stroke="#6c7a89" stroke-width="1"/>
+  <text x="560" y="300" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">2</text>
+
+  <line x1="790" y1="275" x2="790" y2="285" stroke="#6c7a89" stroke-width="1"/>
+  <text x="790" y="300" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12">3</text>
+
+  <!--
+    CURVES
+    All start at (100, 120) which is (t=0, u=1)
+
+    Underdamped ζ=0.1: u(t) = e^(-ζωt) * cos(ωd*t) where ωd = ω*sqrt(1-ζ²)
+    With ζ=0.1, the oscillation barely decays over 3 periods.
+    Approximation: cos(2π * t/Tn) * e^(-0.1 * 2π * t/Tn)
+
+    Critically damped ζ=1: u(t) = (1 + ωn*t) * e^(-ωn*t)
+    Using ωn = 2π/Tn: u = (1 + 2π*x) * e^(-2π*x) where x = t/Tn
+
+    Overdamped ζ=2: sum of two exponentials
+    u = A*e^(-s1*t) + B*e^(-s2*t) where s1,s2 = ωn*(ζ ± sqrt(ζ²-1))
+  -->
+
+  <!-- ==================== UNDERDAMPED ζ = 0.1 ==================== -->
+  <!--
+    u(t) = e^(-0.1*2π*x) * cos(2π*x * sqrt(1-0.01))  ≈ e^(-0.628x) * cos(6.27x)
+    At key points (x = t/Tn):
+    x=0:    u=1         → (100, 120)
+    x=0.15: u≈0.61      → (134, 182)
+    x=0.25: u≈0.0       → (157, 280)
+    x=0.35: u≈-0.55     → (180, 368)
+    x=0.5:  u≈-0.73     → (215, 397)
+    x=0.65: u≈-0.45     → (249, 352)
+    x=0.75: u≈0.0       → (272, 280)
+    x=0.85: u≈0.40      → (295, 216)
+    x=1.0:  u≈0.53      → (330, 195)
+    x=1.15: u≈0.33      → (364, 227)
+    x=1.25: u≈0.0       → (387, 280)
+    x=1.35: u≈-0.30     → (410, 328)
+    x=1.5:  u≈-0.39     → (445, 342)
+    x=1.65: u≈-0.24     → (479, 318)
+    x=1.75: u≈0.0       → (502, 280)
+    x=1.85: u≈0.21      → (525, 246)
+    x=2.0:  u≈0.28      → (560, 235)
+    x=2.15: u≈0.18      → (594, 251)
+    x=2.25: u≈0.0       → (617, 280)
+    x=2.35: u≈-0.16     → (640, 306)
+    x=2.5:  u≈-0.21     → (675, 314)
+    x=2.65: u≈-0.13     → (709, 301)
+    x=2.75: u≈0.0       → (732, 280)
+    x=2.85: u≈0.11      → (755, 262)
+    x=3.0:  u≈0.15      → (790, 256)
+    x=3.15: u≈0.10      → (824, 264)
+  -->
+  <path d="M 100,120
+           C 110,120 125,155 134,182
+           C 143,210 150,255 157,280
+           C 164,305 172,348 180,368
+           C 195,405 208,400 215,397
+           C 225,390 240,365 249,352
+           C 258,330 265,300 272,280
+           C 280,258 288,228 295,216
+           C 308,195 322,195 330,195
+           C 340,195 355,215 364,227
+           C 373,245 380,265 387,280
+           C 394,296 402,318 410,328
+           C 425,348 438,345 445,342
+           C 455,338 470,325 479,318
+           C 488,305 495,290 502,280
+           C 510,268 518,252 525,246
+           C 538,235 552,235 560,235
+           C 568,235 585,245 594,251
+           C 603,260 610,272 617,280
+           C 624,288 632,300 640,306
+           C 655,318 668,316 675,314
+           C 684,310 700,305 709,301
+           C 718,293 725,286 732,280
+           C 740,272 748,265 755,262
+           C 768,256 782,256 790,256
+           C 798,256 815,260 824,264"
+        fill="none" stroke="#E74C3C" stroke-width="2.5" stroke-linecap="round" filter="url(#glowRed)"/>
+  <!-- Thinner bright inner line -->
+  <path d="M 100,120
+           C 110,120 125,155 134,182
+           C 143,210 150,255 157,280
+           C 164,305 172,348 180,368
+           C 195,405 208,400 215,397
+           C 225,390 240,365 249,352
+           C 258,330 265,300 272,280
+           C 280,258 288,228 295,216
+           C 308,195 322,195 330,195
+           C 340,195 355,215 364,227
+           C 373,245 380,265 387,280
+           C 394,296 402,318 410,328
+           C 425,348 438,345 445,342
+           C 455,338 470,325 479,318
+           C 488,305 495,290 502,280
+           C 510,268 518,252 525,246
+           C 538,235 552,235 560,235
+           C 568,235 585,245 594,251
+           C 603,260 610,272 617,280
+           C 624,288 632,300 640,306
+           C 655,318 668,316 675,314
+           C 684,310 700,305 709,301
+           C 718,293 725,286 732,280
+           C 740,272 748,265 755,262
+           C 768,256 782,256 790,256
+           C 798,256 815,260 824,264"
+        fill="none" stroke="#FF6B6B" stroke-width="0.8" opacity="0.5" stroke-linecap="round"/>
+
+  <!-- Decay envelope (dashed) for underdamped -->
+  <path d="M 100,120 C 200,145 400,225 824,275" fill="none" stroke="#E74C3C" stroke-width="0.8" stroke-dasharray="6,4" opacity="0.25"/>
+  <path d="M 100,440 C 200,415 400,335 824,285" fill="none" stroke="#E74C3C" stroke-width="0.8" stroke-dasharray="6,4" opacity="0.25"/>
+
+
+  <!-- ==================== CRITICALLY DAMPED ζ = 1 ==================== -->
+  <!--
+    u(t) = (1 + 2π*x) * e^(-2π*x)
+    x=0:    u=1.0       → (100, 120)
+    x=0.05: u=0.90      → (111, 136)
+    x=0.1:  u=0.74      → (123, 162)
+    x=0.15: u=0.58      → (134, 187)
+    x=0.2:  u=0.43      → (146, 211)
+    x=0.3:  u=0.21      → (169, 246)
+    x=0.4:  u=0.09      → (192, 266)
+    x=0.5:  u=0.03      → (215, 275)
+    x=0.7:  u=0.0       → (261, 280)
+    x=1.0:  u≈-0.01     → (330, 282)
+    x=1.5:  u≈0.0       → (445, 280)
+  -->
+  <path d="M 100,120
+           C 105,120 108,130 111,136
+           C 115,148 119,158 123,162
+           C 130,178 132,183 134,187
+           C 140,200 143,208 146,211
+           C 155,232 162,242 169,246
+           C 178,258 185,264 192,266
+           C 202,272 208,274 215,275
+           C 228,278 245,279 261,280
+           C 290,280 310,281 330,282
+           C 370,282 410,281 445,280
+           C 520,280 600,280 790,280"
+        fill="none" stroke="#00CEC9" stroke-width="2.5" stroke-linecap="round" filter="url(#glow)"/>
+  <path d="M 100,120
+           C 105,120 108,130 111,136
+           C 115,148 119,158 123,162
+           C 130,178 132,183 134,187
+           C 140,200 143,208 146,211
+           C 155,232 162,242 169,246
+           C 178,258 185,264 192,266
+           C 202,272 208,274 215,275
+           C 228,278 245,279 261,280
+           C 290,280 310,281 330,282
+           C 370,282 410,281 445,280
+           C 520,280 600,280 790,280"
+        fill="none" stroke="#55efc4" stroke-width="0.8" opacity="0.5" stroke-linecap="round"/>
+
+
+  <!-- ==================== OVERDAMPED ζ = 2 ==================== -->
+  <!--
+    For ζ=2: s1 = ωn(2-√3) ≈ 0.268ωn, s2 = ωn(2+√3) ≈ 3.732ωn
+    u(t) ≈ 1.077*e^(-1.68x) - 0.077*e^(-23.5x) (approx with ωn=2π/Tn)
+    Simplified: mostly follows the slow exponential after initial transient
+    x=0:    u=1.0       → (100, 120)
+    x=0.05: u=0.88      → (111, 139)
+    x=0.1:  u=0.78      → (123, 155)
+    x=0.15: u=0.69      → (134, 170)
+    x=0.2:  u=0.61      → (146, 182)
+    x=0.3:  u=0.50      → (169, 200)
+    x=0.4:  u=0.40      → (192, 216)
+    x=0.5:  u=0.32      → (215, 229)
+    x=0.7:  u=0.22      → (261, 245)
+    x=1.0:  u=0.12      → (330, 261)
+    x=1.5:  u=0.04      → (445, 274)
+    x=2.0:  u=0.01      → (560, 278)
+    x=2.5:  u=0.003     → (675, 280)
+    x=3.0:  u≈0.0       → (790, 280)
+  -->
+  <path d="M 100,120
+           C 105,122 108,133 111,139
+           C 117,150 120,153 123,155
+           C 128,163 131,167 134,170
+           C 139,176 142,180 146,182
+           C 155,192 162,197 169,200
+           C 178,208 185,213 192,216
+           C 202,224 208,227 215,229
+           C 232,238 247,243 261,245
+           C 285,253 308,258 330,261
+           C 370,268 408,272 445,274
+           C 490,277 525,278 560,278
+           C 610,279 645,280 675,280
+           C 730,280 760,280 790,280"
+        fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round" filter="url(#glowSoft)"/>
+  <path d="M 100,120
+           C 105,122 108,133 111,139
+           C 117,150 120,153 123,155
+           C 128,163 131,167 134,170
+           C 139,176 142,180 146,182
+           C 155,192 162,197 169,200
+           C 178,208 185,213 192,216
+           C 202,224 208,227 215,229
+           C 232,238 247,243 261,245
+           C 285,253 308,258 330,261
+           C 370,268 408,272 445,274
+           C 490,277 525,278 560,278
+           C 610,279 645,280 675,280
+           C 730,280 760,280 790,280"
+        fill="none" stroke="#e8c070" stroke-width="0.8" opacity="0.4" stroke-linecap="round"/>
+
+
+  <!-- ==================== CURVE LABELS ==================== -->
+
+  <!-- Critically damped label -->
+  <rect x="150" y="100" width="178" height="22" rx="11" fill="#00CEC9" opacity="0.1" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="239" y="116" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Critically damped, ζ = 1</text>
+  <!-- Leader line -->
+  <line x1="220" y1="122" x2="155" y2="175" stroke="#00CEC9" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="155" cy="175" r="2.5" fill="#00CEC9" opacity="0.6"/>
+
+  <!-- Overdamped label -->
+  <rect x="310" y="168" width="168" height="22" rx="11" fill="#d4a050" opacity="0.08" stroke="#d4a050" stroke-width="0.6"/>
+  <text x="394" y="184" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Overdamped, ζ = 2</text>
+  <!-- Leader line -->
+  <line x1="360" y1="190" x2="310" y2="256" stroke="#d4a050" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="310" cy="256" r="2.5" fill="#d4a050" opacity="0.6"/>
+
+  <!-- Underdamped label -->
+  <rect x="170" y="400" width="180" height="22" rx="11" fill="#E74C3C" opacity="0.08" stroke="#E74C3C" stroke-width="0.6"/>
+  <text x="260" y="416" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Underdamped, ζ = 0.1</text>
+  <!-- Leader line -->
+  <line x1="240" y1="400" x2="218" y2="392" stroke="#E74C3C" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="218" cy="392" r="2.5" fill="#E74C3C" opacity="0.6"/>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g transform="translate(0, 488)">
+    <line x1="100" y1="0" x2="130" y2="0" stroke="#E74C3C" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="138" y="4" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Underdamped — oscillates, slow decay</text>
+
+    <line x1="410" y1="0" x2="440" y2="0" stroke="#00CEC9" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="448" y="4" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Critically damped — fastest non-oscillating</text>
+
+    <line x1="700" y1="0" x2="730" y2="0" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <text x="738" y="4" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Overdamped — sluggish</text>
+  </g>
+</svg>

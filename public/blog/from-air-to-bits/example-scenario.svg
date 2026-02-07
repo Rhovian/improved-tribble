@@ -1,0 +1,228 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" width="1000" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowText">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="waveOpacity" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00CEC9" stop-opacity="0.8"/>
+      <stop offset="60%" stop-color="#00CEC9" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0.1"/>
+    </linearGradient>
+    <!-- Particle fade gradient -->
+    <linearGradient id="particleFade" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#55efc4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#55efc4" stop-opacity="0.05"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="520" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="500" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">ACOUSTIC SIGNAL PROPAGATION</text>
+  <text x="500" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Source → Medium → Sink</text>
+
+  <!-- ==================== SOURCE: SPEAKER ==================== -->
+  <g transform="translate(115, 250)">
+    <!-- Speaker cabinet body -->
+    <rect x="-62" y="-70" width="65" height="140" rx="8" fill="#1e1e3a" stroke="#00CEC9" stroke-width="1.5" opacity="0.9"/>
+    <!-- Inner panel -->
+    <rect x="-56" y="-62" width="52" height="124" rx="5" fill="#16213e" stroke="#00CEC9" stroke-width="0.6" opacity="0.5"/>
+
+    <!-- Woofer (large driver) -->
+    <circle cx="-30" cy="18" r="28" fill="#12122a" stroke="#00CEC9" stroke-width="1" opacity="0.7"/>
+    <circle cx="-30" cy="18" r="20" fill="#1a1a2e" stroke="#00CEC9" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="-30" cy="18" r="11" fill="#16213e" stroke="#00CEC9" stroke-width="0.8" opacity="0.6"/>
+    <circle cx="-30" cy="18" r="4" fill="#00CEC9" opacity="0.3"/>
+
+    <!-- Tweeter (small driver) -->
+    <circle cx="-30" cy="-32" r="14" fill="#12122a" stroke="#00CEC9" stroke-width="1" opacity="0.7"/>
+    <circle cx="-30" cy="-32" r="9" fill="#1a1a2e" stroke="#00CEC9" stroke-width="0.6" opacity="0.5"/>
+    <circle cx="-30" cy="-32" r="4" fill="#00CEC9" opacity="0.3"/>
+
+    <!-- Speaker cone/horn output -->
+    <path d="M 3,-45 L 25,-65 L 25,65 L 3,45 Z" fill="#1e1e3a" stroke="#00CEC9" stroke-width="1.2" opacity="0.8"/>
+    <path d="M 7,-40 L 22,-58 L 22,58 L 7,40 Z" fill="#16213e" stroke="#00CEC9" stroke-width="0.5" opacity="0.4"/>
+
+    <!-- Source label -->
+    <text x="-18" y="95" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">SOURCE</text>
+
+    <!-- Small status LED -->
+    <circle cx="-50" cy="50" r="3" fill="#55efc4" opacity="0.8" filter="url(#glowSoft)"/>
+  </g>
+
+  <!-- ==================== SPEECH BUBBLE / SIGNAL CONTENT ==================== -->
+  <g transform="translate(160, 135)">
+    <!-- Speech bubble -->
+    <rect x="0" y="-22" width="145" height="38" rx="18" fill="#00CEC9" fill-opacity="0.08" stroke="#00CEC9" stroke-width="0.8" stroke-opacity="0.4"/>
+    <!-- Bubble tail -->
+    <path d="M 10,16 L 0,28 L 22,16" fill="#00CEC9" fill-opacity="0.08" stroke="#00CEC9" stroke-width="0.6" stroke-opacity="0.3"/>
+    <!-- Text -->
+    <text x="72" y="-1" text-anchor="middle" fill="#55efc4" font-family="Courier New, monospace" font-size="16" font-weight="bold" filter="url(#glowSoft)" letter-spacing="1">"hello world"</text>
+  </g>
+
+  <!-- ==================== PROPAGATION WAVES ==================== -->
+  <!-- Concentric arcs emanating from source -->
+  <g transform="translate(145, 250)">
+    <!-- Wave fronts - decreasing opacity with distance -->
+    <path d="M 0,-55 A 55,55 0 0,1 0,55" fill="none" stroke="#00CEC9" stroke-width="2" opacity="0.65" filter="url(#glowSoft)"/>
+    <path d="M 12,-80 A 80,80 0 0,1 12,80" fill="none" stroke="#00CEC9" stroke-width="1.8" opacity="0.5"/>
+    <path d="M 28,-105 A 105,105 0 0,1 28,105" fill="none" stroke="#00CEC9" stroke-width="1.5" opacity="0.38"/>
+    <path d="M 48,-125 A 125,125 0 0,1 48,125" fill="none" stroke="#00CEC9" stroke-width="1.3" opacity="0.28"/>
+    <path d="M 72,-140 A 140,140 0 0,1 72,140" fill="none" stroke="#00CEC9" stroke-width="1.1" opacity="0.2"/>
+    <path d="M 100,-148 A 148,148 0 0,1 100,148" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.14"/>
+    <path d="M 132,-152 A 152,152 0 0,1 132,152" fill="none" stroke="#00CEC9" stroke-width="0.8" opacity="0.1"/>
+  </g>
+
+  <!-- ==================== FLOATING PARTICLES IN MEDIUM ==================== -->
+  <!-- Particles representing air molecules, denser near source, sparser toward sink -->
+  <g>
+    <!-- Dense region near source -->
+    <circle cx="175" cy="215" r="2" fill="#55efc4" opacity="0.5"/>
+    <circle cx="180" cy="248" r="1.8" fill="#00CEC9" opacity="0.55"/>
+    <circle cx="172" cy="280" r="2" fill="#55efc4" opacity="0.5"/>
+    <circle cx="185" cy="300" r="1.5" fill="#00CEC9" opacity="0.45"/>
+    <circle cx="178" cy="195" r="1.5" fill="#55efc4" opacity="0.45"/>
+    <circle cx="170" cy="320" r="1.8" fill="#00CEC9" opacity="0.42"/>
+
+    <circle cx="210" cy="200" r="2" fill="#00CEC9" opacity="0.45"/>
+    <circle cx="215" cy="235" r="1.8" fill="#55efc4" opacity="0.48"/>
+    <circle cx="205" cy="268" r="2" fill="#00CEC9" opacity="0.45"/>
+    <circle cx="220" cy="295" r="1.5" fill="#55efc4" opacity="0.42"/>
+    <circle cx="208" cy="330" r="1.8" fill="#00CEC9" opacity="0.4"/>
+
+    <circle cx="250" cy="210" r="1.8" fill="#00CEC9" opacity="0.4"/>
+    <circle cx="255" cy="250" r="1.5" fill="#55efc4" opacity="0.38"/>
+    <circle cx="248" cy="285" r="1.8" fill="#00CEC9" opacity="0.38"/>
+    <circle cx="260" cy="315" r="1.5" fill="#55efc4" opacity="0.35"/>
+    <circle cx="245" cy="195" r="1.5" fill="#00CEC9" opacity="0.35"/>
+
+    <!-- Mid-field particles -->
+    <circle cx="310" cy="220" r="1.5" fill="#00CEC9" opacity="0.32"/>
+    <circle cx="320" cy="260" r="1.8" fill="#55efc4" opacity="0.3"/>
+    <circle cx="305" cy="295" r="1.5" fill="#00CEC9" opacity="0.28"/>
+    <circle cx="325" cy="230" r="1.5" fill="#55efc4" opacity="0.28"/>
+
+    <circle cx="380" cy="225" r="1.5" fill="#00CEC9" opacity="0.25"/>
+    <circle cx="390" cy="270" r="1.5" fill="#55efc4" opacity="0.23"/>
+    <circle cx="375" cy="305" r="1.5" fill="#00CEC9" opacity="0.22"/>
+    <circle cx="395" cy="245" r="1.3" fill="#55efc4" opacity="0.2"/>
+
+    <circle cx="450" cy="235" r="1.5" fill="#00CEC9" opacity="0.2"/>
+    <circle cx="460" cy="275" r="1.3" fill="#55efc4" opacity="0.18"/>
+    <circle cx="445" cy="295" r="1.5" fill="#00CEC9" opacity="0.17"/>
+
+    <!-- Far-field particles (sparse) -->
+    <circle cx="520" cy="245" r="1.3" fill="#00CEC9" opacity="0.15"/>
+    <circle cx="530" cy="280" r="1.3" fill="#55efc4" opacity="0.14"/>
+    <circle cx="515" cy="260" r="1" fill="#00CEC9" opacity="0.13"/>
+
+    <circle cx="590" cy="255" r="1.3" fill="#00CEC9" opacity="0.12"/>
+    <circle cx="600" cy="275" r="1" fill="#55efc4" opacity="0.11"/>
+
+    <circle cx="655" cy="260" r="1" fill="#00CEC9" opacity="0.1"/>
+    <circle cx="670" cy="270" r="1" fill="#55efc4" opacity="0.09"/>
+  </g>
+
+  <!-- ==================== DISTANCE / PROPAGATION ARROW ==================== -->
+  <g>
+    <!-- Main propagation line -->
+    <line x1="170" y1="400" x2="790" y2="400" stroke="#00CEC9" stroke-width="1" opacity="0.3" stroke-dasharray="8,5"/>
+    <!-- Arrow head -->
+    <polygon points="790,400 780,395 780,405" fill="#00CEC9" opacity="0.3"/>
+    <!-- Label -->
+    <text x="480" y="420" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" letter-spacing="1">propagation direction</text>
+
+    <!-- Distance bracket -->
+    <line x1="145" y1="440" x2="840" y2="440" stroke="#55efc4" stroke-width="0.8" opacity="0.25"/>
+    <line x1="145" y1="435" x2="145" y2="445" stroke="#55efc4" stroke-width="0.8" opacity="0.25"/>
+    <line x1="840" y1="435" x2="840" y2="445" stroke="#55efc4" stroke-width="0.8" opacity="0.25"/>
+    <text x="492" y="458" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.4" letter-spacing="0.5">d (within audible range)</text>
+  </g>
+
+  <!-- ==================== SINK: MICROPHONE ==================== -->
+  <g transform="translate(840, 250)">
+    <!-- Mic stand base -->
+    <ellipse cx="0" cy="88" rx="30" ry="6" fill="#1e1e3a" stroke="#00CEC9" stroke-width="0.8" opacity="0.5"/>
+    <!-- Mic stand pole -->
+    <rect x="-3" y="18" width="6" height="70" rx="3" fill="#1e1e3a" stroke="#00CEC9" stroke-width="0.8" opacity="0.6"/>
+    <!-- Mic stand joint -->
+    <circle cx="0" cy="18" r="6" fill="#1e1e3a" stroke="#00CEC9" stroke-width="0.8" opacity="0.6"/>
+
+    <!-- Microphone body -->
+    <rect x="-14" y="-50" width="28" height="68" rx="5" fill="#1e1e3a" stroke="#00CEC9" stroke-width="1.3" opacity="0.85"/>
+    <!-- Mic grille pattern -->
+    <rect x="-12" y="-48" width="24" height="35" rx="4" fill="#12122a" stroke="#00CEC9" stroke-width="0.6" opacity="0.5"/>
+    <!-- Grille lines -->
+    <line x1="-9" y1="-42" x2="9" y2="-42" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+    <line x1="-9" y1="-37" x2="9" y2="-37" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+    <line x1="-9" y1="-32" x2="9" y2="-32" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+    <line x1="-9" y1="-27" x2="9" y2="-27" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+    <line x1="-9" y1="-22" x2="9" y2="-22" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+    <line x1="-9" y1="-17" x2="9" y2="-17" stroke="#00CEC9" stroke-width="0.4" opacity="0.3"/>
+
+    <!-- Mic capsule top (rounded) -->
+    <path d="M -14,-50 A 14,12 0 0,1 14,-50" fill="#1e1e3a" stroke="#00CEC9" stroke-width="1.3" opacity="0.85"/>
+    <path d="M -12,-50 A 12,10 0 0,1 12,-50" fill="#12122a" stroke="#00CEC9" stroke-width="0.5" opacity="0.4"/>
+
+    <!-- Indicator light -->
+    <circle cx="0" cy="8" r="2.5" fill="#E74C3C" opacity="0.8" filter="url(#glowSoft)"/>
+    <circle cx="0" cy="8" r="1.2" fill="#FF6B6B" opacity="0.9"/>
+
+    <!-- Small incoming wave indicators near mic -->
+    <path d="M -30,-30 A 18,18 0 0,1 -30,10" fill="none" stroke="#00CEC9" stroke-width="0.8" opacity="0.2"/>
+    <path d="M -38,-35 A 26,26 0 0,1 -38,15" fill="none" stroke="#00CEC9" stroke-width="0.6" opacity="0.13"/>
+    <path d="M -46,-38 A 34,34 0 0,1 -46,18" fill="none" stroke="#00CEC9" stroke-width="0.5" opacity="0.08"/>
+
+    <!-- Sink label -->
+    <text x="0" y="115" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-weight="bold" letter-spacing="1">SINK</text>
+  </g>
+
+  <!-- ==================== SIGNAL REPRESENTATION (waveform snippet near sink) ==================== -->
+  <g transform="translate(770, 135)">
+    <!-- Received signal bubble -->
+    <rect x="-10" y="-22" width="145" height="38" rx="18" fill="#E74C3C" fill-opacity="0.06" stroke="#E74C3C" stroke-width="0.8" stroke-opacity="0.3"/>
+    <!-- Bubble tail -->
+    <path d="M 120,16 L 135,28 L 110,16" fill="#E74C3C" fill-opacity="0.06" stroke="#E74C3C" stroke-width="0.5" stroke-opacity="0.25"/>
+    <!-- Mini waveform inside bubble -->
+    <path d="M 8,0 Q 18,-10 28,0 Q 38,10 48,0 Q 58,-10 68,0 Q 78,10 88,0 Q 98,-8 108,0 Q 115,6 120,0"
+          fill="none" stroke="#E74C3C" stroke-width="1.5" opacity="0.6" filter="url(#glowSoft)"/>
+    <path d="M 8,0 Q 18,-10 28,0 Q 38,10 48,0 Q 58,-10 68,0 Q 78,10 88,0 Q 98,-8 108,0 Q 115,6 120,0"
+          fill="none" stroke="#FF6B6B" stroke-width="0.6" opacity="0.4"/>
+  </g>
+
+  <!-- ==================== ANNOTATIONS ==================== -->
+  <!-- Section labels along bottom -->
+  <g>
+    <rect x="60" y="478" width="100" height="26" rx="13" fill="#00CEC9" opacity="0.08" stroke="#00CEC9" stroke-width="0.6"/>
+    <text x="110" y="496" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" opacity="0.7">Emission</text>
+
+    <rect x="380" y="478" width="140" height="26" rx="13" fill="#00CEC9" fill-opacity="0.05" stroke="#00CEC9" stroke-width="0.6" stroke-opacity="0.5"/>
+    <text x="450" y="496" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" opacity="0.7">Medium (air)</text>
+
+    <rect x="780" y="478" width="110" height="26" rx="13" fill="#E74C3C" opacity="0.06" stroke="#E74C3C" stroke-width="0.6"/>
+    <text x="835" y="496" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="600" opacity="0.7">Reception</text>
+  </g>
+</svg>

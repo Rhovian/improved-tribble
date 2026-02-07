@@ -1,0 +1,482 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 820" width="1000" height="820">
+  <defs>
+    <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00CEC9" stop-opacity="0.6"/>
+      <stop offset="50%" stop-color="#00B894" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0.6"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowRed">
+      <feGaussianBlur stdDeviation="2.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="1.5" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <radialGradient id="particleGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#55efc4" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0.5"/>
+    </radialGradient>
+    <radialGradient id="sourceGrad" cx="0%" cy="50%" r="100%">
+      <stop offset="0%" stop-color="#00CEC9" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="820" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="500" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="22" font-weight="bold" letter-spacing="1.5">SINUSOIDAL PRESSURE WAVE</text>
+  <text x="500" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="1">Compressions &amp; Rarefactions Through Time</text>
+
+  <!-- ==================== WAVE GRAPH ==================== -->
+  <!-- Grid lines (subtle) -->
+  <g stroke="#2a2a4a" stroke-width="0.5" stroke-dasharray="4,6">
+    <line x1="80" y1="140" x2="950" y2="140"/>
+    <line x1="80" y1="195" x2="950" y2="195"/>
+    <line x1="80" y1="250" x2="950" y2="250"/>
+    <line x1="80" y1="305" x2="950" y2="305"/>
+    <line x1="80" y1="360" x2="950" y2="360"/>
+    <line x1="190" y1="85" x2="190" y2="430"/>
+    <line x1="300" y1="85" x2="300" y2="430"/>
+    <line x1="410" y1="85" x2="410" y2="430"/>
+    <line x1="520" y1="85" x2="520" y2="430"/>
+    <line x1="630" y1="85" x2="630" y2="430"/>
+    <line x1="740" y1="85" x2="740" y2="430"/>
+    <line x1="850" y1="85" x2="850" y2="430"/>
+  </g>
+
+  <!-- Axes -->
+  <line x1="80" y1="250" x2="960" y2="250" stroke="#4a5568" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <line x1="80" y1="85" x2="80" y2="430" stroke="#6c7a89" stroke-width="1.5"/>
+  <line x1="80" y1="430" x2="960" y2="430" stroke="#6c7a89" stroke-width="1.5"/>
+
+  <!-- Axis arrows -->
+  <polygon points="960,250 950,245 950,255" fill="#6c7a89"/>
+  <polygon points="80,85 75,95 85,95" fill="#6c7a89"/>
+
+  <!-- Y-axis label -->
+  <text x="30" y="250" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600" transform="rotate(-90, 30, 250)">Pressure</text>
+
+  <!-- X-axis label -->
+  <text x="520" y="450" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="600">Time →</text>
+
+  <!-- Y-axis tick labels -->
+  <text x="70" y="144" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">+P max</text>
+  <text x="70" y="254" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">P₀</text>
+  <text x="70" y="364" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">−P max</text>
+
+  <!-- Shaded compression regions -->
+  <g opacity="0.07">
+    <rect x="80" y="110" width="217" height="140" rx="4" fill="#00CEC9"/>
+    <rect x="515" y="110" width="217" height="140" rx="4" fill="#00CEC9"/>
+  </g>
+
+  <!-- Shaded rarefaction regions -->
+  <g opacity="0.05">
+    <rect x="297" y="250" width="218" height="140" rx="4" fill="#E74C3C"/>
+    <rect x="732" y="250" width="218" height="140" rx="4" fill="#E74C3C"/>
+  </g>
+
+  <!-- Main sine wave -->
+  <path d="M 80 250
+           C 80 250, 98 250, 116 222
+           C 134 194, 152 140, 189 140
+           C 226 140, 244 194, 262 222
+           C 280 250, 298 250, 298 250
+           C 298 250, 316 250, 334 278
+           C 352 306, 370 360, 407 360
+           C 444 360, 462 306, 480 278
+           C 498 250, 516 250, 516 250
+           C 516 250, 534 250, 552 222
+           C 570 194, 588 140, 625 140
+           C 662 140, 680 194, 698 222
+           C 716 250, 734 250, 734 250
+           C 734 250, 752 250, 770 278
+           C 788 306, 806 360, 843 360
+           C 880 360, 898 306, 916 278
+           C 934 250, 950 250, 950 250"
+        fill="none" stroke="#00CEC9" stroke-width="3" filter="url(#glow)" stroke-linecap="round"/>
+
+  <!-- Inner glow stroke -->
+  <path d="M 80 250
+           C 80 250, 98 250, 116 222
+           C 134 194, 152 140, 189 140
+           C 226 140, 244 194, 262 222
+           C 280 250, 298 250, 298 250
+           C 298 250, 316 250, 334 278
+           C 352 306, 370 360, 407 360
+           C 444 360, 462 306, 480 278
+           C 498 250, 516 250, 516 250
+           C 516 250, 534 250, 552 222
+           C 570 194, 588 140, 625 140
+           C 662 140, 680 194, 698 222
+           C 716 250, 734 250, 734 250
+           C 734 250, 752 250, 770 278
+           C 788 306, 806 360, 843 360
+           C 880 360, 898 306, 916 278
+           C 934 250, 950 250, 950 250"
+        fill="none" stroke="#55efc4" stroke-width="1" opacity="0.5" stroke-linecap="round"/>
+
+  <!-- Peak markers (compressions) -->
+  <circle cx="189" cy="140" r="5" fill="#00CEC9" filter="url(#glow)"/>
+  <circle cx="189" cy="140" r="2.5" fill="#55efc4"/>
+  <circle cx="625" cy="140" r="5" fill="#00CEC9" filter="url(#glow)"/>
+  <circle cx="625" cy="140" r="2.5" fill="#55efc4"/>
+
+  <!-- Trough markers (rarefactions) -->
+  <circle cx="407" cy="360" r="5" fill="#E74C3C" filter="url(#glowRed)"/>
+  <circle cx="407" cy="360" r="2.5" fill="#FF6B6B"/>
+  <circle cx="843" cy="360" r="5" fill="#E74C3C" filter="url(#glowRed)"/>
+  <circle cx="843" cy="360" r="2.5" fill="#FF6B6B"/>
+
+  <!-- Compression labels -->
+  <line x1="189" y1="140" x2="189" y2="98" stroke="#00CEC9" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+  <rect x="129" y="76" width="120" height="22" rx="11" fill="#00CEC9" opacity="0.15" stroke="#00CEC9" stroke-width="0.8"/>
+  <text x="189" y="92" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" letter-spacing="0.8">COMPRESSION</text>
+
+  <line x1="625" y1="140" x2="625" y2="98" stroke="#00CEC9" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+  <rect x="565" y="76" width="120" height="22" rx="11" fill="#00CEC9" opacity="0.15" stroke="#00CEC9" stroke-width="0.8"/>
+  <text x="625" y="92" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" letter-spacing="0.8">COMPRESSION</text>
+
+  <!-- Rarefaction labels -->
+  <line x1="407" y1="360" x2="407" y2="395" stroke="#E74C3C" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+  <rect x="347" y="395" width="120" height="22" rx="11" fill="#E74C3C" opacity="0.12" stroke="#E74C3C" stroke-width="0.8"/>
+  <text x="407" y="411" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" letter-spacing="0.8">RAREFACTION</text>
+
+  <line x1="843" y1="360" x2="843" y2="395" stroke="#E74C3C" stroke-width="1" stroke-dasharray="3,3" opacity="0.6"/>
+  <rect x="783" y="395" width="120" height="22" rx="11" fill="#E74C3C" opacity="0.12" stroke="#E74C3C" stroke-width="0.8"/>
+  <text x="843" y="411" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold" letter-spacing="0.8">RAREFACTION</text>
+
+  <!-- Wavelength annotation -->
+  <line x1="189" y1="118" x2="625" y2="118" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+  <line x1="189" y1="113" x2="189" y2="123" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+  <line x1="625" y1="113" x2="625" y2="123" stroke="#55efc4" stroke-width="1" opacity="0.4"/>
+  <text x="407" y="114" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="11" opacity="0.6">λ (wavelength)</text>
+
+  <!-- ==================== DIVIDER ==================== -->
+  <line x1="80" y1="460" x2="950" y2="460" stroke="#2a2a4a" stroke-width="1"/>
+  <text x="500" y="485" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="13" letter-spacing="1">MOLECULAR REPRESENTATION</text>
+
+  <!-- ==================== MOLECULAR VIEW ==================== -->
+
+  <!-- Dashed vertical alignment lines connecting wave to particles -->
+  <g stroke="#2a2a4a" stroke-width="0.8" stroke-dasharray="3,5" opacity="0.5">
+    <line x1="189" y1="435" x2="189" y2="500"/>
+    <line x1="298" y1="435" x2="298" y2="500"/>
+    <line x1="407" y1="435" x2="407" y2="500"/>
+    <line x1="516" y1="435" x2="516" y2="500"/>
+    <line x1="625" y1="435" x2="625" y2="500"/>
+    <line x1="734" y1="435" x2="734" y2="500"/>
+    <line x1="843" y1="435" x2="843" y2="500"/>
+    <line x1="950" y1="435" x2="950" y2="500"/>
+  </g>
+
+  <!-- Sound source (half-circles emanating) -->
+  <g transform="translate(80, 615)">
+    <!-- Source body -->
+    <rect x="-25" y="-40" width="25" height="80" rx="4" fill="#3a3a5e" stroke="#00CEC9" stroke-width="1.2" opacity="0.8"/>
+    <rect x="-20" y="-30" width="10" height="60" rx="2" fill="#00CEC9" opacity="0.2"/>
+    <!-- Emanating arcs -->
+    <path d="M 0,-20 A 20,20 0 0,1 0,20" fill="none" stroke="#00CEC9" stroke-width="1.8" opacity="0.7"/>
+    <path d="M 0,-35 A 35,35 0 0,1 0,35" fill="none" stroke="#00CEC9" stroke-width="1.4" opacity="0.5"/>
+    <path d="M 0,-50 A 50,50 0 0,1 0,50" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.3"/>
+    <!-- Label -->
+    <text x="-12" y="65" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">SOURCE</text>
+  </g>
+
+  <!-- Particle field background -->
+  <rect x="100" y="510" width="860" height="210" rx="6" fill="#12122a" opacity="0.5"/>
+
+  <!-- 
+    PARTICLE DISTRIBUTION 
+    Compression zones (~x=189, ~x=625): Dense clusters
+    Rarefaction zones (~x=407, ~x=843): Sparse particles
+    Transition zones: Medium density
+  -->
+
+  <!-- ===== ZONE 1: Rising to first compression (x=100-189) - medium to dense ===== -->
+  <circle cx="108" cy="570" r="3" fill="#00CEC9" opacity="0.5" filter="url(#glowSoft)"/>
+  <circle cx="115" cy="600" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="110" cy="640" r="3" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="120" cy="555" r="2.5" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="118" cy="620" r="2" fill="#55efc4" opacity="0.5"/>
+  <circle cx="112" cy="680" r="3" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="125" cy="530" r="2.5" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="122" cy="660" r="2" fill="#55efc4" opacity="0.5"/>
+  <circle cx="128" cy="585" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="132" cy="545" r="2.5" fill="#55efc4" opacity="0.55"/>
+  <circle cx="135" cy="615" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="130" cy="670" r="2.5" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="138" cy="560" r="2" fill="#55efc4" opacity="0.6"/>
+  <circle cx="140" cy="640" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="137" cy="695" r="2.5" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="145" cy="530" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="148" cy="580" r="3" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="150" cy="620" r="2.5" fill="#55efc4" opacity="0.6"/>
+  <circle cx="146" cy="660" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="152" cy="545" r="2" fill="#55efc4" opacity="0.6"/>
+  <circle cx="155" cy="600" r="3" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="158" cy="680" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="160" cy="550" r="3" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="157" cy="635" r="2" fill="#55efc4" opacity="0.6"/>
+  <circle cx="163" cy="520" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="165" cy="700" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="162" cy="570" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="168" cy="610" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="170" cy="655" r="2.5" fill="#00CEC9" opacity="0.65"/>
+
+  <!-- ===== ZONE 2: First COMPRESSION peak (x=170-215) - VERY DENSE ===== -->
+  <circle cx="172" cy="525" r="3" fill="#00CEC9" opacity="0.8" filter="url(#glowSoft)"/>
+  <circle cx="175" cy="540" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="173" cy="558" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="178" cy="572" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="176" cy="590" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="180" cy="605" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="177" cy="622" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="182" cy="638" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="179" cy="655" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="184" cy="670" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="181" cy="688" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="186" cy="700" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="183" cy="515" r="2" fill="#00CEC9" opacity="0.75"/>
+
+  <circle cx="189" cy="520" r="3" fill="#55efc4" opacity="0.9" filter="url(#glowSoft)"/>
+  <circle cx="191" cy="537" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="188" cy="553" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="192" cy="568" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="186" cy="585" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="193" cy="600" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="187" cy="618" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="194" cy="633" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="190" cy="650" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="195" cy="665" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="188" cy="682" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="193" cy="697" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="185" cy="710" r="2" fill="#55efc4" opacity="0.85"/>
+
+  <circle cx="200" cy="522" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="203" cy="540" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="198" cy="558" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="205" cy="575" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="201" cy="592" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="206" cy="608" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="199" cy="625" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="207" cy="642" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="202" cy="658" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="208" cy="675" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="204" cy="692" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="209" cy="707" r="2" fill="#55efc4" opacity="0.75"/>
+
+  <!-- ===== ZONE 3: Falling from compression to rarefaction (x=215-395) - thinning out ===== -->
+  <circle cx="220" cy="535" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="225" cy="580" r="2.5" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="222" cy="625" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="228" cy="665" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="218" cy="700" r="2" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="226" cy="555" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="230" cy="640" r="2" fill="#00CEC9" opacity="0.6"/>
+
+  <circle cx="242" cy="545" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="248" cy="595" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="245" cy="650" r="2.5" fill="#55efc4" opacity="0.55"/>
+  <circle cx="250" cy="690" r="2" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="240" cy="570" r="2" fill="#55efc4" opacity="0.55"/>
+
+  <circle cx="268" cy="540" r="2.5" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="272" cy="600" r="2" fill="#55efc4" opacity="0.5"/>
+  <circle cx="265" cy="660" r="2.5" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="275" cy="700" r="2" fill="#00CEC9" opacity="0.45"/>
+
+  <circle cx="295" cy="560" r="2" fill="#00CEC9" opacity="0.45"/>
+  <circle cx="300" cy="625" r="2.5" fill="#00CEC9" opacity="0.45"/>
+  <circle cx="292" cy="690" r="2" fill="#55efc4" opacity="0.4"/>
+
+  <circle cx="322" cy="545" r="2" fill="#00CEC9" opacity="0.4"/>
+  <circle cx="328" cy="640" r="2" fill="#55efc4" opacity="0.38"/>
+  <circle cx="318" cy="700" r="2" fill="#00CEC9" opacity="0.35"/>
+
+  <circle cx="348" cy="575" r="2" fill="#00CEC9" opacity="0.35"/>
+  <circle cx="355" cy="660" r="2" fill="#55efc4" opacity="0.33"/>
+
+  <circle cx="375" cy="550" r="2" fill="#00CEC9" opacity="0.33"/>
+  <circle cx="380" cy="680" r="2" fill="#55efc4" opacity="0.3"/>
+
+  <!-- ===== ZONE 4: First RAREFACTION trough (x=395-420) - VERY SPARSE ===== -->
+  <circle cx="400" cy="580" r="2" fill="#E74C3C" opacity="0.35" filter="url(#glowRed)"/>
+  <circle cx="412" cy="660" r="2" fill="#E74C3C" opacity="0.35" filter="url(#glowRed)"/>
+  <circle cx="395" cy="700" r="1.8" fill="#FF6B6B" opacity="0.3"/>
+
+  <!-- ===== ZONE 5: Rising from rarefaction to second compression (x=420-610) ===== -->
+  <circle cx="430" cy="555" r="2" fill="#00CEC9" opacity="0.3"/>
+  <circle cx="435" cy="670" r="2" fill="#55efc4" opacity="0.3"/>
+
+  <circle cx="455" cy="545" r="2" fill="#00CEC9" opacity="0.35"/>
+  <circle cx="460" cy="640" r="2" fill="#55efc4" opacity="0.33"/>
+
+  <circle cx="478" cy="570" r="2" fill="#00CEC9" opacity="0.38"/>
+  <circle cx="482" cy="650" r="2.5" fill="#00CEC9" opacity="0.4"/>
+  <circle cx="475" cy="700" r="2" fill="#55efc4" opacity="0.35"/>
+
+  <circle cx="502" cy="540" r="2.5" fill="#00CEC9" opacity="0.45"/>
+  <circle cx="508" cy="610" r="2" fill="#55efc4" opacity="0.42"/>
+  <circle cx="505" cy="680" r="2.5" fill="#00CEC9" opacity="0.45"/>
+
+  <circle cx="528" cy="555" r="2.5" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="535" cy="610" r="3" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="530" cy="665" r="2.5" fill="#55efc4" opacity="0.48"/>
+  <circle cx="525" cy="700" r="2" fill="#00CEC9" opacity="0.45"/>
+
+  <circle cx="552" cy="535" r="2.5" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="558" cy="585" r="3" fill="#00CEC9" opacity="0.55"/>
+  <circle cx="555" cy="640" r="2.5" fill="#55efc4" opacity="0.52"/>
+  <circle cx="560" cy="690" r="2" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="548" cy="565" r="2" fill="#55efc4" opacity="0.5"/>
+
+  <circle cx="575" cy="525" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="580" cy="570" r="2.5" fill="#55efc4" opacity="0.58"/>
+  <circle cx="578" cy="620" r="3" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="582" cy="660" r="2.5" fill="#55efc4" opacity="0.58"/>
+  <circle cx="576" cy="695" r="3" fill="#00CEC9" opacity="0.58"/>
+  <circle cx="584" cy="545" r="2" fill="#00CEC9" opacity="0.55"/>
+
+  <circle cx="598" cy="530" r="3" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="602" cy="555" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="600" cy="585" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="605" cy="615" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="597" cy="645" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="608" cy="675" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="603" cy="700" r="3" fill="#00CEC9" opacity="0.65"/>
+
+  <!-- ===== ZONE 6: Second COMPRESSION peak (x=610-645) - VERY DENSE ===== -->
+  <circle cx="612" cy="520" r="3" fill="#00CEC9" opacity="0.8" filter="url(#glowSoft)"/>
+  <circle cx="615" cy="538" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="610" cy="555" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="617" cy="572" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="613" cy="590" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="619" cy="607" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="614" cy="625" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="620" cy="642" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="616" cy="660" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="621" cy="677" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="618" cy="695" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="623" cy="710" r="2" fill="#55efc4" opacity="0.75"/>
+
+  <circle cx="625" cy="522" r="3" fill="#55efc4" opacity="0.9" filter="url(#glowSoft)"/>
+  <circle cx="628" cy="540" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="623" cy="557" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="630" cy="573" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="626" cy="590" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="631" cy="607" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="624" cy="623" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="632" cy="640" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="627" cy="657" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="633" cy="673" r="2.5" fill="#00CEC9" opacity="0.9"/>
+  <circle cx="629" cy="690" r="3" fill="#55efc4" opacity="0.9"/>
+  <circle cx="634" cy="705" r="2" fill="#00CEC9" opacity="0.85"/>
+
+  <circle cx="638" cy="525" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="642" cy="543" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="640" cy="560" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="644" cy="578" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="637" cy="595" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="645" cy="612" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="639" cy="630" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="646" cy="648" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="641" cy="665" r="3" fill="#00CEC9" opacity="0.85"/>
+  <circle cx="647" cy="682" r="2.5" fill="#55efc4" opacity="0.8"/>
+  <circle cx="643" cy="698" r="3" fill="#00CEC9" opacity="0.82"/>
+
+  <!-- ===== ZONE 7: Falling from second compression to second rarefaction (x=650-830) ===== -->
+  <circle cx="660" cy="540" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="665" cy="585" r="2.5" fill="#00CEC9" opacity="0.65"/>
+  <circle cx="658" cy="630" r="3" fill="#00CEC9" opacity="0.7"/>
+  <circle cx="668" cy="670" r="2.5" fill="#55efc4" opacity="0.65"/>
+  <circle cx="655" cy="705" r="2" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="663" cy="560" r="2.5" fill="#55efc4" opacity="0.65"/>
+
+  <circle cx="685" cy="550" r="2.5" fill="#00CEC9" opacity="0.6"/>
+  <circle cx="690" cy="605" r="3" fill="#00CEC9" opacity="0.58"/>
+  <circle cx="688" cy="660" r="2.5" fill="#55efc4" opacity="0.55"/>
+  <circle cx="692" cy="700" r="2" fill="#00CEC9" opacity="0.52"/>
+
+  <circle cx="712" cy="545" r="2.5" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="718" cy="620" r="2" fill="#55efc4" opacity="0.48"/>
+  <circle cx="715" cy="680" r="2.5" fill="#00CEC9" opacity="0.48"/>
+
+  <circle cx="738" cy="565" r="2" fill="#00CEC9" opacity="0.42"/>
+  <circle cx="742" cy="645" r="2" fill="#55efc4" opacity="0.4"/>
+  <circle cx="735" cy="705" r="2" fill="#00CEC9" opacity="0.38"/>
+
+  <circle cx="762" cy="555" r="2" fill="#00CEC9" opacity="0.38"/>
+  <circle cx="768" cy="660" r="2" fill="#55efc4" opacity="0.35"/>
+
+  <circle cx="790" cy="580" r="2" fill="#00CEC9" opacity="0.33"/>
+  <circle cx="795" cy="680" r="2" fill="#55efc4" opacity="0.3"/>
+
+  <circle cx="815" cy="560" r="2" fill="#00CEC9" opacity="0.3"/>
+  <circle cx="820" cy="695" r="1.8" fill="#55efc4" opacity="0.28"/>
+
+  <!-- ===== ZONE 8: Second RAREFACTION trough (x=830-860) - VERY SPARSE ===== -->
+  <circle cx="838" cy="590" r="2" fill="#E74C3C" opacity="0.35" filter="url(#glowRed)"/>
+  <circle cx="850" cy="670" r="2" fill="#E74C3C" opacity="0.35" filter="url(#glowRed)"/>
+  <circle cx="845" cy="710" r="1.8" fill="#FF6B6B" opacity="0.3"/>
+
+  <!-- ===== ZONE 9: Rising after second rarefaction (x=860-960) ===== -->
+  <circle cx="872" cy="555" r="2" fill="#00CEC9" opacity="0.3"/>
+  <circle cx="878" cy="650" r="2" fill="#55efc4" opacity="0.3"/>
+
+  <circle cx="895" cy="540" r="2" fill="#00CEC9" opacity="0.38"/>
+  <circle cx="900" cy="610" r="2.5" fill="#00CEC9" opacity="0.4"/>
+  <circle cx="898" cy="680" r="2" fill="#55efc4" opacity="0.38"/>
+
+  <circle cx="920" cy="535" r="2.5" fill="#00CEC9" opacity="0.45"/>
+  <circle cx="925" cy="585" r="2.5" fill="#55efc4" opacity="0.45"/>
+  <circle cx="922" cy="640" r="3" fill="#00CEC9" opacity="0.48"/>
+  <circle cx="928" cy="690" r="2.5" fill="#00CEC9" opacity="0.45"/>
+
+  <circle cx="945" cy="530" r="2.5" fill="#00CEC9" opacity="0.5"/>
+  <circle cx="950" cy="570" r="3" fill="#00CEC9" opacity="0.52"/>
+  <circle cx="948" cy="620" r="2.5" fill="#55efc4" opacity="0.5"/>
+  <circle cx="952" cy="665" r="3" fill="#00CEC9" opacity="0.52"/>
+  <circle cx="946" cy="705" r="2.5" fill="#55efc4" opacity="0.48"/>
+
+  <!-- Zone labels in molecular view -->
+  <text x="189" y="740" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">HIGH</text>
+  <text x="189" y="752" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">DENSITY</text>
+
+  <text x="407" y="740" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">LOW</text>
+  <text x="407" y="752" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">DENSITY</text>
+
+  <text x="625" y="740" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">HIGH</text>
+  <text x="625" y="752" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">DENSITY</text>
+
+  <text x="843" y="740" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">LOW</text>
+  <text x="843" y="752" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="10" font-weight="bold" opacity="0.7">DENSITY</text>
+
+  <!-- Legend -->
+  <rect x="80" y="778" width="12" height="12" rx="3" fill="#00CEC9" opacity="0.8"/>
+  <text x="98" y="789" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Compression (high pressure)</text>
+  <rect x="300" y="778" width="12" height="12" rx="3" fill="#E74C3C" opacity="0.8"/>
+  <text x="318" y="789" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Rarefaction (low pressure)</text>
+  <line x1="530" y1="784" x2="560" y2="784" stroke="#4a5568" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="568" y="789" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Equilibrium pressure (P₀)</text>
+</svg>

@@ -9,6 +9,17 @@ export default function rehypeImageDimensions() {
     visit(tree, "element", (node: Element) => {
       if (node.tagName !== "img") return;
 
+      // Parse size hint from alt text (e.g. "alt text|wide" or "alt text|full")
+      const alt = (node.properties?.alt as string) || "";
+      const sizeMatch = alt.match(/\|(wide|full)$/);
+      if (sizeMatch) {
+        node.properties = {
+          ...node.properties,
+          alt: alt.replace(/\|(wide|full)$/, "").trim(),
+          className: `img-${sizeMatch[1]}`,
+        };
+      }
+
       const src = node.properties?.src as string | undefined;
       if (!src) return;
 

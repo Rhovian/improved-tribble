@@ -41,6 +41,12 @@ body {
   margin-left: auto;
   margin-right: auto;
 }
+.prose img.img-wide {
+  max-width: 85%;
+}
+.prose img.img-full {
+  max-width: 100%;
+}
 
 /* KaTeX display math centering */
 .prose .katex-display {
