@@ -115,11 +115,8 @@ Whether this resonance is a problem depends on the **damping**. Remember the $b\
 
 In practice, well-designed microphones target critical or *slightly* overdamped behavior. A tiny bit of overdamping sacrifices negligible high-frequency response but adds a safety margin against resonant ringing — a worthwhile trade-off when the goal is accurate reproduction of the original sound.
 
----
+So the diaphragm is moving — faithfully tracking the pressure wave. But mechanical motion alone isn't useful to any downstream system. In part 2, we'll see how microphones convert that motion into electrical signals through different transduction mechanisms.
 
 ## References
 
-- [How Do Microphones Work?](https://www.market.com/computers-tablets/microphones/guides/how-do-microphones-work/)
-
 - [The Wave Equation (Princeton University Press)](https://assets.press.princeton.edu/chapters/s9912.pdf)
-

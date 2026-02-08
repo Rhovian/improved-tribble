@@ -82,7 +82,7 @@
   <!-- Magnet front face -->
   <ellipse cx="470" cy="260" rx="16" ry="72" fill="url(#magnetCapGrad)" stroke="#E74C3C" stroke-width="0.8"/>
   <!-- Magnet back face -->
-  <ellipse cx="690" cy="260" rx="16" ry="72" fill="#E74C3C" opacity="0.05" stroke="#E74C3C" stroke-width="0.6" opacity="0.3"/>
+  <ellipse cx="690" cy="260" rx="16" ry="72" fill="#E74C3C" fill-opacity="0.05" stroke="#E74C3C" stroke-width="0.6" stroke-opacity="0.3"/>
 
   <!-- ==================== DIAPHRAGM (with width) ==================== -->
   <!-- Diaphragm body (the thickness between front and back faces) -->
