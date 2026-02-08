@@ -1,0 +1,236 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Backplate gradient -->
+    <linearGradient id="backplateGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#5B7FFF" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#5B7FFF" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#5B7FFF" stop-opacity="0.15"/>
+    </linearGradient>
+
+    <!-- Diaphragm gradient -->
+    <linearGradient id="diaphragmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00CEC9" stop-opacity="0.12"/>
+      <stop offset="50%" stop-color="#00CEC9" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0.12"/>
+    </linearGradient>
+
+    <!-- Electric field gradient (between plates) -->
+    <linearGradient id="fieldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d4a050" stop-opacity="0.06"/>
+      <stop offset="50%" stop-color="#d4a050" stop-opacity="0.02"/>
+      <stop offset="100%" stop-color="#d4a050" stop-opacity="0.06"/>
+    </linearGradient>
+
+    <!-- Housing gradient -->
+    <linearGradient id="housingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a3a5a" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#2a2a4a" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#3a3a5a" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">CONDENSER MICROPHONE</text>
+  <text x="450" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Variable Capacitance — Electrostatic Transducer</text>
+
+  <!-- ==================== PRESSURE WAVES ==================== -->
+  <g fill="none" stroke="#00CEC9" stroke-width="1.8" opacity="0.3">
+    <path d="M 75,195 Q 52,260 75,325"/>
+    <path d="M 100,175 Q 70,260 100,345"/>
+    <path d="M 128,160 Q 92,260 128,360"/>
+    <path d="M 158,148 Q 118,260 158,372"/>
+  </g>
+  <!-- Direction arrow -->
+  <line x1="60" y1="260" x2="190" y2="260" stroke="#00CEC9" stroke-width="1.5" opacity="0.5" stroke-dasharray="6,4"/>
+  <polygon points="190,260 182,255 182,265" fill="#00CEC9" opacity="0.5"/>
+
+  <!-- ==================== HOUSING ==================== -->
+  <path d="M 290,115 L 620,115 Q 655,115 655,150 L 655,370 Q 655,405 620,405 L 290,405"
+        fill="url(#housingGrad)" stroke="#3a3a5a" stroke-width="1.2"/>
+  <ellipse cx="655" cy="260" rx="10" ry="145" fill="#2a2a4a" opacity="0.12" stroke="#3a3a5a" stroke-width="0.8"/>
+  <ellipse cx="290" cy="260" rx="6" ry="145" fill="none" stroke="#3a3a5a" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- ==================== DIAPHRAGM (front plate, thin and conductive) ==================== -->
+  <!-- Front face -->
+  <ellipse cx="250" cy="260" rx="10" ry="115" fill="#00CEC9" opacity="0.06" stroke="#00CEC9" stroke-width="2.5" filter="url(#glow)"/>
+  <ellipse cx="250" cy="260" rx="10" ry="115" fill="none" stroke="#55efc4" stroke-width="0.6" opacity="0.4"/>
+  <!-- Back face -->
+  <ellipse cx="265" cy="260" rx="10" ry="115" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.3"/>
+  <!-- Top/bottom edges -->
+  <line x1="250" y1="145" x2="265" y2="145" stroke="#00CEC9" stroke-width="1" opacity="0.5"/>
+  <line x1="250" y1="375" x2="265" y2="375" stroke="#00CEC9" stroke-width="1" opacity="0.5"/>
+  <!-- Body fill -->
+  <path d="M 250,145 L 265,145 Q 275,260 265,375 L 250,375 Q 240,260 250,145 Z"
+        fill="url(#diaphragmGrad)" stroke="none"/>
+
+  <!-- ==================== GAP BETWEEN PLATES ==================== -->
+  <!-- Electric field region -->
+  <path d="M 265,150 L 380,150 Q 390,260 380,370 L 265,370 Q 275,260 265,150 Z"
+        fill="url(#fieldGrad)" stroke="none"/>
+
+  <!-- Electric field lines (vertical dashes between plates) -->
+  <g stroke="#d4a050" stroke-width="0.6" opacity="0.15" stroke-dasharray="3,6">
+    <line x1="310" y1="175" x2="310" y2="345"/>
+    <line x1="325" y1="168" x2="325" y2="352"/>
+    <line x1="340" y1="163" x2="340" y2="357"/>
+    <line x1="355" y1="160" x2="355" y2="360"/>
+  </g>
+
+  <!-- Field direction arrows (diaphragm to backplate, horizontal) -->
+  <g fill="none" stroke="#d4a050" stroke-width="0.7" opacity="0.2">
+    <line x1="272" y1="210" x2="375" y2="210"/>
+    <line x1="272" y1="260" x2="378" y2="260"/>
+    <line x1="272" y1="310" x2="375" y2="310"/>
+  </g>
+  <g fill="#d4a050" opacity="0.2">
+    <polygon points="375,207 380,210 375,213"/>
+    <polygon points="378,257 383,260 378,263"/>
+    <polygon points="375,307 380,310 375,313"/>
+  </g>
+
+  <!-- Gap dimension marker "d" -->
+  <g opacity="0.8">
+    <!-- Top bracket -->
+    <line x1="268" y1="138" x2="268" y2="128" stroke="#d4a050" stroke-width="0.8"/>
+    <line x1="378" y1="138" x2="378" y2="128" stroke="#d4a050" stroke-width="0.8"/>
+    <line x1="268" y1="133" x2="378" y2="133" stroke="#d4a050" stroke-width="1"/>
+    <polygon points="268,133 275,130 275,136" fill="#d4a050"/>
+    <polygon points="378,133 371,130 371,136" fill="#d4a050"/>
+    <text x="323" y="128" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="16" font-style="italic" font-weight="bold">d</text>
+  </g>
+
+  <!-- ==================== BACKPLATE (fixed, rigid, perforated) ==================== -->
+  <!-- Front face -->
+  <ellipse cx="380" cy="260" rx="14" ry="115" fill="#5B7FFF" opacity="0.08" stroke="#5B7FFF" stroke-width="2"/>
+  <!-- Back face -->
+  <ellipse cx="410" cy="260" rx="14" ry="115" fill="none" stroke="#5B7FFF" stroke-width="0.8" opacity="0.25"/>
+  <!-- Top/bottom edges -->
+  <line x1="380" y1="145" x2="410" y2="145" stroke="#5B7FFF" stroke-width="1" opacity="0.5"/>
+  <line x1="380" y1="375" x2="410" y2="375" stroke="#5B7FFF" stroke-width="1" opacity="0.5"/>
+  <!-- Body fill -->
+  <path d="M 380,145 L 410,145 Q 424,260 410,375 L 380,375 Q 366,260 380,145 Z"
+        fill="url(#backplateGrad)" stroke="none"/>
+
+  <!-- Perforation holes on backplate (allows air through) -->
+  <g fill="none" stroke="#5B7FFF" stroke-width="0.6" opacity="0.3">
+    <ellipse cx="393" cy="180" rx="3" ry="4"/>
+    <ellipse cx="388" cy="205" rx="3" ry="4"/>
+    <ellipse cx="395" cy="230" rx="3" ry="4"/>
+    <ellipse cx="390" cy="255" rx="3" ry="4"/>
+    <ellipse cx="396" cy="280" rx="3" ry="4"/>
+    <ellipse cx="389" cy="305" rx="3" ry="4"/>
+    <ellipse cx="394" cy="330" rx="3" ry="4"/>
+    <ellipse cx="391" cy="355" rx="3" ry="4"/>
+
+    <ellipse cx="400" cy="192" rx="3" ry="4"/>
+    <ellipse cx="397" cy="218" rx="3" ry="4"/>
+    <ellipse cx="402" cy="243" rx="3" ry="4"/>
+    <ellipse cx="398" cy="268" rx="3" ry="4"/>
+    <ellipse cx="403" cy="293" rx="3" ry="4"/>
+    <ellipse cx="399" cy="318" rx="3" ry="4"/>
+    <ellipse cx="401" cy="343" rx="3" ry="4"/>
+  </g>
+
+  <!-- ==================== CHARGE SOURCE / PHANTOM POWER ==================== -->
+  <!-- Wire from diaphragm down -->
+  <path d="M 258,375 L 258,430 L 350,430"
+        fill="none" stroke="#d4a050" stroke-width="1.2" opacity="0.4"/>
+  <!-- Wire from backplate down -->
+  <path d="M 395,375 L 395,430 L 350,430"
+        fill="none" stroke="#d4a050" stroke-width="1.2" opacity="0.4"/>
+
+  <!-- Battery / charge source symbol -->
+  <!-- Long plate (+) -->
+  <line x1="340" y1="420" x2="340" y2="440" stroke="#d4a050" stroke-width="2" opacity="0.6"/>
+  <!-- Short plate (-) -->
+  <line x1="347" y1="424" x2="347" y2="436" stroke="#d4a050" stroke-width="2" opacity="0.6"/>
+  <!-- + and - labels -->
+  <text x="334" y="450" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.5">+</text>
+  <text x="352" y="450" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.5">−</text>
+
+  <!-- Q label on the charge -->
+  <text x="343" y="468" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-style="italic" opacity="0.6">Q = const</text>
+
+  <!-- ==================== IMPEDANCE CONVERTER / PREAMP ==================== -->
+  <!-- Box representing the built-in FET/buffer -->
+  <rect x="470" y="230" width="80" height="60" rx="6" fill="#3a3a5a" opacity="0.12" stroke="#6c7a89" stroke-width="1"/>
+  <!-- Triangle (amplifier symbol) inside -->
+  <path d="M 485,255 L 535,260 L 485,265 Z" fill="none" stroke="#6c7a89" stroke-width="1" opacity="0.6"/>
+  <!-- Input wire from backplate -->
+  <line x1="410" y1="260" x2="470" y2="260" stroke="#6c7a89" stroke-width="1" opacity="0.3" stroke-dasharray="4,4"/>
+  <!-- Output wire -->
+  <line x1="550" y1="260" x2="600" y2="260" stroke="#d4a050" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>
+
+  <!-- ==================== OUTPUT TERMINAL ==================== -->
+  <path d="M 600,235 L 620,235" stroke="#d4a050" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>
+  <path d="M 600,285 L 620,285" stroke="#d4a050" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>
+  <rect x="620" y="225" width="50" height="70" rx="8" fill="none" stroke="#6c7a89" stroke-width="1"/>
+  <text x="645" y="265" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">V(t)</text>
+  <text x="645" y="245" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold">+</text>
+  <text x="645" y="290" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold">−</text>
+
+  <!-- ==================== MOTION ARROW ==================== -->
+  <g opacity="0.7">
+    <line x1="258" y1="393" x2="258" y2="408" stroke="#00CEC9" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="241" y1="400" x2="275" y2="400" stroke="#00CEC9" stroke-width="1.5"/>
+    <polygon points="241,400 248,396 248,404" fill="#00CEC9"/>
+    <polygon points="275,400 268,396 268,404" fill="#00CEC9"/>
+  </g>
+  <text x="258" y="418" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.6">diaphragm motion</text>
+
+  <!-- ==================== LABELS ==================== -->
+  <!-- Pressure waves -->
+  <rect x="42" y="120" width="130" height="22" rx="11" fill="#00CEC9" opacity="0.1" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="107" y="136" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Pressure Waves</text>
+
+  <!-- Diaphragm -->
+  <rect x="195" y="95" width="120" height="22" rx="11" fill="#00CEC9" opacity="0.1" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="255" y="111" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Diaphragm (−)</text>
+  <line x1="255" y1="117" x2="255" y2="145" stroke="#00CEC9" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="255" cy="145" r="2.5" fill="#00CEC9" opacity="0.6"/>
+
+  <!-- Backplate -->
+  <rect x="345" y="95" width="120" height="22" rx="11" fill="#5B7FFF" opacity="0.08" stroke="#5B7FFF" stroke-width="0.6"/>
+  <text x="405" y="111" text-anchor="middle" fill="#5B7FFF" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Backplate (+)</text>
+  <line x1="395" y1="117" x2="390" y2="145" stroke="#5B7FFF" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="390" cy="145" r="2.5" fill="#5B7FFF" opacity="0.6"/>
+
+  <!-- Impedance Converter -->
+  <rect x="462" y="210" width="120" height="22" rx="11" fill="#6c7a89" opacity="0.1" stroke="#6c7a89" stroke-width="0.6"/>
+  <text x="522" y="226" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Impedance Buffer</text>
+
+  <!-- Output Signal -->
+  <rect x="612" y="200" width="80" height="22" rx="11" fill="#6c7a89" opacity="0.1" stroke="#6c7a89" stroke-width="0.6"/>
+  <text x="652" y="216" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Output Signal</text>
+
+  <!-- Charge Source -->
+  <rect x="290" y="475" width="108" height="22" rx="11" fill="#d4a050" opacity="0.08" stroke="#d4a050" stroke-width="0.6"/>
+  <text x="344" y="491" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Charge Source</text>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g transform="translate(460, 490)">
+    <text x="0" y="4" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Diaphragm moves → gap d changes → C changes → V changes (Q constant)</text>
+  </g>
+</svg>

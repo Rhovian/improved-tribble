@@ -1,0 +1,241 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" width="900" height="520">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Magnet cylinder gradient -->
+    <linearGradient id="magnetGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E74C3C" stop-opacity="0.3"/>
+      <stop offset="40%" stop-color="#E74C3C" stop-opacity="0.12"/>
+      <stop offset="100%" stop-color="#8B1A1A" stop-opacity="0.22"/>
+    </linearGradient>
+    <radialGradient id="magnetCapGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#E74C3C" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#E74C3C" stop-opacity="0.08"/>
+    </radialGradient>
+
+    <!-- Diaphragm gradient (gives it thickness/depth) -->
+    <linearGradient id="diaphragmGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#00CEC9" stop-opacity="0.12"/>
+      <stop offset="50%" stop-color="#00CEC9" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#00CEC9" stop-opacity="0.12"/>
+    </linearGradient>
+
+    <!-- Housing gradient -->
+    <linearGradient id="housingGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#3a3a5a" stop-opacity="0.15"/>
+      <stop offset="50%" stop-color="#2a2a4a" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#3a3a5a" stop-opacity="0.15"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="520" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">DYNAMIC MICROPHONE</text>
+  <text x="450" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Electromagnetic Induction — Moving Coil Transducer</text>
+
+  <!-- ==================== PRESSURE WAVES ==================== -->
+  <g fill="none" stroke="#00CEC9" stroke-width="1.8" opacity="0.3">
+    <path d="M 95,195 Q 72,260 95,325"/>
+    <path d="M 120,175 Q 90,260 120,345"/>
+    <path d="M 148,160 Q 112,260 148,360"/>
+    <path d="M 178,148 Q 138,260 178,372"/>
+  </g>
+  <!-- Direction arrow -->
+  <line x1="80" y1="260" x2="210" y2="260" stroke="#00CEC9" stroke-width="1.5" opacity="0.5" stroke-dasharray="6,4"/>
+  <polygon points="210,260 202,255 202,265" fill="#00CEC9" opacity="0.5"/>
+
+  <!-- ==================== HOUSING ==================== -->
+  <!-- Housing body -->
+  <path d="M 330,120 L 700,120 Q 740,120 740,160 L 740,360 Q 740,400 700,400 L 330,400"
+        fill="url(#housingGrad)" stroke="#3a3a5a" stroke-width="1.2"/>
+  <!-- Housing back ellipse -->
+  <ellipse cx="740" cy="260" rx="10" ry="140" fill="#2a2a4a" opacity="0.12" stroke="#3a3a5a" stroke-width="0.8"/>
+  <!-- Housing front opening -->
+  <ellipse cx="330" cy="260" rx="6" ry="140" fill="none" stroke="#3a3a5a" stroke-width="0.8" opacity="0.4"/>
+
+  <!-- ==================== MAGNET (cylinder) ==================== -->
+  <!-- Magnet body - the cylinder surface -->
+  <rect x="470" y="188" width="220" height="144" fill="url(#magnetGrad)" stroke="#E74C3C" stroke-width="0.8"/>
+  <!-- Magnet top edge highlight -->
+  <line x1="470" y1="188" x2="690" y2="188" stroke="#E74C3C" stroke-width="0.6" opacity="0.4"/>
+  <!-- Magnet bottom edge -->
+  <line x1="470" y1="332" x2="690" y2="332" stroke="#8B1A1A" stroke-width="0.6" opacity="0.3"/>
+  <!-- Magnet front face -->
+  <ellipse cx="470" cy="260" rx="16" ry="72" fill="url(#magnetCapGrad)" stroke="#E74C3C" stroke-width="0.8"/>
+  <!-- Magnet back face -->
+  <ellipse cx="690" cy="260" rx="16" ry="72" fill="#E74C3C" opacity="0.05" stroke="#E74C3C" stroke-width="0.6" opacity="0.3"/>
+
+  <!-- ==================== DIAPHRAGM (with width) ==================== -->
+  <!-- Diaphragm body (the thickness between front and back faces) -->
+  <!-- Top edge -->
+  <line x1="265" y1="145" x2="285" y2="145" stroke="#00CEC9" stroke-width="1" opacity="0.6"/>
+  <!-- Bottom edge -->
+  <line x1="265" y1="375" x2="285" y2="375" stroke="#00CEC9" stroke-width="1" opacity="0.6"/>
+  <!-- Fill between the two ellipses -->
+  <path d="M 265,145 L 285,145 Q 301,260 285,375 L 265,375 Q 249,260 265,145 Z"
+        fill="url(#diaphragmGrad)" stroke="none"/>
+  <!-- Front face -->
+  <ellipse cx="265" cy="260" rx="12" ry="115" fill="#00CEC9" opacity="0.06" stroke="#00CEC9" stroke-width="2" filter="url(#glow)"/>
+  <ellipse cx="265" cy="260" rx="12" ry="115" fill="none" stroke="#55efc4" stroke-width="0.6" opacity="0.4"/>
+  <!-- Back face -->
+  <ellipse cx="285" cy="260" rx="12" ry="115" fill="none" stroke="#00CEC9" stroke-width="1" opacity="0.3"/>
+
+  <!-- ==================== CONNECTION ROD (diaphragm to coil) ==================== -->
+  <line x1="297" y1="260" x2="360" y2="260" stroke="#d4a050" stroke-width="2" opacity="0.5"/>
+  <!-- Attachment bracket -->
+  <rect x="353" y="251" width="10" height="18" rx="2" fill="#d4a050" opacity="0.12" stroke="#d4a050" stroke-width="0.8"/>
+
+  <!-- ==================== VOICE COIL (helix around magnet) ==================== -->
+  <!--
+    Strategy: Draw a proper helix. Each full turn has:
+    - A front arc (visible, thick, solid) curving from top to bottom in front of the magnet
+    - A back connector (thin, dashed) going from bottom back up behind the magnet, offset right by the pitch
+    
+    The coil sits around the magnet, so the front arcs have a slightly larger radius than the magnet.
+    Magnet vertical center: 260, radius ~72, so coil arcs go from ~155 to ~365
+    
+    Helix pitch: ~25px per turn, 7 turns from x=370 to x=545
+    
+    Front arcs: from (x, 155) curving left to (x, 365) — these bow outward from the magnet
+    Back arcs: from (x, 365) to (x+pitch, 155) — behind the magnet, dashed
+  -->
+
+  <g filter="url(#glowSoft)">
+    <!-- Turn 1: front arc -->
+    <path d="M 370,160 C 340,210 340,310 370,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 1: back arc (behind magnet) -->
+    <path d="M 370,360 C 400,385 420,385 395,360
+             C 420,310 420,210 395,160
+             C 420,135 400,135 370,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 2: front arc -->
+    <path d="M 395,160 C 365,210 365,310 395,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 2: back arc -->
+    <path d="M 395,360 C 425,385 445,385 420,360
+             C 445,310 445,210 420,160
+             C 445,135 425,135 395,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 3: front arc -->
+    <path d="M 420,160 C 390,210 390,310 420,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 3: back arc -->
+    <path d="M 420,360 C 450,385 470,385 445,360
+             C 470,310 470,210 445,160
+             C 470,135 450,135 420,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 4: front arc -->
+    <path d="M 445,160 C 415,210 415,310 445,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 4: back arc -->
+    <path d="M 445,360 C 475,385 495,385 470,360
+             C 495,310 495,210 470,160
+             C 495,135 475,135 445,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 5: front arc -->
+    <path d="M 470,160 C 440,210 440,310 470,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 5: back arc -->
+    <path d="M 470,360 C 500,385 520,385 495,360
+             C 520,310 520,210 495,160
+             C 520,135 500,135 470,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 6: front arc -->
+    <path d="M 495,160 C 465,210 465,310 495,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Turn 6: back arc -->
+    <path d="M 495,360 C 525,385 545,385 520,360
+             C 545,310 545,210 520,160
+             C 545,135 525,135 495,160"
+          fill="none" stroke="#d4a050" stroke-width="0.8" opacity="0.15" stroke-dasharray="4,4"/>
+
+    <!-- Turn 7: front arc -->
+    <path d="M 520,160 C 490,210 490,310 520,360"
+          fill="none" stroke="#d4a050" stroke-width="2.5" stroke-linecap="round"/>
+
+    <!-- Inner glow on front arcs -->
+    <g stroke="#e8c070" stroke-width="0.7" opacity="0.25" fill="none" stroke-linecap="round">
+      <path d="M 370,160 C 340,210 340,310 370,360"/>
+      <path d="M 395,160 C 365,210 365,310 395,360"/>
+      <path d="M 420,160 C 390,210 390,310 420,360"/>
+      <path d="M 445,160 C 415,210 415,310 445,360"/>
+      <path d="M 470,160 C 440,210 440,310 470,360"/>
+      <path d="M 495,160 C 465,210 465,310 495,360"/>
+      <path d="M 520,160 C 490,210 490,310 520,360"/>
+    </g>
+  </g>
+
+  <!-- ==================== OUTPUT TERMINAL ==================== -->
+  <path d="M 740,230 L 770,230" stroke="#d4a050" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>
+  <path d="M 740,290 L 770,290" stroke="#d4a050" stroke-width="1" opacity="0.4" stroke-dasharray="4,4"/>
+  <rect x="770" y="220" width="50" height="80" rx="8" fill="none" stroke="#6c7a89" stroke-width="1"/>
+  <text x="795" y="265" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">V(t)</text>
+  <text x="795" y="240" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold">+</text>
+  <text x="795" y="295" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="14" font-weight="bold">−</text>
+
+  <!-- ==================== MOTION ARROW ==================== -->
+  <g opacity="0.7">
+    <line x1="275" y1="400" x2="275" y2="425" stroke="#00CEC9" stroke-width="1" stroke-dasharray="3,3"/>
+    <line x1="258" y1="415" x2="292" y2="415" stroke="#00CEC9" stroke-width="1.5"/>
+    <polygon points="258,415 265,411 265,419" fill="#00CEC9"/>
+    <polygon points="292,415 285,411 285,419" fill="#00CEC9"/>
+  </g>
+  <text x="275" y="440" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.6">diaphragm + coil motion</text>
+
+  <!-- ==================== LABELS ==================== -->
+  <!-- Pressure waves -->
+  <rect x="62" y="120" width="130" height="22" rx="11" fill="#00CEC9" opacity="0.1" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="127" y="136" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Pressure Waves</text>
+
+  <!-- Diaphragm -->
+  <rect x="215" y="100" width="100" height="22" rx="11" fill="#00CEC9" opacity="0.1" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="265" y="116" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Diaphragm</text>
+  <line x1="265" y1="122" x2="265" y2="145" stroke="#00CEC9" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="265" cy="145" r="2.5" fill="#00CEC9" opacity="0.6"/>
+
+  <!-- Voice Coil -->
+  <rect x="400" y="460" width="95" height="22" rx="11" fill="#d4a050" opacity="0.08" stroke="#d4a050" stroke-width="0.6"/>
+  <text x="447" y="476" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Voice Coil</text>
+  <line x1="447" y1="460" x2="447" y2="370" stroke="#d4a050" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="447" cy="370" r="2.5" fill="#d4a050" opacity="0.6"/>
+
+  <!-- Permanent Magnet -->
+  <rect x="540" y="108" width="138" height="22" rx="11" fill="#E74C3C" opacity="0.08" stroke="#E74C3C" stroke-width="0.6"/>
+  <text x="609" y="124" text-anchor="middle" fill="#E74C3C" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Permanent Magnet</text>
+  <line x1="590" y1="130" x2="570" y2="188" stroke="#E74C3C" stroke-width="0.8" opacity="0.5"/>
+  <circle cx="570" cy="188" r="2.5" fill="#E74C3C" opacity="0.6"/>
+
+  <!-- Output Signal -->
+  <rect x="760" y="195" width="80" height="22" rx="11" fill="#6c7a89" opacity="0.1" stroke="#6c7a89" stroke-width="0.6"/>
+  <text x="800" y="211" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Output Signal</text>
+
+  <!-- ==================== LEGEND ==================== -->
+  <g transform="translate(100, 500)">
+    <text x="0" y="4" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Sound pressure drives diaphragm → coil moves through magnetic field → voltage induced</text>
+  </g>
+</svg>
