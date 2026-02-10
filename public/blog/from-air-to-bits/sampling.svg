@@ -1,0 +1,265 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 545" width="900" height="545">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#141416"/>
+      <stop offset="100%" stop-color="#141416"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowSoft">
+      <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="glowStrong">
+      <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Callout box gradient -->
+    <linearGradient id="calloutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#1e1e24" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#18181c" stop-opacity="0.95"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="900" height="545" fill="url(#bgGrad)" rx="12"/>
+
+  <!-- Title -->
+  <text x="450" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">SAMPLING</text>
+  <text x="450" y="58" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="12" letter-spacing="1">Measuring Continuous Voltage at Discrete Intervals</text>
+
+  <!-- ==================== MAIN PLOT AREA ==================== -->
+  <!-- Plot bounds: x=80..820, y=100..360, center y=230 -->
+
+  <!-- Grid lines (subtle) -->
+  <g stroke="#2a2a3a" stroke-width="0.5" opacity="0.5">
+    <!-- Horizontal -->
+    <line x1="80" y1="140" x2="820" y2="140"/>
+    <line x1="80" y1="180" x2="820" y2="180"/>
+    <line x1="80" y1="230" x2="820" y2="230" stroke-width="0.8" opacity="0.7"/>
+    <line x1="80" y1="280" x2="820" y2="280"/>
+    <line x1="80" y1="320" x2="820" y2="320"/>
+  </g>
+
+  <!-- Y-axis -->
+  <line x1="80" y1="100" x2="80" y2="360" stroke="#3a3a4a" stroke-width="1"/>
+  <!-- X-axis -->
+  <line x1="80" y1="230" x2="830" y2="230" stroke="#3a3a4a" stroke-width="1"/>
+  <!-- X-axis arrow -->
+  <polygon points="830,230 823,226 823,234" fill="#3a3a4a"/>
+
+  <!-- Y-axis labels -->
+  <text x="70" y="144" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">+V</text>
+  <text x="70" y="234" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">0</text>
+  <text x="70" y="324" text-anchor="end" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">−V</text>
+
+  <!-- X-axis label -->
+  <text x="840" y="234" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">time</text>
+
+  <!-- Y-axis label -->
+  <text x="40" y="230" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11" transform="rotate(-90, 40, 230)">voltage</text>
+
+  <!-- ==================== ANALOG SIGNAL (smooth composite wave) ==================== -->
+  <!-- A more interesting waveform: fundamental + harmonic for realism -->
+  <!-- Using a hand-crafted path that looks like speech/music — not a pure sine -->
+  <!-- Plot range: x 100-800, y center 230, amplitude ~80px -->
+  <g filter="url(#glowSoft)">
+    <path d="M 100,230
+             C 110,230 115,215 120,200
+             C 125,185 130,170 140,158
+             C 150,146 155,148 160,155
+             C 165,162 168,172 172,178
+             C 176,184 180,175 185,165
+             C 190,155 195,150 200,148
+             C 210,144 215,160 220,178
+             C 225,196 228,215 232,230
+             C 236,245 240,262 245,278
+             C 250,294 255,305 260,310
+             C 265,315 270,312 275,305
+             C 280,298 283,288 287,280
+             C 291,272 295,278 300,288
+             C 305,298 310,305 315,310
+             C 320,315 328,305 335,285
+             C 342,265 345,245 350,230
+             C 355,215 360,198 365,183
+             C 370,168 375,155 382,148
+             C 389,141 394,145 400,155
+             C 406,165 410,178 414,185
+             C 418,192 422,182 427,170
+             C 432,158 437,150 443,146
+             C 449,142 456,155 462,175
+             C 468,195 472,215 478,230
+             C 484,245 488,265 494,282
+             C 500,299 505,310 512,315
+             C 519,320 524,312 530,300
+             C 536,288 539,278 543,272
+             C 547,266 551,275 556,286
+             C 561,297 566,308 572,314
+             C 578,320 586,308 594,288
+             C 602,268 606,248 612,230
+             C 618,212 622,195 628,180
+             C 634,165 639,155 646,148
+             C 653,141 658,148 664,160
+             C 670,172 674,185 678,190
+             C 682,195 686,186 691,174
+             C 696,162 701,152 707,147
+             C 713,142 720,156 726,176
+             C 732,196 736,215 742,230
+             C 748,245 752,262 758,280
+             C 764,298 769,308 776,314
+             C 783,320 788,312 794,298"
+          fill="none" stroke="#00CEC9" stroke-width="1.8" opacity="0.3"/>
+  </g>
+
+  <!-- ==================== SAMPLE STEMS + DOTS ==================== -->
+  <!-- Samples taken every ~36px (representing T_s intervals) -->
+  <!-- Y values follow the analog waveform above -->
+
+  <g filter="url(#glowSoft)">
+    <!-- Stem lines (from x-axis to sample point) -->
+    <g stroke="#55efc4" stroke-width="1.2" opacity="0.5">
+      <line x1="132" y1="230" x2="132" y2="166"/>
+      <line x1="168" y1="230" x2="168" y2="172"/>
+      <line x1="204" y1="230" x2="204" y2="146"/>
+      <line x1="240" y1="230" x2="240" y2="262"/>
+      <line x1="276" y1="230" x2="276" y2="304"/>
+      <line x1="312" y1="230" x2="312" y2="308"/>
+      <line x1="348" y1="230" x2="348" y2="232"/>
+      <line x1="384" y1="230" x2="384" y2="148"/>
+      <line x1="420" y1="230" x2="420" y2="188"/>
+      <line x1="456" y1="230" x2="456" y2="144"/>
+      <line x1="492" y1="230" x2="492" y2="290"/>
+      <line x1="528" y1="230" x2="528" y2="302"/>
+      <line x1="564" y1="230" x2="564" y2="292"/>
+      <line x1="600" y1="230" x2="600" y2="272"/>
+      <line x1="636" y1="230" x2="636" y2="162"/>
+      <line x1="672" y1="230" x2="672" y2="170"/>
+      <line x1="708" y1="230" x2="708" y2="146"/>
+      <line x1="744" y1="230" x2="744" y2="232"/>
+      <line x1="780" y1="230" x2="780" y2="310"/>
+    </g>
+
+    <!-- Sample dots -->
+    <g fill="#55efc4">
+      <circle cx="132" cy="166" r="4"/>
+      <circle cx="168" cy="172" r="4"/>
+      <circle cx="204" cy="146" r="4"/>
+      <circle cx="240" cy="262" r="4"/>
+      <circle cx="276" cy="304" r="4"/>
+      <circle cx="312" cy="308" r="4"/>
+      <circle cx="348" cy="232" r="4"/>
+      <circle cx="384" cy="148" r="4"/>
+      <circle cx="420" cy="188" r="4"/>
+      <circle cx="456" cy="144" r="4"/>
+      <circle cx="492" cy="290" r="4"/>
+      <circle cx="528" cy="302" r="4"/>
+      <circle cx="564" cy="292" r="4"/>
+      <circle cx="600" cy="272" r="4"/>
+      <circle cx="636" cy="162" r="4"/>
+      <circle cx="672" cy="170" r="4"/>
+      <circle cx="708" cy="146" r="4"/>
+      <circle cx="744" cy="232" r="4"/>
+      <circle cx="780" cy="310" r="4"/>
+    </g>
+  </g>
+
+  <!-- ==================== T_s PERIOD MARKERS ==================== -->
+  <!-- Show T_s between a few sample points near the left side -->
+  <g opacity="0.7">
+    <!-- Tick marks at sample positions along a line below the plot -->
+    <line x1="132" y1="365" x2="132" y2="375" stroke="#d4a050" stroke-width="1"/>
+    <line x1="168" y1="365" x2="168" y2="375" stroke="#d4a050" stroke-width="1"/>
+    <line x1="204" y1="365" x2="204" y2="375" stroke="#d4a050" stroke-width="1"/>
+    <line x1="240" y1="365" x2="240" y2="375" stroke="#d4a050" stroke-width="1"/>
+    <line x1="276" y1="365" x2="276" y2="375" stroke="#d4a050" stroke-width="1"/>
+
+    <!-- Bracket between first two ticks -->
+    <line x1="132" y1="370" x2="168" y2="370" stroke="#d4a050" stroke-width="1"/>
+    <!-- T_s label -->
+    <text x="150" y="390" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-style="italic">T<tspan font-size="8" dy="3">s</tspan></text>
+
+    <!-- Bracket between second and third -->
+    <line x1="168" y1="370" x2="204" y2="370" stroke="#d4a050" stroke-width="1"/>
+    <text x="186" y="390" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-style="italic">T<tspan font-size="8" dy="3">s</tspan></text>
+
+    <!-- Bracket between third and fourth -->
+    <line x1="204" y1="370" x2="240" y2="370" stroke="#d4a050" stroke-width="1"/>
+    <text x="222" y="390" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-style="italic">T<tspan font-size="8" dy="3">s</tspan></text>
+
+    <!-- Dots to indicate continuation -->
+    <text x="270" y="390" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="14" opacity="0.5">···</text>
+  </g>
+
+  <!-- ==================== ZOOMED CALLOUT ==================== -->
+  <!-- Zoom into the gap between two samples to show what's "lost" -->
+  <g>
+    <!-- Callout box -->
+    <rect x="600" y="370" width="270" height="130" rx="10" fill="url(#calloutGrad)" stroke="#3a3a4a" stroke-width="1"/>
+
+    <!-- Callout title -->
+    <text x="735" y="393" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10" letter-spacing="1">BETWEEN TWO SAMPLES</text>
+
+    <!-- Mini axes -->
+    <line x1="625" y1="440" x2="855" y2="440" stroke="#2a2a3a" stroke-width="0.5"/>
+
+    <!-- Zoomed analog curve between two sample points -->
+    <path d="M 640,440
+             C 648,435 656,420 668,412
+             C 680,404 690,408 700,415
+             C 710,422 718,430 728,426
+             C 738,422 746,410 756,405
+             C 766,400 776,404 786,415
+             C 796,426 806,435 816,432
+             C 826,429 834,422 840,418"
+          fill="none" stroke="#00CEC9" stroke-width="1.5" opacity="0.35" filter="url(#glowSoft)"/>
+
+    <!-- The two sample points at edges -->
+    <line x1="640" y1="440" x2="640" y2="440" stroke="#55efc4" stroke-width="1" opacity="0.6"/>
+    <circle cx="640" cy="440" r="4" fill="#55efc4" filter="url(#glowSoft)"/>
+
+    <line x1="840" y1="440" x2="840" y2="418" stroke="#55efc4" stroke-width="1" opacity="0.6"/>
+    <circle cx="840" cy="418" r="4" fill="#55efc4" filter="url(#glowSoft)"/>
+
+    <!-- Question mark / annotation for the gap -->
+    <text x="735" y="475" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">analog signal continues between samples</text>
+    <text x="735" y="490" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="10" opacity="0.7">Nyquist guarantees perfect reconstruction</text>
+
+    <!-- Leader line from main plot area to callout -->
+    <!-- Connect from the gap between samples 456 and 492 down to the callout -->
+  </g>
+
+  <!-- Leader line from main plot to callout -->
+  <line x1="474" y1="310" x2="600" y2="400" stroke="#3a3a4a" stroke-width="0.8" stroke-dasharray="4,4" opacity="0.5"/>
+  <!-- Small bracket on the main plot highlighting the gap -->
+  <rect x="456" y="295" width="36" height="20" rx="4" fill="none" stroke="#3a3a4a" stroke-width="0.8" stroke-dasharray="3,3" opacity="0.4"/>
+
+  <!-- ==================== LABELS ==================== -->
+  <!-- Analog signal label -->
+  <rect x="95" y="92" width="128" height="22" rx="11" fill="#00CEC9" opacity="0.08" stroke="#00CEC9" stroke-width="0.6"/>
+  <text x="159" y="108" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Analog Signal</text>
+  <line x1="200" y1="108" x2="230" y2="135" stroke="#00CEC9" stroke-width="0.6" opacity="0.4"/>
+
+  <!-- Sample points label -->
+  <rect x="680" y="92" width="130" height="22" rx="11" fill="#55efc4" opacity="0.08" stroke="#55efc4" stroke-width="0.6"/>
+  <text x="745" y="108" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="11" font-weight="bold">Sample Points</text>
+  <line x1="720" y1="114" x2="708" y2="142" stroke="#55efc4" stroke-width="0.6" opacity="0.4"/>
+  <circle cx="708" cy="146" r="2" fill="#55efc4" opacity="0.5"/>
+
+  <!-- ==================== FORMULA ==================== -->
+  <text x="450" y="418" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-style="italic" opacity="0.8">f<tspan font-size="9" dy="3">s</tspan><tspan dy="-3"> = 1 / T</tspan><tspan font-size="9" dy="3">s</tspan></text>
+
+  <!-- ==================== LEGEND ==================== -->
+  <text x="450" y="532" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="11">Each dot is one voltage measurement — between samples, only the Nyquist theorem guarantees the signal is preserved</text>
+</svg>
