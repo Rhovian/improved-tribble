@@ -10,27 +10,21 @@ series:
   total: 3
 ---
 
-If you've ever built an audio pipeline but didn't really understand the underlying physical phenomena, or need a holistic refresher on the subject, this one's for you.
+If you've ever built an audio pipeline but didn't really understand the underlying physical phenomena, or need a holistic refresher on the subject, this one's for you. This article is aimed at developing an intution for the entire audio lifecycle, following a single sound from the physical phenomena all the way to network packets.
 
 ![From Air to Bits](/blog/from-air-to-bits/air-to-bits-pyramid.png)
 
-This article will give a high level overview of each level in the pyramid above, aimed at developing an intution for the entire audio lifecycle, following a single sound from the physical phenomena all the way to network packets.
-
-I find it best to learn with a simple example in mind, and a picture is worth a thousand words, so:
+I find it best to learn with a simple example, and a picture is worth a thousand words, so here's our audio "hello world":
 
 ![From Air to Bits|full](/blog/from-air-to-bits/example-scenario.svg)
 
-A person (source) says "hello world", a mic (sink) picks it up, then converts it to meaningful electrical signals and finally sent across the wire. 
-
-Intentionally this is all very hand-wavey, throughout the article we will break it down piecemeal. Note that the example shows the physical/mechanical side only, we will expand on it in later sections.
+A source emits "hello world", a sink receives the physical waves, converts it to meaningful electrical signals and finally sent across the wire. Simple, right?
 
 ---
 
 ## Sound as Pressure Waves
 
-What we define as sound is really a conglomerate of molecules, *driven* through some external force at varying densities through a **medium**; in our case ambient air (≈ 101 kPa) at speed *c*.
-
-In our example the source speaks "hello world", convertig energy (eg human throat muscle contraction) ito particle excitation. The molecules propagate outwards in the form of a **pressure wave** through air (≈ 101 kPa).
+What we define as sound is really a conglomerate of molecules, *driven* through some external force at varying densities through a **medium**; in our case ambient air (≈ 101 kPa) at the speed of sound.
 
 ![Sound pressure air molecules|full](/blog/from-air-to-bits/pressure-wave-molecules.svg)
 
@@ -42,11 +36,11 @@ $$
 \frac{\partial^2 p}{\partial t^2} = c^2 \frac{\partial^2 p}{\partial x^2}
 $$
 
-If what this second order equation represents isn't immediately obvious, you aren't alone. Essentially, for a given point *p*, the pressure variation with respect to time *t* is proportional to how the wave curves in space *x* around that point.
+This second order equation represents how space and time behave around a point *p*. The pressure variation with respect to time *t* is proportional to how the wave curves in space *x* around that point.
 
-### The speed of Sound
+### The Speed of Sound
 
-As discussed, the medium on earth is air, and sound moves through it at the speed c:
+Its worth defining the speed of sound on earth, where the medium is air:
 
 $$
 c = \sqrt{\frac{\gamma R T}{M}}
@@ -93,9 +87,9 @@ $$
 m\ddot{x} + b\dot{x} + kx = F(t)
 $$
 
-where $m$ is the diaphragm's mass, $k$ is its stiffness, $b$ is damping, and $F(t)$ is the **driving force** from the incoming pressure wave. While you're speaking, the sound wave continuously drives the diaphragm, and it tracks the pressure variations in real time. 
+where $m$ is the diaphragm's mass, $k$ is its stiffness, $b$ is damping, and $F(t)$ is the **driving force** from the incoming pressure wave. While $F(t)$ is active, the sound wave continuously drives the diaphragm, and it tracks the pressure variations in real time. 
 
-When you stop speaking, the damping term $b\dot{x}$ is what causes the diaphragm to settle back to rest rather than ringing indefinitely.
+In contrast when $F(t)$ decays, the damping term $b\dot{x}$ is what causes the diaphragm to settle back to rest rather than ringing indefinitely.
 
 This model has a natural **resonant frequency** — the frequency at which the system oscillates most vigorously when driven by an external force:
 
@@ -105,7 +99,7 @@ $$
 
 You've experienced resonance before: push a child on a swing at just the right rhythm and they soar; push at the wrong rhythm and you fight the motion. A diaphragm works the same way — frequencies near $f_0$ get amplified, while others don't.
 
-Whether this resonance is a problem depends on the **damping**. Remember the $b\dot{x}$ term from the equation above? The ratio of damping to the critical threshold determines how the diaphragm behaves:
+Whether this resonance is a problem depends on the $b\dot{x}$ term. The ratio of damping to the critical threshold determines how the diaphragm behaves:
 
 ![Damping Scenarios|full](/blog/from-air-to-bits/damping-graph.svg)
 
