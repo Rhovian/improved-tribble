@@ -23,10 +23,16 @@ export default function Home() {
         Developer, writer, and tinkerer. I build things and occasionally write
         about them.
       </p>
-      <div className="flex gap-4">
+      <div className="flex flex-wrap justify-center gap-4">
+        <Link
+          href="/portfolio"
+          className="px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors"
+        >
+          Portfolio
+        </Link>
         <Link
           href="/blog"
-          className="px-6 py-3 bg-zinc-900 dark:bg-zinc-100 text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-colors"
+          className="px-6 py-3 border border-zinc-300 dark:border-zinc-700 rounded-lg font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
         >
           Read Blog
         </Link>
