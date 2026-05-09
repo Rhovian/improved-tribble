@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="100%" viewBox="0 0 1200 520" preserveAspectRatio="none" role="img" aria-label="ASCII landscape with mountain range, sun, and drifting clouds">
+<title>ASCII landscape</title>
+<desc>Animated ASCII landscape with a sun, drifting clouds, and a mountain range. Sun by Hayley Jane Wakenshaw (Flump). Mountains from asciiart.eu (artist unknown).</desc>
+
+<style>
+.bg{fill:transparent}
+.r{font-family:ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;font-weight:400;letter-spacing:0;white-space:pre}
+.faint{fill:#1f1f1f}
+.dim{fill:#333333}
+.med{fill:#4a4a4a}
+.bright{fill:#666666}
+.hi{fill:#7f7f7f}
+.cloud-edge{fill:#64748b;font-family:ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;white-space:pre}
+.cloud-body{fill:#94a3b8;font-family:ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;white-space:pre}
+.cloud-hi{fill:#cbd5e1;font-family:ui-monospace,'SF Mono','Cascadia Mono',Menlo,Consolas,monospace;font-size:13px;white-space:pre}
+@media (prefers-color-scheme: dark){
+  .cloud-edge{fill:#475569}
+  .cloud-body{fill:#64748b}
+  .cloud-hi{fill:#94a3b8}
+}
+</style>
+
+<defs>
+  <clipPath id="cloud-lane">
+    <rect x="0" y="0" width="1200" height="220"/>
+  </clipPath>
+</defs>
+
+<rect class="bg" x="0" y="0" width="1200" height="520"/>
+
+<!-- Sun by Hayley Jane Wakenshaw (Flump). Credit on site. -->
+<g transform="translate(28 76)">
+  <text class="r med"    x="0" y="22">           ;   :   ;</text>
+  <text class="r bright" x="0" y="38">        .   \_,!,_/   ,</text>
+  <text class="r bright" x="0" y="54">         `.,'     `.,'</text>
+  <text class="r hi"     x="0" y="70">          /         \</text>
+  <text class="r hi"     x="0" y="86">     ~ -- :         : -- ~</text>
+  <text class="r hi"     x="0" y="102">          \         /</text>
+  <text class="r bright" x="0" y="118">         ,'`._   _.'`.</text>
+  <text class="r bright" x="0" y="134">        '   / `!` \   `</text>
+  <text class="r med"    x="0" y="150">           ;   :   ;</text>
+</g>
+
+<g clip-path="url(#cloud-lane)">
+<!-- Cloud 1: upper sky, slow drift -->
+<g>
+  <animateTransform attributeName="transform" type="translate" from="1220 0" to="-260 0" dur="90s" repeatCount="indefinite"/>
+  <text class="cloud-edge" x="0" y="38">        .--~~,__</text>
+  <text class="cloud-body" x="0" y="54">   .-~~       ,'``.</text>
+  <text class="cloud-hi"   x="0" y="70">  :       (  )    :</text>
+  <text class="cloud-body" x="0" y="86">   `~--._  ___ __,'</text>
+  <text class="cloud-edge" x="0" y="102">         ~~   ~~</text>
+</g>
+
+<!-- Cloud 2: bigger, lower, slowest -->
+<g>
+  <animateTransform attributeName="transform" type="translate" from="1220 0" to="-340 0" dur="130s" begin="-50s" repeatCount="indefinite"/>
+  <text class="cloud-edge" x="0" y="118">          _.--~~--._     .--~~~--.</text>
+  <text class="cloud-body" x="0" y="134">      .-~~          ~-.~~         `~-.</text>
+  <text class="cloud-hi"   x="0" y="150">     (    (   )   (              )    )</text>
+  <text class="cloud-body" x="0" y="166">      `~-.__              ___..--~~`</text>
+  <text class="cloud-edge" x="0" y="182">           `~~~~~~~~~~~~~~~`</text>
+</g>
+
+<!-- Cloud 3: small puff, mid altitude, mid speed -->
+<g>
+  <animateTransform attributeName="transform" type="translate" from="1220 0" to="-180 0" dur="100s" begin="-70s" repeatCount="indefinite"/>
+  <text class="cloud-edge" x="0" y="86">      _.--._</text>
+  <text class="cloud-hi"   x="0" y="102">   .-(      )-.</text>
+  <text class="cloud-body" x="0" y="118">    `~--..--~`</text>
+</g>
+</g>
+
+<!-- Mountain range from asciiart.eu, artist unknown. -->
+<g transform="translate(210 118) scale(1.15)">
+<text class="r hi"     x="0" y="222">              /\                                                               </text>
+<text class="r hi"     x="0" y="238">             /**\                                                              </text>
+<text class="r bright" x="0" y="254">            /****\   /\                                                        </text>
+<text class="r bright" x="0" y="270">           /      \ /**\                                                       </text>
+<text class="r bright" x="0" y="286">          /  /\    /    \        /\    /\  /\      /\            /\/\/\  /\    </text>
+<text class="r med"    x="0" y="302">         /  /  \  /      \      /  \/\/  \/  \  /\/  \/\  /\  /\/ / /  \/  \   </text>
+<text class="r med"    x="0" y="318">        /  /    \/ /\     \    /    \ \  /    \/ /   /  \/  \/  \  /    \   \  </text>
+<text class="r dim"    x="0" y="334">       /  /      \/  \/\   \  /      \    /   /    \                           </text>
+<text class="r dim"    x="0" y="350">    __/__/_______/___/__\___\__________________________________________________</text>
+
+<!-- Foothills / horizon -->
+<text class="r faint" x="0" y="370">    .                                                                  .       </text>
+<text class="r faint" x="0" y="388">                                                                               </text>
+
+<!-- Ground texture -->
+<text class="r faint" x="0" y="404">         .                              .                          .          </text>
+<text class="r faint" x="0" y="420">                       .                                  .                   </text>
+<text class="r faint" x="0" y="436">     .                            .                  .                  .     </text>
+</g>
+
+</svg>

@@ -31,7 +31,7 @@ const projects = [
 
 export default function PortfolioPage() {
   return (
-    <div className="space-y-10">
+    <div className="max-w-4xl mx-auto space-y-10 px-4 py-8">
       <section className="space-y-3">
         <p className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
           Portfolio

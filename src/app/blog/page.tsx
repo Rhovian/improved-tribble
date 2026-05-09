@@ -91,7 +91,7 @@ export default function BlogPage() {
   const hasContent = seriesGroups.length > 0 || standalonePosts.length > 0;
 
   return (
-    <div>
+    <div className="max-w-4xl mx-auto px-4 py-8">
       {!hasContent ? (
         <p className="text-zinc-600 dark:text-zinc-400">No posts yet.</p>
       ) : (

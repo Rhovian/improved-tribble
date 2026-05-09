@@ -1,28 +1,43 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
 export function Header() {
   const { theme, toggleTheme, mounted } = useTheme();
+  const pathname = usePathname();
 
   return (
     <header className="border-b border-zinc-200 dark:border-zinc-800">
       <nav className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6 ml-auto">
-          <Link
-            href="/portfolio"
-            className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-          >
-            Portfolio
-          </Link>
+          {pathname !== "/" && (
+            <Link
+              href="/"
+              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              Home
+            </Link>
+          )}
 
-          <Link
-            href="/blog"
-            className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-          >
-            Blog
-          </Link>
+          {pathname !== "/portfolio" && (
+            <Link
+              href="/portfolio"
+              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              Portfolio
+            </Link>
+          )}
+
+          {pathname !== "/blog" && !pathname.startsWith("/blog/") && (
+            <Link
+              href="/blog"
+              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+            >
+              Blog
+            </Link>
+          )}
 
           <button
             onClick={toggleTheme}

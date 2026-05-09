@@ -47,10 +47,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-screen bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <body className="flex min-h-screen flex-col bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
         <ThemeProvider>
           <Header />
-          <main className="max-w-4xl mx-auto px-4 py-8">{children}</main>
+          <main className="flex-1">{children}</main>
         </ThemeProvider>
       </body>
     </html>
