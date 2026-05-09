@@ -11,7 +11,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
+  theme: "dark",
   toggleTheme: () => {},
   mounted: false,
 });
@@ -21,9 +21,8 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       const stored = localStorage.getItem("theme") as Theme | null;
       if (stored) return stored;
-      if (window.matchMedia("(prefers-color-scheme: dark)").matches) return "dark";
     }
-    return "light";
+    return "dark";
   });
   const [mounted, setMounted] = useState(false);
 
