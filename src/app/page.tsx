@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { DioramaBackground } from "@/components/DioramaBackground";
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
 
@@ -14,20 +14,12 @@ export default function Home() {
   };
 
   return (
-    <div className="isolate relative flex min-h-[calc(100svh-57px)] flex-col items-center justify-center overflow-hidden px-4 py-8 text-center">
+    <div className="isolate relative flex min-h-[calc(100svh-57px)] flex-col items-center justify-start overflow-hidden px-4 pb-8 pt-[8svh] text-center sm:pt-[10svh]">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Image
-        src="/ascii-landscape.svg"
-        alt=""
-        width={680}
-        height={440}
-        priority
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 z-0 h-full w-full object-fill opacity-25 dark:opacity-45"
-      />
+      <DioramaBackground className="z-0" />
       <div className="relative z-10 rounded-lg bg-white/75 px-4 py-6 backdrop-blur-sm dark:bg-zinc-900/70 sm:px-8">
         <h1 className="mb-4 text-5xl font-bold">Hi, I&apos;m J</h1>
         <p className="mb-8 max-w-xl text-xl text-zinc-600 dark:text-zinc-400">

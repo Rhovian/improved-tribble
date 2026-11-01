@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>The House at the End of the World</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Silkscreen&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#03050c;--fg:#93a9d1;--line:#1e2c56;--warm:#ffbe5c;--panel:rgba(3,5,12,.78);color-scheme:dark}
+html,body{height:100%;margin:0;background:var(--bg);overflow:hidden}
+#stage{position:fixed;inset:0;display:grid;place-items:center;overflow:hidden;background:var(--bg)}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;flex:none}
+body.idle,body.idle *{cursor:none}
+#hud{position:fixed;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));
+  max-width:calc(100% - 32px);box-sizing:border-box;display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;
+  padding:10px 12px;background:var(--panel);border:1px solid var(--line);color:var(--fg);
+  font:10px/1.5 Silkscreen,ui-monospace,Menlo,monospace;letter-spacing:.06em;transition:opacity .5s}
+#hud.off{opacity:0;pointer-events:none}
+#hud strong{color:var(--warm);font-weight:400}
+#hud button{font:inherit;letter-spacing:inherit;color:var(--fg);background:transparent;border:1px solid var(--line);padding:4px 8px;cursor:pointer}
+#hud button:hover{border-color:var(--fg)}
+#hud button:focus-visible{outline:1px solid var(--warm);outline-offset:2px}
+#hud button[aria-pressed="true"]{color:var(--warm);border-color:var(--warm)}
+#msg{flex-basis:100%;color:var(--fg);opacity:.8}
+#msg:empty{display:none}
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c" role="img" aria-label="Pixel-art night scene: a snowy cottage with glowing windows on a clifftop above a moonlit sea and distant mountains, a hooded figure by a campfire, drifting smoke and a bright moon over a starry sky"></canvas></div>
+<div id="hud">
+  <span><strong>The House at the End of the World</strong> &middot; <span id="len">6:00</span> seamless loop</span>
+  <button id="bFull" type="button">Fullscreen [F]</button>
+  <button id="bRec" type="button" aria-pressed="false">Record loop [R]</button>
+  <button id="bHide" type="button">Hide [H]</button>
+  <span id="msg"></span>
+</div>
+<script>
+const LOOP_SECONDS = 360;
+const BEAT = 120;
+const TAU = Math.PI * 2;
+const BASE_H = 270;
+const MIN_W = 240;
+const MAX_PIXELS = 420000;
+const hx = (s) => {
+    const n = parseInt(s.slice(1), 16);
+    return (0xff000000 | ((n & 255) << 16) | (n & 0xff00) | (n >>> 16)) >>> 0;
+};
+const pack = (r, g, b) => (0xff000000 | ((b & 255) << 16) | ((g & 255) << 8) | (r & 255)) >>> 0;
+const mix = (c1, c2, a) => {
+    const r1 = c1 & 255, g1 = (c1 >>> 8) & 255, b1 = (c1 >>> 16) & 255;
+    const r2 = c2 & 255, g2 = (c2 >>> 8) & 255, b2 = (c2 >>> 16) & 255;
+    return pack(r1 + (r2 - r1) * a, g1 + (g2 - g1) * a, b1 + (b2 - b1) * a);
+};
+const C = {
+    v0: hx("#03040e"), v1: hx("#060a1e"), n1: hx("#0b1438"), n2: hx("#111f50"),
+    sl: hx("#1b2d66"), st: hx("#2b4282"), bl: hx("#4662a6"), fr: hx("#7590cb"),
+    ss: hx("#96abdc"), sn: hx("#c5d2f0"), sh: hx("#eaf0ff"),
+    py1: hx("#7d6a3f"), py2: hx("#c4a45c"), py3: hx("#f1d98f"),
+    r0: hx("#090c1e"), r1: hx("#101734"), r2: hx("#19234c"), r3: hx("#283568"), r4: hx("#415490"),
+    w0: hx("#120c16"), w1: hx("#21151f"), w2: hx("#36222a"), w3: hx("#5a3a34"), w4: hx("#7a5240"),
+    em: hx("#4a160a"), ru: hx("#8a2f12"), f1: hx("#d4521c"), f2: hx("#f58f2a"), f3: hx("#ffcc5c"), f4: hx("#fff3c4"),
+    i0: hx("#5a2a12"), i1: hx("#b8642a"), i2: hx("#f0a04a"), i3: hx("#ffd58a"), i4: hx("#fff0c8"),
+    tl: hx("#0e2836"), tl2: hx("#17404f"), tl3: hx("#2b6a78"),
+    mi1: hx("#1a2a5a"), mi2: hx("#213463"), mi3: hx("#2b4171"),
+    sm1: hx("#34416f"), sm2: hx("#4c5b90"), sm3: hx("#7383bb"), smw: hx("#7a5a5e"), br: hx("#f2dcc4"),
+    cl: hx("#1a1424"), cm: hx("#4a2c30"), sc: hx("#b8441a"),
+    m0: hx("#7f8bb0"), m1: hx("#a9b4d0"), m2: hx("#c8d0e6"), m3: hx("#e2e7f5"), m4: hx("#f7f9ff"),
+};
+const B4 = [0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5];
+const bay = (x, y) => (B4[((y & 3) << 2) | (x & 3)] + 0.5) / 16;
+function hash(a, b = 0, c = 0) {
+    let h = (Math.imul(a | 0, 0x27d4eb2d) ^ Math.imul(b | 0, 0x165667b1) ^ Math.imul((c | 0) + 0x9e37, 0x85ebca6b)) | 0;
+    h = Math.imul(h ^ (h >>> 15), 0x2c1b3c6d);
+    h = Math.imul(h ^ (h >>> 12), 0x297a2d39);
+    h ^= h >>> 15;
+    return (h >>> 0) / 4294967296;
+}
+function ramp(arr, v, x, y) {
+    const n = arr.length - 1;
+    const s = Math.max(0, Math.min(1, v)) * n;
+    const i = Math.floor(s);
+    return arr[Math.min(n, i + (s - i > bay(x, y) ? 1 : 0))];
+}
+function vnoise(seed, x, y, px) {
+    const ix = Math.floor(x), iy = Math.floor(y);
+    const fx = x - ix, fy = y - iy;
+    const sx = fx * fx * (3 - 2 * fx), sy = fy * fy * (3 - 2 * fy);
+    const x0 = ((ix % px) + px) % px, x1 = (x0 + 1) % px;
+    const a = hash(seed, x0, iy), b = hash(seed, x1, iy);
+    const c = hash(seed, x0, iy + 1), d = hash(seed, x1, iy + 1);
+    return a + (b - a) * sx + (c - a) * sy + (a - b - c + d) * sx * sy;
+}
+function fbmTile(seed, x, y, tw, cell, oct, ys) {
+    const p0 = Math.max(1, Math.round(tw / cell));
+    const cs = tw / p0;
+    let s = 0, a = 1, tot = 0;
+    for (let o = 0; o < oct; o++) {
+        const m = 1 << o;
+        s += a * vnoise(seed + o * 31, (x / cs) * m, (y / cs) * ys * m, p0 * m);
+        tot += a;
+        a *= 0.5;
+    }
+    return s / tot;
+}
+const cyc = (t, f, ph = 0) => Math.sin(TAU * (f * t / BEAT + ph));
+const cycL = (t, f, ph = 0) => Math.sin(TAU * (f * t / LOOP_SECONDS + ph));
+const since = (t, c) => {
+    const L = LOOP_SECONDS;
+    return ((((t - c) % L) + L * 1.5) % L) - L / 2;
+};
+const GUSTS = [
+    [0.04, 16, 1], [0.17, 9, 0.6], [0.3, 20, 1], [0.45, 11, 0.7], [0.58, 18, 0.9], [0.7, 8, 0.55], [0.84, 22, 1],
+];
+function gustRaw(t) {
+    let g = 0;
+    for (const [c, dur, str] of GUSTS) {
+        const d = since(t, c * LOOP_SECONDS);
+        if (Math.abs(d) < dur / 2) {
+            const k = Math.cos((Math.PI * d) / dur);
+            g += str * k * k;
+        }
+    }
+    return Math.min(1, g) * (0.85 + 0.15 * cycL(t, 331));
+}
+const WIND_DT = 0.05;
+const WIND_N = Math.round(LOOP_SECONDS / WIND_DT);
+const GUST_T = new Float32Array(WIND_N + 1);
+const WIND_T = new Float32Array(WIND_N + 1);
+const WIND_P = new Float32Array(WIND_N + 1);
+const WIND_MEAN = (() => {
+    let sum = 0;
+    for (let i = 0; i <= WIND_N; i++) {
+        const t = i * WIND_DT;
+        GUST_T[i] = gustRaw(t);
+        WIND_T[i] = 0.18 + 0.05 * cycL(t, 7) + 0.62 * GUST_T[i];
+        if (i < WIND_N)
+            sum += WIND_T[i];
+    }
+    const mean = sum / WIND_N;
+    for (let i = 0; i < WIND_N; i++)
+        WIND_P[i + 1] = WIND_P[i] + (WIND_T[i] - mean) * WIND_DT;
+    return mean;
+})();
+const tab = (T, t) => {
+    const x = ((((t % LOOP_SECONDS) + LOOP_SECONDS) % LOOP_SECONDS) / WIND_DT);
+    const i = Math.min(WIND_N - 1, Math.floor(x)), f = x - i;
+    return T[i] + (T[i + 1] - T[i]) * f;
+};
+const gustAt = (t) => tab(GUST_T, t);
+const windAt = (t) => tab(WIND_T, t);
+const windDisp = (t, age) => WIND_MEAN * age + tab(WIND_P, t) - tab(WIND_P, t - age);
+const STOKES = [0.12, 0.42, 0.71];
+const WALKS = [
+    [0.06, [[0, 136], [9.5, 212]]],
+    [0.22, [[0, 214], [2.75, 192], [14.75, 192], [17.5, 214]]],
+    [0.38, [[0, 212], [9.5, 136]]],
+    [0.53, [[0, 136], [2.25, 154], [11.25, 154], [13.5, 136]]],
+    [0.69, [[0, 136], [9.5, 212]]],
+    [0.86, [[0, 214], [2.75, 192], [5.75, 192], [12.75, 136]]],
+];
+const OWL_AT = 0.5;
+const OWL = [
+    ["kk.....kk", "..k.b.k..", "...kkk...", "....k...."],
+    [".........", "kkkkbkkkk", "..kkkkk..", "....k...."],
+    [".........", "...kbk...", "..kkkkk..", "kk..k..kk"],
+];
+class Layer {
+    constructor(w, h, ox, oy) {
+        this.w = w;
+        this.h = h;
+        this.ox = ox;
+        this.oy = oy;
+        this.d = new Uint32Array(w * h);
+    }
+    p(x, y, c) {
+        const X = Math.round(x) - this.ox, Y = Math.round(y) - this.oy;
+        if (X < 0 || Y < 0 || X >= this.w || Y >= this.h)
+            return;
+        this.d[Y * this.w + X] = c;
+    }
+    r(x, y, w, h, c) {
+        for (let j = y; j < y + h; j++)
+            for (let i = x; i < x + w; i++)
+                this.p(i, j, c);
+    }
+}
+const HOUSE = { x0: 140, x1: 206, y0: 166, y1: 206, peakX: 173, peakY: 128 };
+const WIN_L = { x: 148, y: 176, w: 13, h: 13 };
+const WIN_R = { x: 186, y: 176, w: 13, h: 13 };
+const WIN_A = { x: 169, y: 147, w: 9, h: 9 };
+const FIRE = { x: 279, y: 208 };
+const LANTERN = { x: 331, y: 188 };
+const CHIMNEY = { x: 191, y: 113 };
+const roofY = (x) => HOUSE.peakY + Math.abs(x - HOUSE.peakX);
+const surfTop = (x) => Math.round(199 + 1.2 * Math.sin(x * 0.07) + 0.8 * Math.sin(x * 0.19 + 1) + (x > 332 ? (x - 332) * 0.3 : 0));
+const surfEdge = (y) => 344 - Math.max(0, y - 206) * 0.5;
+const lipBottom = (x) => 216 + (hash(x >> 1, 3, 3) < 0.35 ? 1 : 0);
+const cliffX = (y) => Math.round(340 - (y - 215) * 0.55 - Math.pow(Math.max(0, y - 270), 1.35) * 0.08 + 2 * Math.sin(y * 0.45) + 1.5 * Math.sin(y * 1.27 + 1));
+const FIGURE = [
+    ".....ddd......",
+    "....dddddr....",
+    "...ddddddfr...",
+    "...dddddffr...",
+    "...ddddddfr...",
+    "....ddddmr....",
+    "...cccccccr...",
+    "..dddddddmmr..",
+    "..ddddddddmhh.",
+    "..dddddddddmr.",
+    "..ddddddddmmr.",
+    "..dddddddmmmmr",
+    "..ddddddmmmmmr",
+    "...dddddd..bbr",
+    "...dddd....bb.",
+];
+const fireFn = (x, y) => {
+    const dx = x - FIRE.x, dy = (y - 202) * (y > 202 ? 1.6 : 1.05);
+    const d = Math.hypot(dx, dy);
+    let I = Math.pow(Math.max(0, 1 - d / 105), 2.1) * 1.05;
+    if (y >= 198 && y <= 214)
+        I *= 1.25;
+    return I * Math.min(1, d / 6 + 0.35);
+};
+const houseFn = (x, y) => {
+    let I = 0;
+    for (const w of [WIN_L, WIN_R]) {
+        const cx = w.x + w.w / 2, cy = w.y + w.h / 2;
+        const d = Math.hypot(x - cx, (y - cy) * 1.2);
+        I += 0.42 * Math.pow(Math.max(0, 1 - d / 32), 2);
+        if (y >= 205 && y <= 214) {
+            const s = (y - 200) * 0.9;
+            const half = w.w / 2 + s;
+            const ax = Math.abs(x - cx);
+            if (ax < half)
+                I += 0.55 * (1 - (y - 205) / 12) * Math.sqrt(1 - ax / half);
+        }
+    }
+    I += 0.35 * Math.pow(Math.max(0, 1 - Math.hypot(x - 173, y - 151) / 20), 2);
+    I += 0.55 * Math.pow(Math.max(0, 1 - Math.hypot(x - 182, y - 182) / 24), 2);
+    if (y >= 206 && y <= 214) {
+        const s = (y - 206) * 1.6;
+        if (x > 176 - s * 0.3 && x < 179 + s)
+            I += 0.4 * (1 - (y - 206) / 9);
+    }
+    return I;
+};
+const lanternFn = (x, y) => {
+    const d = Math.hypot(x - LANTERN.x, (y - 191) * (y > 191 ? 1.4 : 1));
+    let I = 0.85 * Math.pow(Math.max(0, 1 - d / 46), 2);
+    if (y >= 198 && y <= 214)
+        I *= 1.25;
+    return I;
+};
+function createDiorama(canvas, opts = {}) {
+    var _a, _b;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    if (!ctx)
+        throw new Error("Canvas 2D is not available");
+    const focusX = (_a = opts.focusX) !== null && _a !== void 0 ? _a : 248;
+    const skyShare = (_b = opts.skyShare) !== null && _b !== void 0 ? _b : 0.7;
+    let W = 0, H = 0, S = 1, camX = 0, camY = 0;
+    let img;
+    let FB;
+    let sky, world, cloudFar, cloudNear, mist, mist2;
+    let cloudFarY = 0, mistY = 0, mist2Y = 0;
+    let warm, vig;
+    let lFire, lHouse, lLant;
+    let twinkles = [];
+    let flakes = [];
+    let drifts = [];
+    let groundX0 = 0, groundX1 = 0;
+    let moonX = 0, moonY = 0;
+    let moonSpr, lMoon;
+    let moonCover;
+    let shoreAt = new Int16Array(0);
+    const MOON_R = 16;
+    function setSize(w, h) {
+        W = w;
+        H = h;
+        canvas.width = W;
+        canvas.height = H;
+        img = ctx.createImageData(W, H);
+        FB = new Uint32Array(img.data.buffer);
+        camX = Math.round(focusX - W / 2);
+        const extra = H - BASE_H;
+        camY = Math.round(extra > 0 ? -extra * skyShare : -extra * 0.6);
+        build();
+    }
+    function build() {
+        buildSky();
+        buildMoon();
+        buildClouds();
+        buildMist();
+        buildWorld();
+        buildLights();
+        buildParticles();
+        buildVignette();
+    }
+    function buildSky() {
+        sky = new Layer(W, H, camX, camY);
+        twinkles = [];
+        moonX = Math.min(Math.max(400, camX + 44), camX + W - 44);
+        moonY = Math.round(58 + Math.min(0, camY) * 0.35);
+        const mx = moonX, my = moonY;
+        const band = (x, y) => {
+            const d = (y - (140 - 0.35 * x)) / Math.hypot(1, 0.35);
+            return Math.exp(-(d / 24) * (d / 24)) * (0.45 + 0.55 * vnoise(17, x / 14, y / 9, 1 << 20));
+        };
+        const skyR = [C.v0, C.v1, C.n1, C.n2, C.sl, C.st];
+        for (let Y = 0; Y < H; Y++) {
+            const y = Y + camY;
+            for (let X = 0; X < W; X++) {
+                const x = X + camX;
+                const hy = 172;
+                let v = y < hy ? 1 - (hy - y) / 200 : 1 - (y - hy) / 95;
+                v = Math.max(0, v);
+                v = v * v * 0.62;
+                const dm = Math.hypot(x - mx, (y - my) * 1.1);
+                v += 0.6 * Math.pow(Math.max(0, 1 - dm / 110), 2.2);
+                if (y < 160)
+                    v += 0.16 * band(x, y);
+                let c = ramp(skyR, v, x, y);
+                if (y > 200) {
+                    const g = Math.min(1, (y - 200) / 80) * Math.max(0, Math.min(1, (x - 300) / 180));
+                    if (g > 0.08)
+                        c = ramp([C.v1, C.tl, C.tl2], g * 1.1, x, y);
+                }
+                sky.d[Y * W + X] = c;
+            }
+        }
+        for (let gy = Math.floor(camY / 6); gy <= Math.floor((camY + H) / 6); gy++) {
+            for (let gx = Math.floor(camX / 6); gx <= Math.floor((camX + W) / 6); gx++) {
+                const x = gx * 6 + Math.floor(hash(gx, gy, 21) * 6);
+                const y = gy * 6 + Math.floor(hash(gx, gy, 22) * 6);
+                if (Math.hypot(x - mx, y - my) < MOON_R + 8)
+                    continue;
+                if (y > 166)
+                    continue;
+                const inVoid = x > 316 && y > 96;
+                const bnd = y < 160 ? band(x, y) : 0;
+                const p = (inVoid ? 0.22 : y < 150 ? 0.12 : 0) + 0.45 * bnd;
+                const h = hash(gx, gy, 20);
+                if (h >= p)
+                    continue;
+                const b = hash(gx, gy, 23);
+                const gold = hash(gx, gy, 26) < 0.06;
+                sky.p(x, y, gold ? (b > 0.7 ? C.py2 : C.py1) : b > 0.9 ? C.sn : b > 0.7 ? C.ss : b > 0.4 ? C.fr : C.bl);
+                if (b > 0.72)
+                    twinkles.push({ x, y, f: 2 + Math.floor(hash(gx, gy, 24) * 10), ph: hash(gx, gy, 25), big: b > 0.94, gold });
+            }
+        }
+        const SEA = 173;
+        const HAZE = C.sl;
+        const mtn = new Layer(W, H, camX, camY);
+        const peaksFor = (seed, cell, hMin, hRange, shore, fade = 120) => {
+            const out = [];
+            for (let g = Math.floor((camX - 90) / cell); g * cell < Math.min(camX + W + 90, shore + 30); g++) {
+                const px = g * cell + 4 + hash(g, seed, 1) * (cell - 8);
+                const env = Math.pow(Math.max(0, Math.min(1, (shore - px) / fade)), 0.6);
+                const h = (hMin + hRange * Math.pow(hash(g, seed, 2), 1.3)) * env;
+                if (h < 2)
+                    continue;
+                out.push({
+                    px, ay: SEA - h, h,
+                    sl: 0.7 + 0.55 * hash(g, seed, 3), sr: 0.7 + 0.55 * hash(g, seed, 4),
+                    skew: (hash(g, seed, 5) - 0.5) * 0.7, id: ((g * 31 + seed) & 0xffff) + 1000,
+                });
+            }
+            return out;
+        };
+        const drawRange = (peaks, pal, haze) => {
+            for (let x = camX; x < camX + W; x++) {
+                let best = null, top = SEA + 1;
+                for (const pk of peaks) {
+                    const ty = pk.ay + Math.abs(x - pk.px) * (x < pk.px ? pk.sl : pk.sr);
+                    if (ty < top) {
+                        top = ty;
+                        best = pk;
+                    }
+                }
+                if (!best)
+                    continue;
+                const pk = best;
+                const T = Math.round(top + (vnoise(pk.id, x / 3, 0, 1 << 20) - 0.5) * 2.2);
+                for (let y = Math.max(T, camY); y <= SEA; y++) {
+                    const r = (y - pk.ay) / pk.h;
+                    const lit = x > pk.px + (y - pk.ay) * pk.skew + (vnoise(pk.id + 5, x / 4, y / 4, 1 << 20) - 0.5) * 3;
+                    const gully = vnoise(pk.id + 9, x / 2.6, 0, 1 << 20);
+                    const tongue = Math.max(0, Math.min(1, (gully - 0.5) / 0.3));
+                    let snowLine = 0.4 + 0.26 * (vnoise(pk.id + 3, x / 5, 0, 1 << 20) - 0.5) + 0.3 * tongue * tongue;
+                    if (gully < 0.28)
+                        snowLine -= 0.1;
+                    const snow = pk.h > 8 && r < snowLine;
+                    let c = snow ? (lit ? pal[3] : pal[2]) : lit ? pal[1] : pal[0];
+                    if (y === T && lit && snow)
+                        c = pal[4];
+                    const fog = Math.min(1, haze + Math.max(0, (y - (SEA - 16)) / 16) * 0.42);
+                    const q = Math.floor(fog * 4 + bay(x, y)) / 4;
+                    mtn.p(x, y, mix(c, HAZE, q * 0.8));
+                }
+            }
+        };
+        const FAR_SHORE = 398, NEAR_SHORE = 372;
+        drawRange([...peaksFor(41, 30, 12, 20, FAR_SHORE), ...peaksFor(42, 12, 3, 7, FAR_SHORE, 40)], [hx("#131e4c"), hx("#19285a"), hx("#273a70"), hx("#4760a0"), hx("#6178b2")], 0.3);
+        drawRange([...peaksFor(51, 36, 16, 26, NEAR_SHORE), ...peaksFor(52, 13, 3, 8, NEAR_SHORE, 36)], [hx("#0c1435"), hx("#152152"), hx("#2a3d76"), hx("#6d87c4"), hx("#a2b6e4")], 0.02);
+        shoreAt = new Int16Array(W).fill(-32768);
+        const stripTop = new Int16Array(W).fill(SEA);
+        const forestCol = (haze) => mix(C.v1, HAZE, haze);
+        const snowCol = (haze) => mix(C.ss, HAZE, haze);
+        for (let X = 0; X < W; X++) {
+            const x = X + camX;
+            if (x <= NEAR_SHORE + 4) {
+                const tip = Math.max(0, (x - (NEAR_SHORE - 26)) / 30);
+                const wl = SEA + 1 + (vnoise(91, x / 9, 0, 1 << 20) > 0.62 ? 1 : 0) + Math.round(tip * 1.5);
+                const fh = Math.max(0, Math.round(2 + 1.6 * vnoise(92, x / 4, 0, 1 << 20) - tip * 2.5)) + (x % 3 === 1 && hash(x, 0, 93) < 0.6 ? 1 : 0);
+                for (let y = Math.min(wl - 1 - fh, SEA + 1); y < wl; y++)
+                    mtn.p(x, y, forestCol(0.36));
+                const beach = vnoise(96, x / 5, 0, 1 << 20);
+                mtn.p(x, wl, beach < 0.3 ? mix(C.v0, HAZE, 0.3) : snowCol(beach > 0.7 ? 0.38 : 0.5));
+                if (beach > 0.8)
+                    mtn.p(x, wl - 1, snowCol(0.5));
+                shoreAt[X] = wl;
+                stripTop[X] = beach > 0.8 ? wl - 1 : wl;
+            }
+        }
+        for (let i = 0; i < W * H; i++)
+            if (mtn.d[i])
+                sky.d[i] = mtn.d[i];
+        const WATER = [C.v0, C.v1, hx("#0a1642"), C.n1, C.n2, C.sl];
+        for (let Y = Math.max(0, SEA + 1 - camY); Y < H; Y++) {
+            const y = Y + camY, dd = y - SEA;
+            for (let X = 0; X < W; X++) {
+                if (mtn.d[Y * W + X])
+                    continue;
+                const x = X + camX;
+                let v = 0.12 + 0.83 * Math.exp(-dd / 28);
+                v += 0.28 * Math.exp(-Math.pow((x - mx) / (10 + dd * 0.5), 2)) * Math.exp(-dd / 140);
+                let c = ramp(WATER, v, x, y);
+                const wl = shoreAt[X] > -32768 ? shoreAt[X] : SEA;
+                const rd = y - wl;
+                if (rd > 0 && rd < 48) {
+                    const wob = rd > 3 ? Math.round(1.5 * Math.sin(y * 2.1)) : 0;
+                    const SX = x + wob - camX, SY = stripTop[X] - rd - camY;
+                    if (SX >= 0 && SY >= 0 && SX < W && SY < H) {
+                        const m = mtn.d[SY * W + SX];
+                        const w = (rd > 3 && y % 4 === 0 ? 0.25 : 0.65) * (1 - rd / 48);
+                        if (m)
+                            c = mix(c, mix(m, C.v1, 0.5), w);
+                    }
+                }
+                sky.d[Y * W + X] = c;
+            }
+        }
+        const ridgeNear = (x) => 186 + 3 * Math.sin(x * 0.035 + 1) + 2 * Math.sin(x * 0.09) + Math.max(0, x - 296) * 0.45;
+        for (let x = camX; x < Math.min(340, camX + W); x++) {
+            const T = Math.round(ridgeNear(x));
+            for (let y = T; y < 206; y++)
+                sky.p(x, y, y === T ? C.n1 : C.v1);
+        }
+        for (let g = Math.floor(camX / 9); g * 9 < Math.min(318, camX + W); g++) {
+            if (hash(g, 0, 31) < 0.35)
+                continue;
+            const cx = g * 9 + Math.floor(hash(g, 1, 31) * 6);
+            if (cx > 318)
+                continue;
+            const h = 5 + Math.floor(hash(g, 2, 31) * 10);
+            const base = Math.round(ridgeNear(cx)) + 1;
+            if (base > 195)
+                continue;
+            for (let j = 0; j < h; j++) {
+                const hw = Math.floor((j / h) * h * 0.28);
+                for (let i = -hw; i <= hw; i++)
+                    sky.p(cx + i, base - h + j, j === 0 ? C.sl : i === hw && j % 3 === 0 ? C.n2 : C.v1);
+            }
+        }
+    }
+    function buildMoon() {
+        const R = MOON_R, L = new Layer(2 * R + 3, 2 * R + 3, -R - 1, -R - 1);
+        for (let dy = -R - 1; dy <= R + 1; dy++)
+            for (let dx = -R - 1; dx <= R + 1; dx++) {
+                const d = Math.hypot(dx, dy);
+                if (d > R + 0.3)
+                    continue;
+                const n = vnoise(61, (dx + 40) / 5, (dy + 40) / 5, 1 << 20) * 0.6 + vnoise(62, (dx + 40) / 2.4, (dy + 40) / 2.4, 1 << 20) * 0.4;
+                const lit = (dx * 0.55 + dy * 0.5) / R;
+                let c = lit < -0.3 ? C.m4 : lit > 0.55 ? C.m2 : C.m3;
+                if (n > 0.55)
+                    c = lit > 0.4 ? C.m1 : C.m2;
+                if (n > 0.67)
+                    c = C.m1;
+                if (d > R - 0.9)
+                    c = lit < -0.2 ? C.m3 : C.m1;
+                L.p(dx, dy, c);
+            }
+        for (const [cx, cy, r] of [[-5, 5, 2.2], [6, -4, 1.6], [2, 9, 1.2], [-7, -6, 1.2], [9, 5, 1.4], [-1, -10, 1]]) {
+            for (let dy = -2; dy <= 2; dy++)
+                for (let dx = -2; dx <= 2; dx++) {
+                    const d = Math.hypot(dx, dy);
+                    if (d <= r - 0.4)
+                        L.p(cx + dx, cy + dy, C.m1);
+                    else if (d <= r + 0.6 && dx + dy < 0)
+                        L.p(cx + dx, cy + dy, C.m4);
+                }
+        }
+        moonSpr = L;
+        moonCover = new Uint8Array(W * H);
+        for (let dy = -R - 1; dy <= R + 1; dy++)
+            for (let dx = -R - 1; dx <= R + 1; dx++) {
+                const X = moonX + dx - camX, Y = moonY + dy - camY;
+                if (X < 0 || Y < 0 || X >= W || Y >= H || Math.hypot(dx, dy) > R + 0.3)
+                    continue;
+                moonCover[Y * W + X] = 1;
+            }
+    }
+    function buildClouds() {
+        const make = (seed, yTop, yBot, mask, cols, th) => {
+            const top = Math.min(yTop, camY);
+            const L = new Layer(W, Math.max(1, yBot - top), 0, top);
+            const dens = (X, y) => fbmTile(seed, X, y, W, 110, 4, 1.9) * mask(y);
+            for (let Y = 0; Y < L.h; Y++) {
+                const y = Y + top;
+                for (let X = 0; X < W; X++) {
+                    const d = dens(X, y);
+                    if (d + (bay(X, y) - 0.5) * 0.06 < th)
+                        continue;
+                    const dd = d - th;
+                    let c = dd > 0.12 ? cols[0] : dd > 0.05 ? cols[1] : cols[2];
+                    if (dens(X, y - 2) < th)
+                        c = cols[3];
+                    L.d[Y * W + X] = c;
+                }
+            }
+            return L;
+        };
+        cloudFar = make(101, 0, 132, (y) => 0.6 + 0.5 * Math.max(0, Math.min(1, 1 - (y - 20) / 110)), [C.n2, C.sl, C.sl, C.bl], 0.6);
+        cloudNear = make(202, 0, 150, (y) => 0.3 + 0.55 * Math.max(0, 1 - Math.abs(y - 85) / 60), [C.n1, C.n2, C.n2, C.st], 0.66);
+        cloudFarY = cloudFar.oy;
+    }
+    function buildMist() {
+        const make = (seed, h) => {
+            const L = new Layer(W, h, 0, 0);
+            for (let Y = 0; Y < h; Y++)
+                for (let X = 0; X < W; X++) {
+                    const n = fbmTile(seed, X, Y, W, 90, 3, 2.6);
+                    const d = n * Math.sin((Math.PI * Y) / h) * 1.45 + (bay(X, Y) - 0.5) * 0.08;
+                    if (d > 0.98)
+                        L.d[Y * W + X] = C.mi3;
+                    else if (d > 0.89)
+                        L.d[Y * W + X] = C.mi2;
+                    else if (d > 0.8)
+                        L.d[Y * W + X] = C.mi1;
+                }
+            return L;
+        };
+        mist = make(303, 22);
+        mistY = 158;
+        mist2 = make(404, 30);
+        mist2Y = 186;
+    }
+    function pine(L, cx, by, h, sd) {
+        L.r(cx - 1, by - 4, 2, 4, C.w0);
+        const top = by - h, tiers = Math.max(2, Math.round(h / 10)), th = (h - 4) / tiers, maxW = h * 0.3;
+        for (let y = top; y < by - 3; y++) {
+            const rel = (y - top) / (h - 4);
+            const k = ((y - top) % th) / th;
+            const hw = Math.max(0.5, maxW * (0.22 + 0.78 * rel) * (0.45 + 0.55 * k));
+            for (let x = Math.floor(cx - hw); x <= Math.ceil(cx + hw); x++) {
+                const dx = x - cx;
+                let c = C.v1;
+                if (dx > hw * 0.35)
+                    c = C.n1;
+                if (dx > hw - 1.2)
+                    c = C.n2;
+                if (k > 0.8 && hash(x, y, sd) < 0.55)
+                    c = dx > 0 ? C.ss : C.fr;
+                if (y === top)
+                    c = C.sn;
+                L.p(x, y, c);
+            }
+        }
+    }
+    function buildWorld() {
+        const L = (world = new Layer(W, H, camX, camY));
+        const x0 = camX, x1 = camX + W, y1 = camY + H;
+        for (let x = x0; x < x1; x++) {
+            const T = surfTop(x);
+            const lb = lipBottom(x);
+            for (let y = Math.max(T, camY); y < y1; y++) {
+                if (y <= 215) {
+                    if (x >= surfEdge(y))
+                        continue;
+                    if (y >= 214) {
+                        L.p(x, y, y === 214 ? C.sh : C.fr);
+                        continue;
+                    }
+                    const f = (y - T) / Math.max(1, 214 - T);
+                    const n = vnoise(7, x / 9, y / 3, 1 << 20);
+                    let v = 0.32 + 0.4 * f + 0.3 * (n - 0.5);
+                    if ((y + Math.round(3 * Math.sin(x * 0.05))) % 5 === 0 && n > 0.55)
+                        v -= 0.18;
+                    let c = ramp([C.bl, C.fr, C.ss, C.sn], v, x, y);
+                    if (y === T)
+                        c = C.sn;
+                    if (x >= surfEdge(y) - 1)
+                        c = C.sh;
+                    L.p(x, y, c);
+                }
+                else {
+                    if (y < lb) {
+                        if (x < surfEdge(215))
+                            L.p(x, y, C.fr);
+                        continue;
+                    }
+                    const ex = cliffX(y);
+                    if (x >= ex)
+                        continue;
+                    const dd = y - 216;
+                    const band = Math.floor((y + 3 * Math.sin(x * 0.04) + 2 * Math.sin(x * 0.11)) / 6);
+                    const n = vnoise(9, x / 7, y / 4, 1 << 20);
+                    const v = (1 - dd / 70) * 0.9 + (band & 1 ? 0.08 : -0.04) + (n - 0.5) * 0.25;
+                    let c = ramp([C.v0, C.v1, C.r0, C.r1, C.r2], v, x, y);
+                    if (hash(x >> 2, y >> 1, 13) < 0.007 && dd > 6)
+                        c = C.st;
+                    if (hash(x, y, 14) < 0.0025 && dd > 4 && x < ex - 3)
+                        c = C.py1;
+                    if (x >= ex - 1)
+                        c = dd < 40 ? C.r4 : C.r3;
+                    else if (x >= ex - 2)
+                        c = C.r3;
+                    L.p(x, y, c);
+                }
+            }
+        }
+        for (let g = Math.floor(x0 / 14); g * 14 < x1; g++) {
+            if (hash(g, 0, 51) < 0.45)
+                continue;
+            const sx = g * 14 + Math.floor(hash(g, 1, 51) * 10);
+            const sy = 222 + Math.floor(hash(g, 2, 51) * 60);
+            const rw = 2 + Math.floor(hash(g, 3, 51) * 3), rh = 1 + Math.floor(hash(g, 4, 51) * 2);
+            if (sx + rw >= cliffX(sy) - 2 || sy > y1)
+                continue;
+            for (let j = -rh; j <= rh; j++)
+                for (let i = -rw; i <= rw; i++) {
+                    if ((i * i) / (rw * rw) + (j * j) / (rh * rh) > 1)
+                        continue;
+                    L.p(sx + i, sy + j, j < 0 ? C.r3 : C.r2);
+                }
+        }
+        for (const rx of [22, 48, 76, 104, 150, 168, 196, 300]) {
+            let x = rx, len = 6 + Math.floor(hash(rx, 0, 61) * 12);
+            for (let j = 0; j < len; j++) {
+                L.p(x, 217 + j, C.w1);
+                if (hash(rx, j, 62) < 0.3)
+                    x += hash(rx, j, 63) < 0.5 ? -1 : 1;
+            }
+        }
+        for (let x = x0; x < Math.min(344, x1); x++) {
+            if (hash(x, 0, 77) > 0.2)
+                continue;
+            const len = 1 + Math.floor(hash(x, 1, 77) * (x > 330 ? 8 : 5));
+            for (let j = 0; j < len; j++)
+                L.p(x, lipBottom(x) + j, j === 0 ? C.sn : C.fr);
+        }
+        const pines = [[18, 200, 62], [44, 201, 46], [72, 200, 54], [98, 201, 36], [118, 202, 24], [8, 203, 30]];
+        for (let g = Math.floor((x0 - 30) / 21); g < 0; g++) {
+            if (hash(g, 0, 71) < 0.2)
+                continue;
+            pines.push([g * 21 + Math.floor(hash(g, 1, 71) * 9), 200 + Math.floor(hash(g, 2, 71) * 3), 26 + Math.floor(hash(g, 3, 71) * 40)]);
+        }
+        pines.sort((a, b) => a[1] - b[1]);
+        pines.forEach(([cx, by, h], i) => pine(L, cx, by, h, i + 3));
+        for (const [fx, fy] of [[90, 205], [102, 204], [114, 205]]) {
+            L.r(fx, fy - 10, 2, 10, C.w1);
+            L.p(fx + 1, fy - 10, C.w2);
+            L.r(fx, fy - 11, 2, 1, C.sn);
+        }
+        L.r(90, 197, 24, 1, C.w0);
+        L.r(90, 201, 14, 1, C.w0);
+        L.r(90, 196, 24, 1, C.ss);
+        drawHouse(L);
+        drawYard(L);
+    }
+    function drawHouse(L) {
+        const { x0, x1, y0, y1, peakX } = HOUSE;
+        for (let y = 196; y < 206; y++)
+            for (let x = 127; x < 136; x++) {
+                const edge = x === 127 || x === 135;
+                L.p(x, y, y === 198 || y === 203 ? C.w0 : edge ? C.w1 : x > 132 ? C.w3 : C.w2);
+            }
+        L.r(127, 195, 9, 1, C.n1);
+        L.r(128, 195, 7, 1, C.st);
+        L.p(129, 195, C.fr);
+        for (let y = y0; y < y1; y++)
+            for (let x = x0; x < x1; x++) {
+                let c = (y - y0) % 4 === 0 ? C.w0 : C.w1;
+                if ((x + ((y - y0) >> 2) * 7) % 17 === 0)
+                    c = C.w0;
+                if ((y - y0) % 4 === 1 && hash(x, y, 3) < 0.3)
+                    c = C.w2;
+                L.p(x, y, c);
+            }
+        L.r(x0, y0, 2, y1 - y0, C.w0);
+        L.r(x1 - 2, y0, 2, y1 - y0, C.w0);
+        for (let y = y0; y < y1; y++)
+            L.p(x1 - 1, y, C.w2);
+        for (let y = HOUSE.peakY + 3; y < y0; y++)
+            for (let x = x0; x < x1; x++) {
+                if (Math.abs(x - peakX) >= y - HOUSE.peakY - 2)
+                    continue;
+                L.p(x, y, x % 3 === 0 ? C.w0 : hash(x, y, 4) < 0.15 ? C.w2 : C.w1);
+            }
+        L.r(x0 - 1, y0 - 1, x1 - x0 + 2, 1, C.w0);
+        for (let y = 202; y < 207; y++)
+            for (let x = x0 - 1; x <= x1; x++) {
+                const row = y - 202, bx = Math.floor((x + (row & 1 ? 2 : 0)) / 4);
+                L.p(x, y, (x + (row & 1 ? 2 : 0)) % 4 === 0 || row === 2 ? C.r1 : hash(bx, row, 5) < 0.5 ? C.r3 : C.r2);
+            }
+        for (let y = 118; y < roofY(188); y++)
+            for (let x = 188; x < 196; x++) {
+                const row = Math.floor((y - 118) / 3), off = row & 1 ? 2 : 0;
+                let c = (y - 118) % 3 === 0 || (x + off) % 4 === 0 ? C.r1 : hash(Math.floor((x + off) / 4), row, 6) < 0.5 ? C.r2 : C.r3;
+                if (x === 195)
+                    c = C.r4;
+                L.p(x, y, c);
+            }
+        L.r(187, 116, 10, 2, C.r3);
+        L.r(187, 116, 10, 1, C.r4);
+        L.r(187, 114, 10, 2, C.sn);
+        L.r(188, 113, 8, 1, C.sh);
+        for (let x = 132; x <= 214; x++) {
+            const ry = roofY(x);
+            if (ry > 170)
+                continue;
+            L.p(x, ry, C.w0);
+            L.p(x, ry + 1, C.w0);
+            L.p(x, ry + 2, C.w1);
+            const thick = 3 + Math.round(hash(x >> 2, 0, 8) * 2);
+            const right = x > peakX;
+            for (let j = 1; j <= thick; j++) {
+                let c = right ? C.sn : C.ss;
+                if (j === thick)
+                    c = right ? C.sh : C.sn;
+                if (j === 1)
+                    c = right ? C.ss : C.fr;
+                L.p(x, ry - j, c);
+            }
+        }
+        for (let j = 0; j < 4; j++) {
+            L.p(peakX - 1, HOUSE.peakY - 4 - j * 0, C.sn);
+        }
+        L.r(peakX - 2, HOUSE.peakY - 5, 5, 1, C.sh);
+        for (const x of [133, 135, 136, 138, 141, 205, 208, 209, 211, 213]) {
+            const len = 1 + Math.floor(hash(x, 0, 9) * 4);
+            for (let j = 0; j < len; j++)
+                L.p(x, roofY(x) + 3 + j, j === 0 ? C.sn : C.fr);
+        }
+        for (const w of [WIN_L, WIN_R]) {
+            L.r(w.x - 1, w.y - 1, w.w + 2, w.h + 2, C.w0);
+            L.r(w.x - 2, w.y - 2, w.w + 4, 1, C.ss);
+            L.r(w.x - 2, w.y + w.h + 1, w.w + 4, 1, C.w2);
+            L.r(w.x - 2, w.y + w.h, w.w + 4, 1, C.sn);
+            L.p(w.x - 2, w.y + w.h + 2, C.fr);
+            L.p(w.x + w.w + 1, w.y + w.h + 2, C.fr);
+        }
+        L.r(WIN_A.x - 1, WIN_A.y - 1, WIN_A.w + 2, WIN_A.h + 2, C.w0);
+        L.r(WIN_A.x - 1, WIN_A.y + WIN_A.h + 1, WIN_A.w + 2, 1, C.ss);
+        for (let y = 184; y < 206; y++)
+            for (let x = 166; x < 178; x++)
+                L.p(x, y, (x - 166) % 3 === 0 ? C.w1 : C.w2);
+        L.r(165, 183, 14, 1, C.w0);
+        L.r(165, 183, 1, 23, C.w0);
+        L.r(178, 183, 1, 23, C.w0);
+        L.r(166, 190, 12, 1, C.w1);
+        L.r(166, 199, 12, 1, C.w1);
+        L.p(169, 195, C.r4);
+        L.r(164, 205, 16, 1, C.ss);
+        L.r(165, 204, 14, 1, C.sn);
+        L.r(180, 179, 4, 1, C.w0);
+        L.p(181, 178, C.sn);
+        L.p(182, 178, C.sn);
+        for (let x = x0 - 2; x <= x1 + 1; x++) {
+            if (x >= 164 && x <= 179)
+                continue;
+            const h = 1 + Math.round(1.5 + 1.5 * Math.sin(x * 0.3) + hash(x, 0, 10));
+            for (let j = 0; j < h; j++)
+                L.p(x, 206 - j, j === h - 1 ? C.sn : C.ss);
+        }
+        const ly = (x) => Math.round(180 + (x - 204) / 4);
+        for (let x = 206; x < 234; x++)
+            for (let y = ly(x) + 2; y < 206; y++)
+                L.p(x, y, x === 233 ? C.w1 : C.w0);
+        for (let row = 0; row < 4; row++)
+            for (let col = 0; col < 8; col++) {
+                const cx = 209 + col * 3 + (row & 1), cy = 203 - row * 3;
+                if (cx > 231)
+                    continue;
+                L.p(cx, cy, C.w4);
+                L.p(cx + 1, cy, C.w3);
+                L.p(cx, cy + 1, C.w3);
+                L.p(cx + 1, cy + 1, C.w2);
+            }
+        for (let x = 208; x < 233; x++)
+            if (hash(x, 0, 12) < 0.6)
+                L.p(x, 191 + ((x >> 1) & 1), C.ss);
+        for (let x = 204; x <= 236; x++) {
+            const y = ly(x);
+            L.p(x, y, C.w0);
+            L.p(x, y + 1, C.w1);
+            L.p(x, y - 1, C.ss);
+            L.p(x, y - 2, C.sn);
+            if (hash(x >> 1, 1, 12) < 0.6)
+                L.p(x, y - 3, C.sh);
+        }
+        L.r(233, 188, 1, 18, C.w1);
+    }
+    function drawYard(L) {
+        L.r(238, 202, 7, 6, C.w2);
+        L.r(238, 202, 1, 6, C.w1);
+        L.r(243, 202, 2, 6, C.w3);
+        L.r(238, 201, 7, 1, C.w4);
+        L.r(239, 200, 5, 1, C.sn);
+        for (let j = 0; j < 6; j++)
+            L.p(241 + (j >> 1), 200 - j, C.w3);
+        L.r(240, 199, 2, 2, C.r4);
+        L.p(239, 200, C.r3);
+        for (let y = 205; y < 210; y++)
+            for (let x = 246; x < 264; x++)
+                L.p(x, y, y === 205 ? C.w3 : y === 209 ? C.w0 : (x + y) % 7 === 0 ? C.w1 : C.w2);
+        L.r(263, 205, 1, 5, C.w4);
+        L.p(263, 207, C.w3);
+        for (let x = 246; x < 252; x++)
+            L.p(x, 204, C.ss);
+        for (let i = 0; i < 7; i++) {
+            const sx = 269 + i * 3 + (i > 3 ? 1 : 0);
+            L.r(sx, 209, 3, 2, C.r3);
+            L.p(sx + 1, 208, C.ss);
+            L.p(sx, 211, C.r2);
+            L.p(sx + 1, 211, C.r2);
+        }
+        for (let i = 0; i < 12; i++) {
+            L.p(273 + i, 208 - (i >> 2), C.w2);
+            L.p(285 - i, 208 - (i >> 2), C.w1);
+        }
+        L.r(272, 208, 15, 1, C.w0);
+        L.r(324, 186, 2, 24, C.w1);
+        L.r(325, 186, 1, 24, C.w2);
+        L.r(324, 186, 9, 1, C.w0);
+        L.r(324, 185, 8, 1, C.ss);
+        L.p(332, 186, C.w0);
+        L.r(321, 208, 8, 2, C.ss);
+        L.r(322, 207, 6, 1, C.sn);
+        for (let i = 0; i < 16; i++) {
+            const fx = 180 + i * 4.6, fy = 209 + ((i & 1) ? 1 : -0) + Math.round(i * 0.05);
+            if (fx > 236 && fx < 246)
+                continue;
+            L.p(fx, fy, C.bl);
+            L.p(fx + 1, fy, C.fr);
+        }
+    }
+    function lightMap(fn, bx0, by0, bx1, by1) {
+        const X0 = Math.max(0, bx0 - camX), Y0 = Math.max(0, by0 - camY);
+        const X1 = Math.min(W, bx1 - camX), Y1 = Math.min(H, by1 - camY);
+        const w = Math.max(0, X1 - X0), h = Math.max(0, Y1 - Y0);
+        const lv = new Uint8Array(w * h);
+        for (let Y = Y0; Y < Y1; Y++)
+            for (let X = X0; X < X1; X++) {
+                const x = X + camX, y = Y + camY;
+                let I = fn(x, y);
+                if (y > 216)
+                    I *= 0.3;
+                const q = Math.min(8, Math.floor(I * 8 + bay(x, y)));
+                lv[(Y - Y0) * w + (X - X0)] = q > 0 ? q : 0;
+            }
+        return { x0: X0, y0: Y0, w, h, lv };
+    }
+    function buildLights() {
+        lFire = lightMap(fireFn, FIRE.x - 110, 100, FIRE.x + 110, 290);
+        lHouse = lightMap(houseFn, 110, 120, 230, 222);
+        lLant = lightMap(lanternFn, LANTERN.x - 50, 140, LANTERN.x + 50, 240);
+        const moonFn = (x, y) => {
+            const d = Math.hypot(x - moonX, y - moonY);
+            if (d < MOON_R - 0.7)
+                return 0.15;
+            return 0.85 * Math.pow(Math.max(0, 1 - Math.max(0, d - MOON_R) / 95), 2.3);
+        };
+        lMoon = lightMap(moonFn, moonX - 115, moonY - 115, moonX + 115, moonY + 115);
+        warm = new Float32Array(W * H);
+        for (let Y = 0; Y < H; Y++)
+            for (let X = 0; X < W; X++) {
+                const x = X + camX, y = Y + camY;
+                if (x < 100 || x > 400 || y < 90 || y > 240)
+                    continue;
+                warm[Y * W + X] = fireFn(x, y) + houseFn(x, y) * 0.8 + lanternFn(x, y) * 0.8;
+            }
+    }
+    function buildParticles() {
+        const SPREAD = 150;
+        const area = ((W + SPREAD) * H) / (480 * 270);
+        const layer = (n, kMin, kRange, l) => Array.from({ length: Math.round(n * area) }, (_, i) => ({
+            y0: hash(i, l, 1),
+            k: kMin + Math.floor(hash(i, l, 2) * kRange),
+            layer: l,
+            seed: i + l * 10007,
+        }));
+        flakes = [...layer(72, 4, 5, 0), ...layer(54, 7, 6, 1), ...layer(14, 12, 7, 2)];
+        groundX0 = Math.max(camX - 80, -4000);
+        groundX1 = Math.min(336, camX + W);
+        const groundN = Math.max(0, Math.round((120 * (groundX1 - groundX0)) / 420));
+        const LIFE = [2.2, 1.6, 4.5];
+        drifts = [];
+        [48, Math.round(groundN * 1.6), 44].forEach((n, src) => {
+            for (let i = 0; i < n; i++) {
+                const per = LIFE[src] * (1.3 + 0.7 * hash(i, src, 71));
+                drifts.push({ m: Math.max(1, Math.round(LOOP_SECONDS / per)), ph: hash(i, src, 72), src, seed: i + src * 7919 });
+            }
+        });
+    }
+    function buildVignette() {
+        vig = new Uint16Array(W * H);
+        for (let Y = 0; Y < H; Y++)
+            for (let X = 0; X < W; X++) {
+                const dx = (X - W / 2) / (W / 2), dy = (Y - H / 2) / (H / 2);
+                const r = dx * dx * 0.55 + dy * dy * 0.75;
+                const v = Math.max(0, Math.min(1, (r - 0.35) / 0.9)) * 0.55;
+                vig[Y * W + X] = 256 - Math.round(v * 136);
+            }
+    }
+    const put = (x, y, c) => {
+        const X = Math.round(x) - camX, Y = Math.round(y) - camY;
+        if (X < 0 || Y < 0 || X >= W || Y >= H)
+            return;
+        FB[Y * W + X] = c;
+    };
+    const blend = (x, y, c, a) => {
+        const X = Math.round(x) - camX, Y = Math.round(y) - camY;
+        if (X < 0 || Y < 0 || X >= W || Y >= H)
+            return;
+        const i = Y * W + X;
+        FB[i] = mix(FB[i], c, a);
+    };
+    const warmAt = (x, y) => {
+        const X = Math.round(x) - camX, Y = Math.round(y) - camY;
+        if (X < 0 || Y < 0 || X >= W || Y >= H)
+            return 0;
+        return warm[Y * W + X];
+    };
+    function blitFull(L) {
+        const d = L.d;
+        for (let i = 0; i < d.length; i++) {
+            const s = d[i];
+            if (s)
+                FB[i] = s;
+        }
+    }
+    function blitScroll(L, worldY, off, veil, alpha = 1) {
+        const Y0 = worldY - camY;
+        off = ((off % W) + W) % W;
+        for (let y = 0; y < L.h; y++) {
+            const Y = Y0 + y;
+            if (Y < 0 || Y >= H)
+                continue;
+            const row = y * W, frow = Y * W;
+            for (let X = 0; X < W; X++) {
+                let sx = X - off;
+                if (sx < 0)
+                    sx += W;
+                const s = L.d[row + sx];
+                if (!s)
+                    continue;
+                const i = frow + X;
+                FB[i] = veil && veil[i] ? mix(FB[i], s, 0.5) : alpha < 1 ? mix(FB[i], s, alpha) : s;
+            }
+        }
+    }
+    function blitSprite(L, x, y) {
+        for (let j = 0; j < L.h; j++)
+            for (let i = 0; i < L.w; i++) {
+                const s = L.d[j * L.w + i];
+                if (s)
+                    put(x + i, y + j, s);
+            }
+    }
+    const quant = (v, steps) => Math.round(v * steps) / steps;
+    function applyLight(m, tr, tg, tb, kmax, fl) {
+        const ks = [];
+        for (let q = 0; q <= 8; q++)
+            ks[q] = (q / 8) * kmax * fl;
+        for (let y = 0; y < m.h; y++) {
+            const frow = (m.y0 + y) * W + m.x0, lrow = y * m.w;
+            for (let x = 0; x < m.w; x++) {
+                const q = m.lv[lrow + x];
+                if (!q)
+                    continue;
+                const i = frow + x, c = FB[i];
+                const r = c & 255, g = (c >>> 8) & 255, b = (c >>> 16) & 255;
+                const s = Math.min(1, ((r * 77 + g * 150 + b * 29) >> 8) / 255 * 1.5 + 0.22);
+                const k = Math.min(1, ks[q]);
+                FB[i] = pack(r + (tr * s - r) * k, g + (tg * s - g) * k, b + (tb * s - b) * k);
+            }
+        }
+    }
+    function stokeState(t) {
+        let d = 1e9, n = 0;
+        STOKES.forEach((f, i) => { const s = since(t, f * LOOP_SECONDS); if (s >= 0 && s < d) {
+            d = s;
+            n = i;
+        } });
+        return { d, n };
+    }
+    const flareOf = (d) => (d < 1.5 || d > 16 ? 0 : Math.exp(-(d - 1.5) / 2.8) * Math.min(1, (d - 1.5) * 5));
+    function walker(t) {
+        for (const [f, keys] of WALKS) {
+            const d = since(t, f * LOOP_SECONDS);
+            if (d < 0 || d > keys[keys.length - 1][0])
+                continue;
+            for (let i = 1; i < keys.length; i++) {
+                const [t0, xa] = keys[i - 1], [t1, xb] = keys[i];
+                if (d <= t1)
+                    return { x: xa + (xb - xa) * ((d - t0) / (t1 - t0)), moving: xa !== xb };
+            }
+        }
+        return null;
+    }
+    function drawWindow(w, fl, dim, t, cat, who, moving = false) {
+        const cx = w.x + (w.w - 1) / 2, cy = w.y + (w.h - 1) / 2;
+        const ramp5 = [C.i0, C.i1, C.i2, C.i3, C.i4];
+        const bob = who !== null && moving && Math.floor(t * 2.4) % 2 ? 1 : 0;
+        for (let y = w.y; y < w.y + w.h; y++)
+            for (let x = w.x; x < w.x + w.w; x++) {
+                let v = 0.32 + 0.4 * ((y - w.y) / w.h) + 0.25 * (1 - Math.abs(x - cx) / (w.w / 2));
+                v = v * (0.72 + (fl - 0.85) * 2.6) * dim;
+                let c = ramp(ramp5, v, x, y);
+                if (who !== null) {
+                    const hy = w.y + 3 + bob, dx = x - who;
+                    const head = dx * dx + (y - hy) * (y - hy) * 1.3 <= 3.4;
+                    const body = y >= hy + 3 && Math.abs(dx) <= (y >= hy + 4 ? 3.6 : 2);
+                    if (head || body)
+                        c = mix(c, C.w1, 0.74);
+                }
+                if (x === w.x || x === w.x + w.w - 1)
+                    c = C.ru;
+                if (Math.round(x) === Math.round(cx) || Math.round(y) === Math.round(cy))
+                    c = C.w0;
+                put(x, y, c);
+            }
+        if (cat) {
+            const bx = w.x + 2, by = w.y + w.h - 1;
+            const body = ["k.k...", "kkk...", "kkkk..", "kkkkk.", "kkkkkk"];
+            body.forEach((row, j) => { for (let i = 0; i < row.length; i++)
+                if (row[i] === "k")
+                    put(bx + i, by - 4 + j, C.w0); });
+            const sw = cyc(t, 8);
+            put(bx + 6, by, C.w0);
+            put(bx + 7, by - (sw > 0.3 ? 1 : 0), C.w0);
+            put(bx + 7 + (sw > 0.7 ? 1 : 0), by - 1 - (sw > -0.2 ? 1 : 0), C.w0);
+        }
+    }
+    function drawFire(t, fl, lean, flare) {
+        const top = 23 + 9 * flare;
+        for (let dy = 0; dy < 34; dy++) {
+            const y = FIRE.y - dy;
+            const hw0 = 6.8 * Math.pow(Math.max(0, 1 - dy / (top + 2)), 0.85);
+            const sway = 0.6 * Math.sin((TAU * (28 * t)) / BEAT + dy * 0.3) * (dy / 25) + lean * Math.pow(dy / 25, 1.3);
+            for (let dx = -10; dx <= 12; dx++) {
+                const adx = Math.abs(dx - sway);
+                if (adx > hw0 + 3)
+                    continue;
+                const shape = 1 - Math.pow(Math.min(1, adx / (hw0 + 0.01)), 2);
+                const hf = 1 - dy / top;
+                const n = 0.5 * Math.sin(0.95 * dx + 0.6 * dy - (TAU * 270 * t) / BEAT) +
+                    0.32 * Math.sin(-1.7 * dx + 0.93 * dy - (TAU * 405 * t) / BEAT + 1.3) +
+                    0.22 * Math.sin(2.6 * dx + 1.4 * dy - (TAU * 585 * t) / BEAT + 2.1);
+                let I = shape * hf * 1.25 + 0.3 * n * (0.4 + dy / 24) - 0.1 + (fl - 0.85) * 0.6 + 0.12 * flare;
+                if (dy < 2)
+                    I += 0.25;
+                const c = I > 0.85 ? C.f4 : I > 0.62 ? C.f3 : I > 0.4 ? C.f2 : I > 0.2 ? C.f1 : I > 0.1 ? C.ru : 0;
+                if (c)
+                    put(FIRE.x + dx, y, c);
+            }
+        }
+        const embers = [[273, 209, 41], [276, 210, 67], [282, 209, 53], [285, 210, 89], [279, 210, 71], [288, 209, 47], [270, 210, 59]];
+        for (const [x, y, f] of embers) {
+            const v = cyc(t, f, x * 0.01) + flare;
+            put(x, y, v > 0.5 ? C.f3 : v > -0.1 ? C.f2 : v > -0.6 ? C.f1 : C.ru);
+        }
+    }
+    function line(x0, y0, x1, y1, c) {
+        const n = Math.max(1, Math.round(Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0))));
+        for (let i = 0; i <= n; i++)
+            put(x0 + ((x1 - x0) * i) / n, y0 + ((y1 - y0) * i) / n, c);
+    }
+    function drawFigure(t, fl, stoke) {
+        const ox = 247, oy = 194;
+        const breathe = cyc(t, 28) > 0.55 ? -1 : 0;
+        const rim = fl > 0.9 ? C.f2 : fl > 0.8 ? C.f1 : C.ru;
+        const face = fl > 0.86 ? hx("#e8a46a") : hx("#c07848");
+        FIGURE.forEach((row, j) => {
+            const yy = oy + j + (j < 8 ? breathe : 0);
+            for (let i = 0; i < row.length; i++) {
+                const ch = row[i];
+                if (ch === ".")
+                    continue;
+                const c = ch === "d" ? C.cl : ch === "m" ? C.cm : ch === "r" ? rim : ch === "f" ? face : ch === "h" ? face : ch === "s" ? C.ss : ch === "c" ? C.sc : C.v0;
+                put(ox + i, yy, c);
+            }
+        });
+        const d = stoke;
+        const reach = d < 1.2 ? d / 1.2 : d < 2.6 ? 1 : d < 3.6 ? 1 - (d - 2.6) : 0;
+        if (reach <= 0)
+            return;
+        const hx0 = ox + 12 + Math.round(reach), hy0 = oy + 8;
+        put(hx0, hy0, face);
+        const poke = d > 1.2 && d < 2.6 ? Math.round(Math.sin((d - 1.2) * 11)) : 0;
+        const tx = hx0 + (FIRE.x - 4 - hx0) * reach + poke, ty = hy0 + (FIRE.y - 3 - hy0) * reach;
+        line(hx0 + 1, hy0, tx, ty, C.w3);
+        if (d > 1.3)
+            put(tx, ty, fl > 0.85 ? C.f3 : C.f2);
+    }
+    function drawShadows(fl) {
+        const shade = (x, y, a) => {
+            const X = x - camX, Y = y - camY;
+            if (X < 0 || Y < 0 || X >= W || Y >= H)
+                return;
+            const i = Y * W + X, base = world.d[i];
+            if (base)
+                FB[i] = mix(FB[i], mix(base, C.bl, 0.25), a);
+        };
+        const L = 21 + Math.round((0.86 - fl) * 30), x1 = 250;
+        for (let x = x1 - L; x <= x1; x++) {
+            const k = (x1 - x) / L, hw = 0.6 + 2 * (1 - k);
+            for (let y = Math.round(209 - hw); y <= Math.round(209 + hw); y++) {
+                if (y > 213 || y < surfTop(x))
+                    continue;
+                if (k > 0.55 && (k - 0.55) / 0.45 > bay(x, y))
+                    continue;
+                shade(x, y, 0.7);
+            }
+        }
+        const L2 = 12 + Math.round((0.86 - fl) * 16);
+        for (let x = 327; x < 327 + L2; x++) {
+            const k = (x - 327) / L2;
+            if (k > 0.5 && (k - 0.5) / 0.5 > bay(x, 209))
+                continue;
+            shade(x, 209, 0.6);
+            if (k < 0.45)
+                shade(x, 208, 0.35);
+        }
+    }
+    function drawBreath(t) {
+        const Tb = BEAT / 28;
+        const p = (((28 * t) / BEAT) % 1 + 1) % 1;
+        const age0 = (p - 0.42) * Tb;
+        if (age0 < 0)
+            return;
+        for (let j = 0; j < 4; j++) {
+            const age = age0 - j * 0.12, life = 1.5;
+            if (age < 0 || age > life)
+                continue;
+            const k = age / life;
+            const x = 258 + age * 5 + 6 * windDisp(t, age) + j * 0.6;
+            const y = 198 - age * 3.5 - j * 0.3;
+            const a = 0.55 * (1 - k);
+            blend(x, y, C.br, a);
+            if (k > 0.2) {
+                blend(x + 1, y, C.br, a * 0.6);
+                blend(x, y - 1, C.br, a * 0.4);
+            }
+        }
+    }
+    function smokeDisk(cx, cy, r, dens, warmTint, a) {
+        const R = Math.ceil(r), icx = Math.round(cx), icy = Math.round(cy);
+        for (let py = -R; py <= R; py++)
+            for (let px = -R; px <= R; px++) {
+                const d2 = (px * px + py * py) / (r * r);
+                if (d2 > 1)
+                    continue;
+                const X = icx + px, Y = icy + py;
+                const l = dens * (1 - 0.6 * d2);
+                if (l <= bay(X, Y))
+                    continue;
+                const c = warmTint ? C.smw : l > 0.4 ? (px - py > r * 0.2 ? C.sm3 : C.sm2) : C.sm1;
+                blend(X, Y, c, a);
+            }
+    }
+    function drawSmoke(t) {
+        const N = 44, T = 15, per = LOOP_SECONDS / T;
+        for (let i = 0; i < N; i++) {
+            const u = t / T + i / N, cy = Math.floor(u), a = u - cy, age = a * T;
+            const h = hash(i, cy % per, 5);
+            const x = CHIMNEY.x + a * 6 + 16 * windDisp(t, age) + Math.sin(a * 5 + h * 6) * 3.5 * a;
+            const y = CHIMNEY.y - 72 * (1 - Math.pow(1 - a, 1.7));
+            const dens = 1.1 * Math.pow(1 - a, 1.4) * Math.min(1, a * 14);
+            if (dens < 0.05)
+                continue;
+            smokeDisk(x, y, 1.8 + a * 11, dens, a < 0.08, 0.55 + 0.25 * (1 - a));
+        }
+        const N2 = 12, T2 = 8, per2 = LOOP_SECONDS / T2;
+        for (let i = 0; i < N2; i++) {
+            const u = t / T2 + i / N2, cy = Math.floor(u), a = u - cy, age = a * T2;
+            const h = hash(i, cy % per2, 6);
+            const x = FIRE.x + a * 6 + 10 * windDisp(t, age) + Math.sin(a * 5 + h * 6) * 2.5;
+            const y = FIRE.y - 22 - 42 * (1 - Math.pow(1 - a, 1.5));
+            const dens = 0.48 * Math.pow(1 - a, 1.4) * Math.min(1, a * 6);
+            if (dens < 0.05)
+                continue;
+            smokeDisk(x, y, 1 + a * 6, dens, a < 0.18, 0.45);
+        }
+    }
+    const sparkCol = (aa) => (aa < 0.2 ? C.f4 : aa < 0.45 ? C.f3 : aa < 0.7 ? C.f2 : aa < 0.9 ? C.f1 : C.ru);
+    function drawSparks(t, stoke) {
+        const N = 34, T = 4, per = LOOP_SECONDS / T;
+        for (let i = 0; i < N; i++) {
+            const u = t / T + i / N, cy = Math.floor(u), a = u - cy;
+            const c0 = cy % per;
+            const life = 0.55 + 0.45 * hash(i, c0, 1);
+            if (a > life)
+                continue;
+            const aa = a / life;
+            const x = FIRE.x + (hash(i, c0, 2) - 0.5) * 8 + aa * (4 + 14 * hash(i, c0, 3)) + 14 * windDisp(t, a * T) + Math.sin(aa * 7 + hash(i, c0, 4) * 6) * 3;
+            const y = FIRE.y - 6 - aa * (30 + 46 * hash(i, c0, 5));
+            if (hash(i, c0, 6) > 0.55 && Math.floor(aa * 24) % 3 === 0)
+                continue;
+            put(x, y, sparkCol(aa));
+        }
+        if (stoke.d < 6) {
+            for (let j = 0; j < 30; j++) {
+                const a = stoke.d - 1.45 - hash(j, stoke.n, 1) * 0.5;
+                const life = 1.1 + 1.6 * hash(j, stoke.n, 2);
+                if (a < 0 || a > life)
+                    continue;
+                const aa = a / life;
+                const x = FIRE.x + (hash(j, stoke.n, 3) - 0.5) * 10 + aa * (hash(j, stoke.n, 4) - 0.35) * 34 + 14 * windDisp(t, a);
+                const y = FIRE.y - 8 - (40 + 75 * hash(j, stoke.n, 5)) * aa * (2 - aa);
+                if (hash(j, stoke.n, 6) > 0.6 && Math.floor(aa * 30) % 3 === 0)
+                    continue;
+                put(x, y, sparkCol(aa));
+            }
+        }
+        const M = 6, T2 = 5, per2 = LOOP_SECONDS / T2;
+        for (let i = 0; i < M; i++) {
+            const u = t / T2 + i / M, cy = Math.floor(u), a = u - cy;
+            const c0 = cy % per2;
+            if (hash(i, c0, 7) < 0.4 || a > 0.6)
+                continue;
+            const aa = a / 0.6;
+            const x = CHIMNEY.x + (hash(i, c0, 8) - 0.5) * 5 + aa * 6 + 12 * windDisp(t, a * T2) + Math.sin(aa * 6) * 2;
+            const y = CHIMNEY.y - 2 - aa * 34;
+            put(x, y, aa < 0.3 ? C.f3 : aa < 0.7 ? C.f2 : C.ru);
+        }
+    }
+    function drawDrift(t) {
+        const LIFE = [2.2, 1.6, 4.5];
+        for (const p of drifts) {
+            const T = LOOP_SECONDS / p.m, u = t / T + p.ph, c = Math.floor(u), age = (u - c) * T;
+            const life = LIFE[p.src];
+            if (age > life)
+                continue;
+            const cm = c % p.m, g = gustAt(t - age);
+            if (hash(p.seed, cm, 1) > g * 1.15 - 0.1)
+                continue;
+            const k = age / life, h = hash(p.seed, cm, 2);
+            let x, y;
+            if (p.src === 0) {
+                const sx = 148 + h * 48;
+                x = sx + 20 * windDisp(t, age);
+                y = roofY(sx) - 5 - 7 * age + 2.5 * age * age;
+            }
+            else if (p.src === 1) {
+                const sx = groundX0 + h * (groundX1 - groundX0);
+                x = sx + 26 * windDisp(t, age);
+                y = surfTop(sx) + 1 + Math.floor(hash(p.seed, cm, 3) * 4) - (3 + 7 * hash(p.seed, cm, 4)) * Math.sin(k * Math.PI);
+            }
+            else {
+                const sx = 328 + h * 16;
+                x = sx + 22 * windDisp(t, age);
+                y = surfTop(sx) - 3 - 3 * age + 1.6 * age * age;
+            }
+            const a = 0.8 * (1 - k) * (0.5 + 0.5 * g);
+            const col = warmAt(x, y) > 0.3 ? C.i3 : C.sh;
+            blend(x, y, col, a);
+            if (p.src === 1) {
+                blend(x - 1, y, col, a * 0.5);
+                blend(x - 2, y, col, a * 0.22);
+            }
+        }
+    }
+    function drawSnow(t) {
+        const WH = H + 24, reps = LOOP_SECONDS / BEAT;
+        const WS = [8, 12, 17];
+        for (const f of flakes) {
+            const u = f.y0 + (f.k * t) / BEAT;
+            const c = Math.floor(u), frac = u - c;
+            const age = (frac * BEAT) / f.k;
+            const y = frac * WH - 12 + camY;
+            const sway = (1.2 + f.layer) * cyc(t, (3 + (f.seed % 4)) * f.k, hash(f.seed, 0, 1));
+            const x = camX - 150 + hash(f.seed, c % (f.k * reps), 9) * (W + 160) + WS[f.layer] * windDisp(t, age) + sway;
+            const w = warmAt(x, y);
+            const col = w > 0.4 ? C.i3 : w > 0.2 ? C.i2 : f.layer === 0 ? C.ss : C.sh;
+            if (f.layer === 0)
+                blend(x, y, col, 0.6);
+            else if (f.layer === 1)
+                put(x, y, col);
+            else {
+                blend(x, y, col, 0.85);
+                blend(x + 1, y, col, 0.5);
+                blend(x, y + 1, col, 0.5);
+                blend(x + 1, y + 1, col, 0.3);
+            }
+        }
+    }
+    function cloudAt(x, y, t) {
+        const X = Math.round(x) - camX;
+        if (X < 0 || X >= W)
+            return false;
+        const look = (L, k) => {
+            const yy = Math.round(y) - L.oy;
+            if (yy < 0 || yy >= L.h)
+                return false;
+            const off = ((Math.floor((t / BEAT) * W * k) % W) + W) % W;
+            let sx = X - off;
+            if (sx < 0)
+                sx += W;
+            return L.d[yy * W + sx] !== 0;
+        };
+        return look(cloudNear, 2) || look(cloudFar, 1);
+    }
+    function drawShootingStar(t) {
+        const win = LOOP_SECONDS / 9, u = t / win, c = Math.floor(u) % 9;
+        const a = (u - Math.floor(u)) * win - (4 + hash(c, 0, 101) * 30);
+        const dur = 1.3, out = 0.45;
+        if (a < 0 || a > dur + out)
+            return;
+        const skyBottom = Math.min(130, camY + H * 0.45);
+        const sx = camX + W * (0.08 + 0.55 * hash(c, 1, 101));
+        const sy = camY + 6 + (skyBottom - camY - 6) * 0.6 * hash(c, 2, 101);
+        const len = 70 + 45 * hash(c, 3, 101), dx = 0.94, dy = 0.34;
+        const k = Math.min(1, a / dur);
+        const fade = a > dur ? 1 - (a - dur) / out : Math.min(1, a / 0.15);
+        const hx0 = sx + dx * len * k, hy0 = sy + dy * len * k;
+        const tail = Math.round(8 + 14 * Math.min(1, a / 0.4));
+        for (let j = 0; j < tail; j++) {
+            let al = Math.pow(1 - j / tail, 1.3) * 0.95 * fade;
+            if (al <= 0.02)
+                continue;
+            const px = hx0 - dx * j, py = hy0 - dy * j;
+            if (cloudAt(px, py, t)) {
+                al *= 0.6;
+                blend(px, py - 1, C.ss, al * 0.3);
+                blend(px, py + 1, C.ss, al * 0.3);
+            }
+            blend(px, py, j < 2 ? C.m4 : j < 8 ? C.sn : C.ss, al);
+        }
+    }
+    function drawWater(t) {
+        const SEA = 173;
+        const x0 = Math.max(camX, 296), x1 = camX + W;
+        for (let y = SEA + 2; y < camY + H; y++) {
+            const dd = y - SEA, rh = hash(y, 0, 201);
+            if (rh > 0.8 && dd > 6)
+                continue;
+            const shift = 2.5 * cyc(t, 1 + Math.floor(rh * 2), rh);
+            const dl = 2 + Math.floor(dd / 12);
+            const hw = 1.5 + dd * 0.3;
+            for (let x = x0; x < x1; x++) {
+                if (y <= shoreAt[x - camX])
+                    continue;
+                const ax = Math.abs(x - moonX);
+                const h = hash(Math.floor((x + shift + rh * 64) / dl), y, 202);
+                if (ax < hw * 1.6) {
+                    const core = 1 - ax / (hw * 1.6);
+                    const v = core * 1.15 + 0.4 * cyc(t, 12 + Math.floor(h * 30), h) - 0.5 + (h - 0.5) * 0.5;
+                    if (v > 0.6)
+                        put(x, y, C.m4);
+                    else if (v > 0.38)
+                        put(x, y, C.m2);
+                    else if (v > 0.2)
+                        blend(x, y, C.m0, 0.5);
+                }
+                else if (h > 0.93 && cyc(t, 4 + Math.floor(h * 8), h) > 0.2) {
+                    blend(x, y, C.st, 0.35 * Math.max(0, 1 - dd / 120));
+                }
+            }
+        }
+    }
+    function drawOwl(t) {
+        const span = W + 40, dur = span / 40;
+        const d = since(t, OWL_AT * LOOP_SECONDS);
+        if (d < 0 || d > dur)
+            return;
+        const p = d / dur;
+        const x = camX - 20 + p * span;
+        const rel = (x - moonX) / Math.max(160, W * 0.5);
+        const y = moonY + 4 + 34 * rel * rel + 2 * Math.sin(p * TAU * 1.5);
+        const ph = d % 3.2;
+        const fr = ph < 1.2 ? [0, 1, 2, 1][Math.floor(ph / 0.15) % 4] : 1;
+        OWL[fr].forEach((row, j) => {
+            for (let i = 0; i < row.length; i++) {
+                if (row[i] === ".")
+                    continue;
+                put(x - 4 + i, y - 2 + j, row[i] === "b" ? C.n2 : C.v0);
+            }
+        });
+    }
+    function drawLantern(t, fl) {
+        const g = gustAt(t);
+        const s = Math.max(-2, Math.min(3, Math.round((0.5 + 1.6 * g) * cyc(t, 24) + 1.4 * g)));
+        const lx = LANTERN.x + s;
+        put(332 + Math.round(s / 2), 187, C.w0);
+        for (let i = -2; i <= 2; i++) {
+            put(lx + i, 188, C.w0);
+            put(lx + i, 194, C.w0);
+            put(lx + i, 187, i === 0 ? C.w0 : C.sn);
+        }
+        for (let y = 189; y < 194; y++) {
+            put(lx - 2, y, C.w0);
+            put(lx + 2, y, C.w0);
+            for (let i = -1; i <= 1; i++)
+                put(lx + i, y, fl > 0.93 ? C.i4 : y === 191 && i === 0 ? C.i4 : fl > 0.85 ? C.i3 : C.f3);
+        }
+    }
+    function render(tIn) {
+        const t = ((tIn % LOOP_SECONDS) + LOOP_SECONDS) % LOOP_SECONDS;
+        const stoke = stokeState(t);
+        const flare = flareOf(stoke.d);
+        const g = gustAt(t);
+        const lean = (windAt(t) - 0.18) * 5;
+        const fireFl = quant(0.82 + 0.09 * cyc(t, 131) + 0.06 * cyc(t, 233, 0.3) + 0.05 * cyc(t, 389, 0.7) + 0.04 * cyc(t, 59, 0.1) - 0.04 * g, 16);
+        const fireLit = Math.min(1.12, fireFl + 0.16 * flare);
+        const winFl = quant(0.86 + 0.05 * cyc(t, 97) + 0.04 * cyc(t, 211, 0.4) + 0.03 * cyc(t, 389, 0.8), 16);
+        const lanFl = quant(0.9 + 0.05 * cyc(t, 241) + 0.04 * cyc(t, 433, 0.5) - 0.05 * g, 16);
+        const wk = walker(t);
+        const inWin = (w) => (wk && wk.x > w.x - 5 && wk.x < w.x + w.w + 4 ? wk.x : null);
+        const whoL = inWin(WIN_L), whoR = inWin(WIN_R);
+        FB.set(sky.d);
+        for (const s of twinkles) {
+            const v = cyc(t, s.f, s.ph);
+            const [c0, c1, c2, c3] = s.gold ? [C.py3, C.py2, C.py2, C.py1] : [C.m4, C.sn, C.ss, C.fr];
+            put(s.x, s.y, v > 0.6 ? c0 : v > 0 ? c1 : v > -0.6 ? c2 : c3);
+            if (v > (s.big ? 0.35 : 0.85)) {
+                const a = s.big ? 0.75 : 0.45, arm = s.gold ? C.py1 : C.ss, far = s.gold ? C.py1 : C.fr;
+                blend(s.x - 1, s.y, arm, a);
+                blend(s.x + 1, s.y, arm, a);
+                blend(s.x, s.y - 1, arm, a);
+                blend(s.x, s.y + 1, arm, a);
+                if (s.big && v > 0.75) {
+                    blend(s.x - 2, s.y, far, 0.4);
+                    blend(s.x + 2, s.y, far, 0.4);
+                    blend(s.x, s.y - 2, far, 0.4);
+                    blend(s.x, s.y + 2, far, 0.4);
+                }
+            }
+        }
+        blitSprite(moonSpr, moonX - MOON_R - 1, moonY - MOON_R - 1);
+        blitScroll(cloudFar, cloudFarY, Math.floor((t / BEAT) * W), moonCover);
+        blitScroll(cloudNear, cloudNear.oy, Math.floor((t / BEAT) * W * 2), moonCover);
+        applyLight(lMoon, 215, 226, 255, 0.62, 1);
+        drawShootingStar(t);
+        drawOwl(t);
+        drawWater(t);
+        blitScroll(mist, mistY, -Math.floor((t / BEAT) * W), undefined, 0.34);
+        blitScroll(mist2, mist2Y, Math.floor((t / BEAT) * W * 2), undefined, 0.28);
+        blitFull(world);
+        drawWindow(WIN_L, winFl, 1, t, true, whoL, wk === null || wk === void 0 ? void 0 : wk.moving);
+        drawWindow(WIN_R, quant(winFl * 0.98 + 0.02 * cyc(t, 151), 16), 1, t, false, whoR, wk === null || wk === void 0 ? void 0 : wk.moving);
+        drawWindow(WIN_A, winFl, 0.72, t, false, null);
+        for (let y = 185; y < 205; y++)
+            put(177, y, winFl > 0.88 ? C.i3 : C.i2);
+        put(181, 180, C.i4);
+        put(182, 180, winFl > 0.86 ? C.i4 : C.i3);
+        put(181, 181, C.i3);
+        put(182, 181, C.i2);
+        drawLantern(t, lanFl);
+        drawFire(t, fireFl, lean, flare);
+        drawSmoke(t);
+        applyLight(lHouse, 255, 170, 80, 0.7, winFl * (whoL !== null || whoR !== null ? 0.9 : 1));
+        applyLight(lLant, 255, 180, 92, 0.6, lanFl);
+        applyLight(lFire, 255, 138, 50, 0.82, fireLit);
+        drawShadows(fireLit);
+        drawFigure(t, fireLit, stoke.d);
+        drawBreath(t);
+        drawSparks(t, stoke);
+        drawDrift(t);
+        drawSnow(t);
+        for (let i = 0; i < FB.length; i++) {
+            const f = vig[i];
+            if (f >= 256)
+                continue;
+            const c = FB[i];
+            FB[i] = pack(((c & 255) * f) >> 8, (((c >>> 8) & 255) * f) >> 8, (((c >>> 16) & 255) * f) >> 8);
+        }
+        ctx.putImageData(img, 0, 0);
+    }
+    const api = {
+        get bufW() { return W; },
+        get bufH() { return H; },
+        get scale() { return S; },
+        resize(cssW, cssH, dpr) {
+            if (opts.fixedSize) {
+                S = 1;
+                if (W !== opts.fixedSize.w || H !== opts.fixedSize.h)
+                    setSize(opts.fixedSize.w, opts.fixedSize.h);
+                return S;
+            }
+            const dW = Math.max(1, cssW * dpr), dH = Math.max(1, cssH * dpr);
+            const fit = Math.max(1, Math.min(dH / BASE_H, dW / MIN_W));
+            let s = Math.floor(fit) / fit >= 0.8 ? Math.floor(fit) : fit;
+            while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS)
+                s = Math.floor(s) + 1;
+            const w = Math.ceil(dW / s), h = Math.ceil(dH / s);
+            S = s;
+            canvas.style.width = `${(w * s) / dpr}px`;
+            canvas.style.height = `${(h * s) / dpr}px`;
+            if (w !== W || h !== H)
+                setSize(w, h);
+            return s;
+        },
+        frame(t) {
+            if (W > 0)
+                render(t);
+        },
+    };
+    return api;
+}
+
+(function(){
+  var canvas=document.getElementById('c'), hud=document.getElementById('hud'), msg=document.getElementById('msg'), bRec=document.getElementById('bRec');
+  var d=createDiorama(canvas);
+  var origin=performance.now(), rec=null, hidden=false, idleTimer=0;
+  function fit(){ if(!rec) d.resize(innerWidth,innerHeight,devicePixelRatio||1); }
+  fit();
+  var rt; addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(fit,120);});
+  function loop(now){
+    d.frame((now-origin)/1000);
+    if(rec){
+      rec.out.drawImage(canvas,0,0,1920,1080);
+      var el=(now-rec.start)/1000;
+      msg.textContent='Recording '+fmt(el)+' / '+fmt(LOOP_SECONDS)+' (keep this tab visible)';
+      if(el>=LOOP_SECONDS) stopRec();
+    }
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+  function fmt(s){s=Math.min(LOOP_SECONDS,Math.floor(s));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0');}
+  document.getElementById('len').textContent=fmt(LOOP_SECONDS);
+
+  function showHud(){ if(hidden) return; hud.classList.remove('off'); document.body.classList.remove('idle'); clearTimeout(idleTimer); idleTimer=setTimeout(function(){ if(!rec) hud.classList.add('off'); document.body.classList.add('idle'); },3500); }
+  addEventListener('mousemove',showHud); addEventListener('touchstart',showHud,{passive:true});
+  showHud();
+
+  function toggleFull(){ try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(function(){}); }catch(e){} }
+  function toggleHide(){ hidden=!hidden; hud.classList.toggle('off',hidden); if(!hidden) showHud(); }
+
+  function startRec(){
+    if(rec) return;
+    if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){ msg.textContent='This browser cannot record a canvas. Try Chrome or Firefox.'; return; }
+    var out=document.createElement('canvas'); out.width=1920; out.height=1080;
+    var o=out.getContext('2d'); o.imageSmoothingEnabled=false;
+    // Render exactly 480x270 art pixels (4x = 1080p) while recording.
+    var fixed=createDiorama(canvas,{fixedSize:{w:480,h:270}}); fixed.resize(0,0,1);
+    canvas.style.width=Math.min(innerWidth,innerHeight*16/9)+'px'; canvas.style.height=Math.min(innerHeight,innerWidth*9/16)+'px';
+    var types=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm','video/mp4'];
+    var mime=types.filter(function(t){return MediaRecorder.isTypeSupported(t);})[0]||'';
+    var stream=out.captureStream(60), chunks=[];
+    var mr=new MediaRecorder(stream,mime?{mimeType:mime,videoBitsPerSecond:14e6}:{videoBitsPerSecond:14e6});
+    mr.ondataavailable=function(e){ if(e.data&&e.data.size) chunks.push(e.data); };
+    mr.onstop=function(){
+      var blob=new Blob(chunks,{type:mime||'video/webm'}), url=URL.createObjectURL(blob);
+      var a=document.createElement('a'); a.href=url; a.download='house-at-the-end-of-the-world-loop.'+(mime.indexOf('mp4')>=0?'mp4':'webm');
+      document.body.appendChild(a); a.click(); a.remove();
+      msg.textContent='Saved one '+fmt(LOOP_SECONDS)+' loop at 1920x1080. If no download appeared, open this page as a local file or from your own site.';
+      setTimeout(function(){URL.revokeObjectURL(url);},60000);
+    };
+    origin=performance.now();
+    rec={out:o,mr:mr,start:origin,prev:d}; d=fixed;
+    mr.start(1000);
+    bRec.setAttribute('aria-pressed','true'); bRec.textContent='Stop [R]';
+  }
+  function stopRec(){
+    if(!rec) return;
+    var r=rec; rec=null; r.mr.stop();
+    d=createDiorama(canvas); fit();
+    bRec.setAttribute('aria-pressed','false'); bRec.textContent='Record loop [R]';
+  }
+  document.getElementById('bFull').onclick=toggleFull;
+  document.getElementById('bHide').onclick=toggleHide;
+  bRec.onclick=function(){ rec?stopRec():startRec(); };
+  addEventListener('keydown',function(e){
+    if(e.metaKey||e.ctrlKey||e.altKey) return;
+    var k=e.key.toLowerCase();
+    if(k==='f') toggleFull(); else if(k==='h') toggleHide(); else if(k==='r') bRec.onclick();
+  });
+  canvas.addEventListener('dblclick',toggleFull);
+  try{ if(navigator.wakeLock) navigator.wakeLock.request('screen').catch(function(){}); }catch(e){}
+  document.addEventListener('visibilitychange',function(){ try{ if(!document.hidden&&navigator.wakeLock) navigator.wakeLock.request('screen').catch(function(){}); }catch(e){} });
+})();
+</script>
+</body>
+</html>
