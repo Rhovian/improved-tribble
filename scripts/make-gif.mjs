@@ -9,14 +9,10 @@
 // their slow drift can't loop in a few seconds. Pick --start in a calm stretch
 // of the 6-minute loop (default 224 s has no gusts, visitors or shooting stars).
 import { spawn } from "node:child_process";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { dirname, join, resolve } from "node:path";
-import { fileURLToPath, pathToFileURL } from "node:url";
+import { join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import ts from "typescript";
+import { headlessCanvas, loadEngine, root } from "./lib/engine.mjs";
 
-const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const { values: a } = parseArgs({
   options: {
     start: { type: "string", default: "224" },
@@ -34,28 +30,11 @@ const fps = Number(a.fps), scale = Number(a.scale), W = Number(a.width), H = Num
 const N = Math.round(seconds * fps), X = Math.round(blend * fps);
 if (!(N > 0 && X >= 0 && X < N)) throw new Error("--blend must be shorter than --seconds");
 
-// load the engine: transpile the TypeScript once into a temp module
-const tmp = mkdtempSync(join(tmpdir(), "diorama-"));
-const engine = join(tmp, "diorama.mjs");
-const src = readFileSync(join(root, "src/lib/diorama.ts"), "utf8");
-writeFileSync(engine, ts.transpileModule(src, { compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.ESNext } }).outputText);
-const { createDiorama } = await import(pathToFileURL(engine).href);
-rmSync(tmp, { recursive: true, force: true });
-
-// a minimal stand-in for a canvas: the engine only needs ImageData in and out
-let last = null;
-const canvas = {
-  width: 0,
-  height: 0,
-  style: {},
-  getContext: () => ({
-    createImageData: (w, h) => ({ width: w, height: h, data: new Uint8ClampedArray(w * h * 4) }),
-    putImageData: (img) => { last = img.data; },
-  }),
-};
+const { createDiorama } = await loadEngine();
+const { canvas, pixels } = headlessCanvas();
 const d = createDiorama(canvas, { fixedSize: { w: W, h: H }, skyTime: start });
 d.resize(0, 0, 1);
-const frameAt = (t) => { d.frame(t); return Buffer.from(last); };
+const frameAt = (t) => { d.frame(t); return pixels(); };
 
 const out = resolve(a.out);
 const ff = spawn("ffmpeg", [

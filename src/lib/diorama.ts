@@ -61,6 +61,66 @@ const BASE_H = 270;
 const MIN_W = 240;
 const MAX_PIXELS = 420_000;
 
+/** A canvas the engine can draw into: an on-page canvas or an OffscreenCanvas in a worker. */
+export interface CanvasLike {
+  width: number;
+  height: number;
+  getContext(contextId: "2d", options?: { alpha?: boolean }): unknown;
+}
+interface Context2D {
+  createImageData(w: number, h: number): ImageData;
+  putImageData(data: ImageData, x: number, y: number): void;
+}
+
+/** How the scene is framed for a CSS box: buffer size, pixel scale and camera. */
+export interface SceneLayout {
+  bufW: number;
+  bufH: number;
+  /** Device pixels per art pixel. */
+  scale: number;
+  dpr: number;
+  camX: number;
+  camY: number;
+  /** CSS size of the canvas (it may overhang the box by under one art pixel). */
+  cssWidth: number;
+  cssHeight: number;
+}
+
+/**
+ * Frame the scene for a CSS box. Pure, so a page can work out where things
+ * land without asking the renderer (which may live in a worker).
+ */
+export function computeLayout(cssW: number, cssH: number, dpr: number, opts: DioramaOptions = {}): SceneLayout {
+  let w: number, h: number, s: number;
+  if (opts.fixedSize) {
+    w = opts.fixedSize.w; h = opts.fixedSize.h; s = 1; dpr = 1;
+  } else {
+    const dW = Math.max(1, cssW * dpr), dH = Math.max(1, cssH * dpr);
+    // Prefer a whole-number scale (perfectly even pixels); fall back to the
+    // exact fit when rounding down would zoom the scene out too far.
+    const fit = Math.max(1, Math.min(dH / BASE_H, dW / MIN_W));
+    s = Math.floor(fit) / fit >= 0.8 ? Math.floor(fit) : fit;
+    while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS) s = Math.floor(s) + 1;
+    w = Math.ceil(dW / s); h = Math.ceil(dH / s);
+  }
+  const extra = h - BASE_H;
+  return {
+    bufW: w,
+    bufH: h,
+    scale: s,
+    dpr,
+    camX: Math.round((opts.focusX ?? 248) - w / 2),
+    camY: Math.round(extra > 0 ? -extra * (opts.skyShare ?? 0.7) : -extra * 0.6) + (opts.shiftY ?? 0),
+    cssWidth: (w * s) / dpr,
+    cssHeight: (h * s) / dpr,
+  };
+}
+
+/** Where a scene point (world coords) lands, in CSS px from the canvas's top-left. */
+export function projectPoint(l: SceneLayout, wx: number, wy: number): { x: number; y: number } {
+  return { x: ((wx - l.camX) * l.scale) / l.dpr, y: ((wy - l.camY) * l.scale) / l.dpr };
+}
+
 /* ---------- colour helpers (ABGR packed, little-endian ImageData) ---------- */
 
 const hx = (s: string): number => {
@@ -321,14 +381,11 @@ const lanternFn = (x: number, y: number) => {
 
 /* ========================================================================== */
 
-export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = {}): Diorama {
-  const ctx = canvas.getContext("2d", { alpha: false });
+export function createDiorama(canvas: CanvasLike, opts: DioramaOptions = {}): Diorama {
+  const ctx = canvas.getContext("2d", { alpha: false }) as Context2D | null;
   if (!ctx) throw new Error("Canvas 2D is not available");
-  const focusX = opts.focusX ?? 248;
-  const skyShare = opts.skyShare ?? 0.7;
-  const shiftY = opts.shiftY ?? 0;
   const skyTime = opts.skyTime;
-  let DPR = 1;
+  let layout: SceneLayout = computeLayout(0, 0, 1, opts);
 
   let W = 0, H = 0, S = 1, camX = 0, camY = 0;
   let img: ImageData;
@@ -349,14 +406,13 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
 
   /* ----------------------------- build ----------------------------- */
 
-  function setSize(w: number, h: number) {
-    W = w; H = h;
+  function setSize(l: SceneLayout) {
+    W = l.bufW; H = l.bufH;
     canvas.width = W; canvas.height = H;
     img = ctx!.createImageData(W, H);
     FB = new Uint32Array(img.data.buffer);
-    camX = Math.round(focusX - W / 2);
-    const extra = H - BASE_H;
-    camY = Math.round(extra > 0 ? -extra * skyShare : -extra * 0.6) + shiftY;
+    camX = l.camX;
+    camY = l.camY;
     build();
   }
 
@@ -1435,31 +1491,24 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
     get bufH() { return H; },
     get scale() { return S; },
     resize(cssW: number, cssH: number, dpr: number) {
-      if (opts.fixedSize) {
-        S = 1;
-        DPR = 1;
-        if (W !== opts.fixedSize.w || H !== opts.fixedSize.h) setSize(opts.fixedSize.w, opts.fixedSize.h);
-        return S;
+      const l = computeLayout(cssW, cssH, dpr, opts);
+      // an on-page canvas gets its CSS size here; a worker's canvas has no style
+      const style = (canvas as { style?: { width: string; height: string } }).style;
+      if (style && !opts.fixedSize) {
+        style.width = `${l.cssWidth}px`;
+        style.height = `${l.cssHeight}px`;
       }
-      const dW = Math.max(1, cssW * dpr), dH = Math.max(1, cssH * dpr);
-      // Prefer a whole-number scale (perfectly even pixels); fall back to the
-      // exact fit when rounding down would zoom the scene out too far.
-      const fit = Math.max(1, Math.min(dH / BASE_H, dW / MIN_W));
-      let s = Math.floor(fit) / fit >= 0.8 ? Math.floor(fit) : fit;
-      while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS) s = Math.floor(s) + 1;
-      const w = Math.ceil(dW / s), h = Math.ceil(dH / s);
-      S = s;
-      DPR = dpr;
-      canvas.style.width = `${(w * s) / dpr}px`;
-      canvas.style.height = `${(h * s) / dpr}px`;
-      if (w !== W || h !== H) setSize(w, h);
-      return s;
+      const rebuild = l.bufW !== W || l.bufH !== H || l.camX !== camX || l.camY !== camY;
+      layout = l;
+      S = l.scale;
+      if (rebuild) setSize(l);
+      return S;
     },
     frame(t: number) {
       if (W > 0) render(t);
     },
     project(wx: number, wy: number) {
-      return { x: ((wx - camX) * S) / DPR, y: ((wy - camY) * S) / DPR };
+      return projectPoint(layout, wx, wy);
     },
   };
   return api;

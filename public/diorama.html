@@ -43,6 +43,39 @@ const TAU = Math.PI * 2;
 const BASE_H = 270;
 const MIN_W = 240;
 const MAX_PIXELS = 420000;
+function computeLayout(cssW, cssH, dpr, opts = {}) {
+    var _a, _b, _c;
+    let w, h, s;
+    if (opts.fixedSize) {
+        w = opts.fixedSize.w;
+        h = opts.fixedSize.h;
+        s = 1;
+        dpr = 1;
+    }
+    else {
+        const dW = Math.max(1, cssW * dpr), dH = Math.max(1, cssH * dpr);
+        const fit = Math.max(1, Math.min(dH / BASE_H, dW / MIN_W));
+        s = Math.floor(fit) / fit >= 0.8 ? Math.floor(fit) : fit;
+        while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS)
+            s = Math.floor(s) + 1;
+        w = Math.ceil(dW / s);
+        h = Math.ceil(dH / s);
+    }
+    const extra = h - BASE_H;
+    return {
+        bufW: w,
+        bufH: h,
+        scale: s,
+        dpr,
+        camX: Math.round(((_a = opts.focusX) !== null && _a !== void 0 ? _a : 248) - w / 2),
+        camY: Math.round(extra > 0 ? -extra * ((_b = opts.skyShare) !== null && _b !== void 0 ? _b : 0.7) : -extra * 0.6) + ((_c = opts.shiftY) !== null && _c !== void 0 ? _c : 0),
+        cssWidth: (w * s) / dpr,
+        cssHeight: (h * s) / dpr,
+    };
+}
+function projectPoint(l, wx, wy) {
+    return { x: ((wx - l.camX) * l.scale) / l.dpr, y: ((wy - l.camY) * l.scale) / l.dpr };
+}
 const hx = (s) => {
     const n = parseInt(s.slice(1), 16);
     return (0xff000000 | ((n & 255) << 16) | (n & 0xff00) | (n >>> 16)) >>> 0;
@@ -254,15 +287,11 @@ const lanternFn = (x, y) => {
     return I;
 };
 function createDiorama(canvas, opts = {}) {
-    var _a, _b, _c;
     const ctx = canvas.getContext("2d", { alpha: false });
     if (!ctx)
         throw new Error("Canvas 2D is not available");
-    const focusX = (_a = opts.focusX) !== null && _a !== void 0 ? _a : 248;
-    const skyShare = (_b = opts.skyShare) !== null && _b !== void 0 ? _b : 0.7;
-    const shiftY = (_c = opts.shiftY) !== null && _c !== void 0 ? _c : 0;
     const skyTime = opts.skyTime;
-    let DPR = 1;
+    let layout = computeLayout(0, 0, 1, opts);
     let W = 0, H = 0, S = 1, camX = 0, camY = 0;
     let img;
     let FB;
@@ -279,16 +308,15 @@ function createDiorama(canvas, opts = {}) {
     let moonCover;
     let shoreAt = new Int16Array(0);
     const MOON_R = 16;
-    function setSize(w, h) {
-        W = w;
-        H = h;
+    function setSize(l) {
+        W = l.bufW;
+        H = l.bufH;
         canvas.width = W;
         canvas.height = H;
         img = ctx.createImageData(W, H);
         FB = new Uint32Array(img.data.buffer);
-        camX = Math.round(focusX - W / 2);
-        const extra = H - BASE_H;
-        camY = Math.round(extra > 0 ? -extra * skyShare : -extra * 0.6) + shiftY;
+        camX = l.camX;
+        camY = l.camY;
         build();
     }
     function build() {
@@ -1502,33 +1530,25 @@ function createDiorama(canvas, opts = {}) {
         get bufH() { return H; },
         get scale() { return S; },
         resize(cssW, cssH, dpr) {
-            if (opts.fixedSize) {
-                S = 1;
-                DPR = 1;
-                if (W !== opts.fixedSize.w || H !== opts.fixedSize.h)
-                    setSize(opts.fixedSize.w, opts.fixedSize.h);
-                return S;
+            const l = computeLayout(cssW, cssH, dpr, opts);
+            const style = canvas.style;
+            if (style && !opts.fixedSize) {
+                style.width = `${l.cssWidth}px`;
+                style.height = `${l.cssHeight}px`;
             }
-            const dW = Math.max(1, cssW * dpr), dH = Math.max(1, cssH * dpr);
-            const fit = Math.max(1, Math.min(dH / BASE_H, dW / MIN_W));
-            let s = Math.floor(fit) / fit >= 0.8 ? Math.floor(fit) : fit;
-            while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS)
-                s = Math.floor(s) + 1;
-            const w = Math.ceil(dW / s), h = Math.ceil(dH / s);
-            S = s;
-            DPR = dpr;
-            canvas.style.width = `${(w * s) / dpr}px`;
-            canvas.style.height = `${(h * s) / dpr}px`;
-            if (w !== W || h !== H)
-                setSize(w, h);
-            return s;
+            const rebuild = l.bufW !== W || l.bufH !== H || l.camX !== camX || l.camY !== camY;
+            layout = l;
+            S = l.scale;
+            if (rebuild)
+                setSize(l);
+            return S;
         },
         frame(t) {
             if (W > 0)
                 render(t);
         },
         project(wx, wy) {
-            return { x: ((wx - camX) * S) / DPR, y: ((wy - camY) * S) / DPR };
+            return projectPoint(layout, wx, wy);
         },
     };
     return api;

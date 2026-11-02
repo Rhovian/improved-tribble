@@ -12,6 +12,9 @@ const TYPE_MS = 32;
 /** How long the box stays up once the line is shown, unless someone is using it. */
 const AUTO_HIDE_MS = 12000;
 
+/** Remembers, for this browser session, that the intro was seen (or closed). */
+const SEEN_KEY = "hd-state";
+
 type Phase = "typing" | "open" | "closed";
 
 export interface DialogueAnchor {
@@ -28,18 +31,35 @@ export interface DialogueAnchor {
 export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
   const [phase, setPhase] = useState<Phase>("typing");
   const [shown, setShown] = useState(0);
+  const [typing, setTyping] = useState(false);
   const [hold, setHold] = useState(false);
   const dragStart = useRef<number | null>(null);
   const dragged = useRef(false);
 
-  // type the line out (or show it at once for reduced motion)
+  // First visit this session: type the line out. Later visits (or reduced
+  // motion): show it at once, or stay tucked away if it was closed.
   useEffect(() => {
-    if (phase !== "typing") return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    let saved: string | null = null;
+    try {
+      saved = window.sessionStorage.getItem(SEEN_KEY);
+    } catch {}
+    if (saved === "closed" || saved === "seen" || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setShown(LINE.length);
-      setPhase("open");
-      return;
+      setPhase(saved === "closed" ? "closed" : "open");
+    } else {
+      setTyping(true);
     }
+  }, []);
+
+  useEffect(() => {
+    if (phase === "typing") return;
+    try {
+      window.sessionStorage.setItem(SEEN_KEY, phase === "closed" ? "closed" : "seen");
+    } catch {}
+  }, [phase]);
+
+  useEffect(() => {
+    if (phase !== "typing" || !typing) return;
     const id = window.setInterval(() => {
       setShown((n) => {
         if (n + 1 >= LINE.length) {
@@ -51,7 +71,7 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
       });
     }, TYPE_MS);
     return () => window.clearInterval(id);
-  }, [phase]);
+  }, [phase, typing]);
 
   // tuck away on a timer, but never while the pointer or focus is on it
   useEffect(() => {
@@ -121,11 +141,17 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
         <p className="hd-say" onClick={skipTyping}>
           <span className="sr-only">{LINE}</span>
           <span aria-hidden="true">
-            {LINE.slice(0, shown)}
+            {/* every character keeps its place from the first frame; typing only
+                recolours it, so nothing reflows or shifts */}
+            {LINE.split("").map((ch, i) => (
+              <span key={i} className={i < shown ? undefined : "hd-ghost"}>
+                {ch}
+              </span>
+            ))}
             {phase !== "typing" && <span className="hd-more">▾</span>}
           </span>
         </p>
-        <ul className="hd-choices" data-ready={phase !== "typing"}>
+        <ul className="hd-choices">
           <li>
             <a href="https://github.com/Rhovian" target="_blank" rel="noopener noreferrer">
               GitHub

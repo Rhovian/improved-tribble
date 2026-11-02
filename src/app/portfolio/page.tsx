@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   alternates: {
     canonical: "/portfolio",
   },
+  // placeholder projects for now: keep this page out of search results
+  robots: { index: false, follow: true },
 };
 
 const projects = [
