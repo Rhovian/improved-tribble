@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       "Developer, writer, and tinkerer. I build things and occasionally write about them.",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "J — Portfolio & Blog",
     description:
       "Developer, writer, and tinkerer. I build things and occasionally write about them.",
