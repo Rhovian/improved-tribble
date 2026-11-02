@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 const pixel = Pixelify_Sans({ subsets: ["latin"], variable: "--font-pixel", display: "swap" });
 
 const LINE =
-  "Hi, I'm J. Developer, writer, and tinkerer. I build things and occasionally write about them.";
+  "Hi, I'm Joseph. Developer, writer, and tinkerer. I build things and occasionally write about them.";
 /** Delay between typed characters. */
 const TYPE_MS = 32;
 /** How long the box stays up once the line is shown, unless someone is using it. */
@@ -25,7 +25,7 @@ export interface DialogueAnchor {
 
 /**
  * The home page introduction as a game dialogue box. It types out once, then
- * after a while tucks itself away into its "J" name tag; tapping (or dragging
+ * after a while tucks itself away into its "Joseph" name tag; tapping (or dragging
  * up) the tag pulls it back. A separate element from the scene behind it.
  */
 export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
@@ -110,7 +110,7 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHold(false);
       }}
     >
-      <h1 className="sr-only">Hi, I&apos;m J</h1>
+      <h1 className="sr-only">Hi, I&apos;m Joseph</h1>
       <button
         type="button"
         className="hd-tag"
@@ -132,7 +132,7 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
           dragStart.current = null;
         }}
       >
-        J{closed && <span className="hd-caret" aria-hidden="true">▴</span>}
+        Joseph{closed && <span className="hd-caret" aria-hidden="true">▴</span>}
       </button>
       <div id="hero-dialogue" className="hd-box" role="region" aria-label="Introduction">
         <button type="button" className="hd-close" aria-label="Hide introduction" onClick={() => setPhase("closed")}>

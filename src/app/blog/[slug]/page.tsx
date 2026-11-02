@@ -76,7 +76,7 @@ export default async function BlogPost({
     url: `${siteUrl}/blog/${slug}`,
     author: {
       "@type": "Person",
-      name: "J",
+      name: "Joseph",
       url: siteUrl,
     },
     ...(post.tags && { keywords: post.tags.join(", ") }),
