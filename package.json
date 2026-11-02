@@ -7,7 +7,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:diorama": "node scripts/build-diorama.mjs",
+    "gif:diorama": "node scripts/make-gif.mjs"
   },
   "repository": {
     "type": "git",

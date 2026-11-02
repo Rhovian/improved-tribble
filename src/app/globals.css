@@ -59,3 +59,103 @@ body {
 .dark .katex {
   color: #ededed;
 }
+
+/* ---------------------------------------------------------------------------
+   Home: the introduction as a game dialogue box over the night scene.
+   Lapis night, silver text, pyrite-gold accents; square pixel notches.
+   --------------------------------------------------------------------------- */
+.hd {
+  --hd-lapis: #0b1438;
+  --hd-deep: rgba(9, 16, 46, 0.93);
+  --hd-rim: #c5d2f0;
+  --hd-silver: #eaf0ff;
+  --hd-frost: #b9c6ea;
+  --hd-gold: #f1d98f;
+  --hd-notch: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+  position: absolute;
+  z-index: 10;
+  font-family: var(--font-pixel), ui-monospace, Menlo, monospace;
+  color: var(--hd-silver);
+}
+.hd-tag {
+  position: absolute;
+  left: 22px;
+  top: -14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 4px;
+  font: 700 18px/1 var(--font-pixel), ui-monospace, monospace;
+  color: var(--hd-lapis);
+  background: var(--hd-gold);
+  clip-path: var(--hd-notch);
+  cursor: pointer;
+  touch-action: none;
+}
+.hd-tag:focus-visible { outline: none; box-shadow: inset 0 0 0 2px var(--hd-lapis); }
+.hd-caret { font-size: 14px; }
+.hd[data-phase="closed"] .hd-tag { animation: hd-bob 1.6s steps(2) infinite; }
+@keyframes hd-bob { 50% { transform: translateY(-2px); } }
+
+.hd-box {
+  position: relative;
+  padding: 26px 26px 20px;
+  background: var(--hd-deep);
+  clip-path: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
+  box-shadow: inset 0 0 0 2px var(--hd-lapis), inset 0 0 0 4px var(--hd-rim), inset 0 0 0 6px #1b2d66;
+  transition: opacity 0.24s steps(4), transform 0.24s steps(4), visibility 0s linear 0s;
+}
+.hd[data-phase="closed"] .hd-box {
+  opacity: 0;
+  transform: translateY(16px);
+  visibility: hidden;
+  transition: opacity 0.24s steps(4), transform 0.24s steps(4), visibility 0s linear 0.24s;
+}
+.hd-close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 2px 6px;
+  font: 400 16px/1 var(--font-pixel), ui-monospace, monospace;
+  color: var(--hd-frost);
+  background: transparent;
+  cursor: pointer;
+}
+.hd-close:hover, .hd-close:focus-visible { color: var(--hd-gold); outline: none; }
+.hd-say {
+  min-height: 3em;
+  margin: 0;
+  padding-right: 18px;
+  font-size: clamp(17px, 1.5vw, 20px);
+  line-height: 1.5;
+  cursor: default;
+}
+.hd-more { display: inline-block; margin-left: 6px; color: var(--hd-gold); animation: hd-blink 1s steps(1) infinite; }
+@keyframes hd-blink { 50% { opacity: 0; } }
+.hd-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 28px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity 0.3s;
+}
+.hd-choices[data-ready="false"] { opacity: 0; pointer-events: none; }
+.hd-choices a {
+  position: relative;
+  padding-left: 18px;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--hd-frost);
+  text-decoration: none;
+}
+.hd-choices a::before { content: "\25B8"; position: absolute; left: 0; color: var(--hd-gold); opacity: 0; }
+.hd-choices a:hover, .hd-choices a:focus-visible { color: var(--hd-silver); outline: none; }
+.hd-choices a:hover::before, .hd-choices a:focus-visible::before { opacity: 1; }
+@media (prefers-reduced-motion: reduce) {
+  .hd-box, .hd[data-phase="closed"] .hd-box { transition: none; }
+  .hd[data-phase="closed"] .hd-tag, .hd-more { animation: none; }
+}
