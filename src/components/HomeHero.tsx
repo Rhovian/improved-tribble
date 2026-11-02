@@ -1,11 +1,13 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DioramaBackground, type ScenePoint } from "./DioramaBackground";
 import { HeroDialogue, type DialogueAnchor } from "./HeroDialogue";
 
 /** Room the dialogue needs below its top edge, so it never runs off-screen. */
 const DIALOGUE_ROOM = 200;
+/** Remembers a visitor's choice to pause the animation. */
+const PAUSE_KEY = "scene-paused";
 
 /**
  * Home hero: the animated scene, with the introduction dialogue as its own
@@ -13,6 +15,21 @@ const DIALOGUE_ROOM = 200;
  */
 export function HomeHero() {
   const [anchor, setAnchor] = useState<DialogueAnchor | null>(null);
+  const [paused, setPaused] = useState(false);
+
+  useEffect(() => {
+    try {
+      setPaused(window.localStorage.getItem(PAUSE_KEY) === "1");
+    } catch {}
+  }, []);
+  const togglePause = () => {
+    setPaused((p) => {
+      try {
+        window.localStorage.setItem(PAUSE_KEY, p ? "0" : "1");
+      } catch {}
+      return !p;
+    });
+  };
 
   const onLayout = useCallback((project: ScenePoint, box: { width: number; height: number }) => {
     const house = project(140, 230); // the cabin's left wall, just under the snow lip
@@ -33,8 +50,19 @@ export function HomeHero() {
         className="z-0"
         shiftY={(landscape) => (landscape ? 26 : 48)}
         onLayout={onLayout}
+        paused={paused}
       />
       <HeroDialogue anchor={anchor} />
+      <button
+        type="button"
+        className="scene-toggle"
+        aria-pressed={paused}
+        aria-label={paused ? "Play the background animation" : "Pause the background animation"}
+        title={paused ? "Play" : "Pause"}
+        onClick={togglePause}
+      >
+        <span aria-hidden="true">{paused ? "▶" : "❚❚"}</span>
+      </button>
     </section>
   );
 }
