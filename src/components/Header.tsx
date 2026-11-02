@@ -24,14 +24,6 @@ export function Header() {
             </Link>
           )}
 
-          {pathname !== "/portfolio" && (
-            <Link
-              href="/portfolio"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-            >
-              Portfolio
-            </Link>
-          )}
 
           {pathname !== "/blog" && !pathname.startsWith("/blog/") && (
             <Link
