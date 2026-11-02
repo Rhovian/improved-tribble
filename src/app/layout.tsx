@@ -8,8 +8,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-th
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "J — Portfolio & Blog",
-    template: "%s | J",
+    default: "Joseph — Portfolio & Blog",
+    template: "%s | Joseph",
   },
   description:
     "Developer, writer, and tinkerer. I build things and occasionally write about them.",
@@ -17,14 +17,14 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "J — Portfolio & Blog",
-    title: "J — Portfolio & Blog",
+    siteName: "Joseph — Portfolio & Blog",
+    title: "Joseph — Portfolio & Blog",
     description:
       "Developer, writer, and tinkerer. I build things and occasionally write about them.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "J — Portfolio & Blog",
+    title: "Joseph — Portfolio & Blog",
     description:
       "Developer, writer, and tinkerer. I build things and occasionally write about them.",
   },

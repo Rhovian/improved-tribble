@@ -6,7 +6,7 @@ export default function Home() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: "J",
+    name: "Joseph",
     url: siteUrl,
     jobTitle: "Developer",
     sameAs: ["https://github.com/Rhovian"],

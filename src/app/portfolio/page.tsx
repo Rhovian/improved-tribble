@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "Portfolio",
-  description: "Selected projects, experiments, and work from J.",
+  description: "Selected projects, experiments, and work from Joseph.",
   alternates: {
     canonical: "/portfolio",
   },
