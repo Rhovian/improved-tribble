@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Pixelify_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
 
@@ -127,12 +126,6 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
           </span>
         </p>
         <ul className="hd-choices" data-ready={phase !== "typing"}>
-          <li>
-            <Link href="/portfolio">Portfolio</Link>
-          </li>
-          <li>
-            <Link href="/blog">Read Blog</Link>
-          </li>
           <li>
             <a href="https://github.com/Rhovian" target="_blank" rel="noopener noreferrer">
               GitHub
