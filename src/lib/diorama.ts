@@ -32,6 +32,11 @@ export interface DioramaOptions {
   skyShare?: number;
   /** Look further down by this many art pixels (positive shows more earth). Default 0. */
   shiftY?: number;
+  /**
+   * Hold the drifting clouds and fog at this loop time. For short clips (a
+   * GIF) whose ends are blended together, so the sky doesn't jump each loop.
+   */
+  skyTime?: number;
 }
 
 export interface Diorama {
@@ -322,6 +327,7 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
   const focusX = opts.focusX ?? 248;
   const skyShare = opts.skyShare ?? 0.7;
   const shiftY = opts.shiftY ?? 0;
+  const skyTime = opts.skyTime;
   let DPR = 1;
 
   let W = 0, H = 0, S = 1, camX = 0, camY = 0;
@@ -1258,7 +1264,8 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
   }
 
   /** Is there cloud at world (x, y) in this frame? Mirrors blitScroll. */
-  function cloudAt(x: number, y: number, t: number): boolean {
+  function cloudAt(x: number, y: number, tNow: number): boolean {
+    const t = skyTime ?? tNow;
     const X = Math.round(x) - camX;
     if (X < 0 || X >= W) return false;
     const look = (L: Layer, k: number) => {
@@ -1384,15 +1391,16 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
       }
     }
     blitSprite(moonSpr, moonX - MOON_R - 1, moonY - MOON_R - 1);
-    blitScroll(cloudFar, cloudFarY, Math.floor((t / BEAT) * W), moonCover);
-    blitScroll(cloudNear, cloudNear.oy, Math.floor((t / BEAT) * W * 2), moonCover);
+    const ts = skyTime ?? t;
+    blitScroll(cloudFar, cloudFarY, Math.floor((ts / BEAT) * W), moonCover);
+    blitScroll(cloudNear, cloudNear.oy, Math.floor((ts / BEAT) * W * 2), moonCover);
     // moonlight after the clouds: their edges near the moon get a silver lining
     applyLight(lMoon, 215, 226, 255, 0.62, 1);
     drawShootingStar(t);
     drawOwl(t);
     drawWater(t);
-    blitScroll(mist, mistY, -Math.floor((t / BEAT) * W), undefined, 0.34);
-    blitScroll(mist2, mist2Y, Math.floor((t / BEAT) * W * 2), undefined, 0.28);
+    blitScroll(mist, mistY, -Math.floor((ts / BEAT) * W), undefined, 0.34);
+    blitScroll(mist2, mist2Y, Math.floor((ts / BEAT) * W * 2), undefined, 0.28);
     blitFull(world);
     drawWindow(WIN_L, winFl, 1, t, true, whoL, wk?.moving);
     drawWindow(WIN_R, quant(winFl * 0.98 + 0.02 * cyc(t, 151), 16), 1, t, false, whoR, wk?.moving);

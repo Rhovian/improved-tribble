@@ -7,15 +7,26 @@ import { useTheme } from "./ThemeProvider";
 export function Header() {
   const { theme, toggleTheme, mounted } = useTheme();
   const pathname = usePathname();
+  // on the home page the header floats, transparent, over the night scene
+  const overScene = pathname === "/";
+  const link = overScene
+    ? "text-[#b9c6ea] hover:text-white transition-colors"
+    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors";
 
   return (
-    <header className="border-b border-zinc-200 dark:border-zinc-800">
+    <header
+      className={
+        overScene
+          ? "absolute inset-x-0 top-0 z-20 bg-gradient-to-b from-[#03040e]/70 to-transparent text-[#b9c6ea]"
+          : "border-b border-zinc-200 dark:border-zinc-800"
+      }
+    >
       <nav className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-6 ml-auto">
           {pathname !== "/" && (
             <Link
               href="/"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className={link}
             >
               Home
             </Link>
@@ -24,7 +35,7 @@ export function Header() {
           {pathname !== "/portfolio" && (
             <Link
               href="/portfolio"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className={link}
             >
               Portfolio
             </Link>
@@ -33,7 +44,7 @@ export function Header() {
           {pathname !== "/blog" && !pathname.startsWith("/blog/") && (
             <Link
               href="/blog"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              className={link}
             >
               Blog
             </Link>
@@ -41,7 +52,7 @@ export function Header() {
 
           <button
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
+            className={`p-2 rounded-lg transition-colors ${overScene ? "hover:bg-white/10" : "hover:bg-zinc-100 dark:hover:bg-zinc-800"}`}
             aria-label="Toggle theme"
           >
             {mounted && theme === "dark" ? (

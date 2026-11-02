@@ -261,6 +261,7 @@ function createDiorama(canvas, opts = {}) {
     const focusX = (_a = opts.focusX) !== null && _a !== void 0 ? _a : 248;
     const skyShare = (_b = opts.skyShare) !== null && _b !== void 0 ? _b : 0.7;
     const shiftY = (_c = opts.shiftY) !== null && _c !== void 0 ? _c : 0;
+    const skyTime = opts.skyTime;
     let DPR = 1;
     let W = 0, H = 0, S = 1, camX = 0, camY = 0;
     let img;
@@ -1312,7 +1313,8 @@ function createDiorama(canvas, opts = {}) {
             }
         }
     }
-    function cloudAt(x, y, t) {
+    function cloudAt(x, y, tNow) {
+        const t = skyTime !== null && skyTime !== void 0 ? skyTime : tNow;
         const X = Math.round(x) - camX;
         if (X < 0 || X >= W)
             return false;
@@ -1455,14 +1457,15 @@ function createDiorama(canvas, opts = {}) {
             }
         }
         blitSprite(moonSpr, moonX - MOON_R - 1, moonY - MOON_R - 1);
-        blitScroll(cloudFar, cloudFarY, Math.floor((t / BEAT) * W), moonCover);
-        blitScroll(cloudNear, cloudNear.oy, Math.floor((t / BEAT) * W * 2), moonCover);
+        const ts = skyTime !== null && skyTime !== void 0 ? skyTime : t;
+        blitScroll(cloudFar, cloudFarY, Math.floor((ts / BEAT) * W), moonCover);
+        blitScroll(cloudNear, cloudNear.oy, Math.floor((ts / BEAT) * W * 2), moonCover);
         applyLight(lMoon, 215, 226, 255, 0.62, 1);
         drawShootingStar(t);
         drawOwl(t);
         drawWater(t);
-        blitScroll(mist, mistY, -Math.floor((t / BEAT) * W), undefined, 0.34);
-        blitScroll(mist2, mist2Y, Math.floor((t / BEAT) * W * 2), undefined, 0.28);
+        blitScroll(mist, mistY, -Math.floor((ts / BEAT) * W), undefined, 0.34);
+        blitScroll(mist2, mist2Y, Math.floor((ts / BEAT) * W * 2), undefined, 0.28);
         blitFull(world);
         drawWindow(WIN_L, winFl, 1, t, true, whoL, wk === null || wk === void 0 ? void 0 : wk.moving);
         drawWindow(WIN_R, quant(winFl * 0.98 + 0.02 * cyc(t, 151), 16), 1, t, false, whoR, wk === null || wk === void 0 ? void 0 : wk.moving);
