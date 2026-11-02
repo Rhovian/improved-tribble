@@ -30,6 +30,8 @@ export interface DioramaOptions {
   focusX?: number;
   /** Share of extra height given to sky (rest goes to earth). Default 0.7. */
   skyShare?: number;
+  /** Look further down by this many art pixels (positive shows more earth). Default 0. */
+  shiftY?: number;
 }
 
 export interface Diorama {
@@ -37,6 +39,13 @@ export interface Diorama {
   resize(cssW: number, cssH: number, dpr: number): number;
   /** Draw the frame for loop time t (seconds, any value; wrapped to the loop). */
   frame(t: number): void;
+  /**
+   * Where a scene point lands, in CSS px from the canvas's top-left corner.
+   * Useful for lining page content up with the scene. Landmarks (world y):
+   * 173 horizon, 199 snow surface, 216 top of the rock face; house x 140..232,
+   * cliff edge x ~342.
+   */
+  project(wx: number, wy: number): { x: number; y: number };
   readonly bufW: number;
   readonly bufH: number;
   readonly scale: number;
@@ -312,6 +321,8 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
   if (!ctx) throw new Error("Canvas 2D is not available");
   const focusX = opts.focusX ?? 248;
   const skyShare = opts.skyShare ?? 0.7;
+  const shiftY = opts.shiftY ?? 0;
+  let DPR = 1;
 
   let W = 0, H = 0, S = 1, camX = 0, camY = 0;
   let img: ImageData;
@@ -339,7 +350,7 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
     FB = new Uint32Array(img.data.buffer);
     camX = Math.round(focusX - W / 2);
     const extra = H - BASE_H;
-    camY = Math.round(extra > 0 ? -extra * skyShare : -extra * 0.6);
+    camY = Math.round(extra > 0 ? -extra * skyShare : -extra * 0.6) + shiftY;
     build();
   }
 
@@ -358,7 +369,8 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
     sky = new Layer(W, H, camX, camY);
     twinkles = [];
     moonX = Math.min(Math.max(400, camX + 44), camX + W - 44);
-    moonY = Math.round(58 + Math.min(0, camY) * 0.35);
+    // on tall screens keep the moon low enough to leave the upper sky for page text
+    moonY = Math.round(58 + Math.min(0, camY) * 0.12);
     const mx = moonX, my = moonY;
     // faint Milky Way: a band rising from the forest towards the upper right
     const band = (x: number, y: number) => {
@@ -1417,6 +1429,7 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
     resize(cssW: number, cssH: number, dpr: number) {
       if (opts.fixedSize) {
         S = 1;
+        DPR = 1;
         if (W !== opts.fixedSize.w || H !== opts.fixedSize.h) setSize(opts.fixedSize.w, opts.fixedSize.h);
         return S;
       }
@@ -1428,6 +1441,7 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
       while (Math.ceil(dW / s) * Math.ceil(dH / s) > MAX_PIXELS) s = Math.floor(s) + 1;
       const w = Math.ceil(dW / s), h = Math.ceil(dH / s);
       S = s;
+      DPR = dpr;
       canvas.style.width = `${(w * s) / dpr}px`;
       canvas.style.height = `${(h * s) / dpr}px`;
       if (w !== W || h !== H) setSize(w, h);
@@ -1435,6 +1449,9 @@ export function createDiorama(canvas: HTMLCanvasElement, opts: DioramaOptions = 
     },
     frame(t: number) {
       if (W > 0) render(t);
+    },
+    project(wx: number, wy: number) {
+      return { x: ((wx - camX) * S) / DPR, y: ((wy - camY) * S) / DPR };
     },
   };
   return api;
