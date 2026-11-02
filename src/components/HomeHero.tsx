@@ -18,7 +18,11 @@ export function HomeHero() {
     const house = project(140, 230); // the cabin's left wall, just under the snow lip
     const edge = project(326, 0); // the cliff face, where the rock gives way to water
     const width = Math.min(620, box.width - 32);
-    const left = Math.max(16, Math.min(house.x - 12, edge.x - width, box.width - width - 16));
+    // desktop: against the left edge of the screen; phones: under the cabin
+    const desktop = box.width >= 768 && box.width > box.height;
+    const left = desktop
+      ? Math.max(24, box.width * 0.04)
+      : Math.max(16, Math.min(house.x - 12, edge.x - width, box.width - width - 16));
     const top = Math.max(96, Math.min(house.y, box.height - DIALOGUE_ROOM));
     setAnchor({ left: Math.round(left), top: Math.round(top), width: Math.round(width) });
   }, []);
