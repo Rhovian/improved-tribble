@@ -30,6 +30,18 @@ export interface PostMeta {
 
 export interface Post extends PostMeta {
   contentHtml: string;
+  /** Estimated reading time, from the prose only (no maths or code). */
+  readingMinutes: number;
+}
+
+function readingMinutes(markdown: string): number {
+  const prose = markdown
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/\$\$[\s\S]*?\$\$/g, " ")
+    .replace(/\$[^$\n]+\$/g, " ")
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ");
+  const words = prose.split(/\s+/).filter((w) => /[A-Za-z0-9]/.test(w)).length;
+  return Math.max(1, Math.round(words / 230));
 }
 
 export function getAllPosts(): PostMeta[] {
@@ -161,5 +173,6 @@ export async function getPostBySlug(slug: string): Promise<Post | null> {
     tags: data.tags || [],
     series: data.series || undefined,
     contentHtml,
+    readingMinutes: readingMinutes(content),
   };
 }

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
-import { getPostBySlug, getAllPosts, getSeriesNavigation } from "@/lib/posts";
 import Link from "next/link";
+import { getPostBySlug, getAllPosts, getSeriesNavigation, getSeriesPosts } from "@/lib/posts";
+import { ContinueReading, SeriesProgress, formatDate } from "@/components/blog";
 
 const siteUrl =
   process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
@@ -46,7 +47,7 @@ export async function generateMetadata({
       tags: post.tags,
     },
     twitter: {
-      card: "summary",
+      card: "summary_large_image",
       title,
       description,
     },
@@ -66,6 +67,7 @@ export default async function BlogPost({
   }
 
   const { previousPost, nextPost } = getSeriesNavigation(slug);
+  const seriesPosts = post.series ? getSeriesPosts(post.series.slug) : [];
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -90,110 +92,38 @@ export default async function BlogPost({
   };
 
   return (
-    <article className="max-w-3xl mx-auto px-4 py-8">
+    <article className="mx-auto max-w-3xl px-4 pb-24 pt-6">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <Link
-        href="/blog"
-        className="text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 mb-8 inline-block"
-      >
-        ← Back to blog
+      <Link href="/blog" className="mb-8 inline-block font-pixel text-base text-muted hover:text-gold">
+        ◂ All posts
       </Link>
 
-      {/* Series Context Bar */}
       {post.series && (
-        <div className="mb-8 p-4 bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-              {post.series.name}
-            </span>
-            <span className="text-sm text-blue-600 dark:text-blue-400">
-              Part {post.series.part} of {post.series.total}
-            </span>
-          </div>
-          {/* Progress bar */}
-          <div className="w-full bg-blue-200 dark:bg-blue-900 rounded-full h-1.5">
-            <div
-              className="bg-blue-600 dark:bg-blue-400 h-1.5 rounded-full transition-all"
-              style={{
-                width: `${(post.series.part / post.series.total) * 100}%`,
-              }}
-            />
-          </div>
-        </div>
+        <SeriesProgress name={post.series.name} part={post.series.part} total={post.series.total} posts={seriesPosts} />
       )}
 
-      <header className="mb-8">
-        <time
-          className="text-sm text-zinc-500 dark:text-zinc-500"
-          dateTime={post.date}
-        >
-          {new Date(post.date).toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </time>
-        <h1 className="text-4xl font-bold mt-2 mb-4">{post.title}</h1>
-        {post.tags && (
-          <div className="flex gap-2">
+      <header className="mb-10">
+        <p className="meta">
+          <time dateTime={post.date}>{formatDate(post.date, "long")}</time>
+          <span aria-hidden="true"> &middot; </span>
+          {post.readingMinutes} min read
+        </p>
+        <h1 className="pixel-title mt-3 text-[2rem] leading-tight sm:text-5xl">{post.title}</h1>
+        {post.tags && post.tags.length > 0 && (
+          <div className="mt-5 flex flex-wrap gap-2">
             {post.tags.map((tag: string) => (
-              <span
-                key={tag}
-                className="text-xs px-2 py-1 bg-zinc-100 dark:bg-zinc-800 rounded-full"
-              >
-                {tag}
-              </span>
+              <span key={tag} className="px-chip">{tag}</span>
             ))}
           </div>
         )}
       </header>
 
-      <div
-        className="prose prose-zinc dark:prose-invert max-w-none prose-headings:font-semibold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-pre:bg-zinc-100 dark:prose-pre:bg-zinc-900 prose-img:rounded-lg"
-        dangerouslySetInnerHTML={{ __html: post.contentHtml }}
-      />
+      <div className="prose prose-lapis" dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
 
-      {/* Series Navigation */}
-      {(previousPost || nextPost) && (
-        <nav className="mt-12 pt-8 border-t border-zinc-200 dark:border-zinc-800">
-          <div className="text-sm font-medium text-zinc-500 dark:text-zinc-400 mb-4">
-            Continue reading
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {previousPost ? (
-              <Link
-                href={`/blog/${previousPost.slug}`}
-                className="group p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 transition-colors"
-              >
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
-                  ← Previous
-                </div>
-                <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                  Part {previousPost.series?.part}: {previousPost.title}
-                </div>
-              </Link>
-            ) : (
-              <div />
-            )}
-            {nextPost && (
-              <Link
-                href={`/blog/${nextPost.slug}`}
-                className="group p-4 border border-zinc-200 dark:border-zinc-800 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 transition-colors text-right"
-              >
-                <div className="text-xs text-zinc-500 dark:text-zinc-400 mb-1">
-                  Next →
-                </div>
-                <div className="text-sm font-medium text-zinc-700 dark:text-zinc-300 group-hover:text-blue-600 dark:group-hover:text-blue-400">
-                  Part {nextPost.series?.part}: {nextPost.title}
-                </div>
-              </Link>
-            )}
-          </div>
-        </nav>
-      )}
+      <ContinueReading previous={previousPost} next={nextPost} part={post.series?.part} total={post.series?.total} />
     </article>
   );
 }
