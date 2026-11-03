@@ -6,32 +6,11 @@
 @import "katex/dist/katex.min.css";
 
 /* ---------------------------------------------------------------------------
-   One world, two lights. The inner pages share the landing scene's palette:
-   lapis night with frost-silver text and pyrite-gold accents (default), or a
-   snowfield by day (lapis ink on snow). Fonts: pixel for names, titles and
-   UI; a bookish serif for reading; mono for dates, counts and code.
+   The inner pages share the landing scene's palette: lapis night with
+   frost-silver text and pyrite-gold accents. Fonts: pixel for names, titles
+   and UI; a bookish serif for reading; mono for dates, counts and code.
    --------------------------------------------------------------------------- */
 :root {
-  /* snowfield (light) */
-  --paper: #eef2fb;
-  --paper-2: #e1e8f7;
-  --ink: #1d2852;
-  --ink-strong: #0b1438;
-  --muted: #4a5a8a;
-  --rule: #c3cfea;
-  --rim: #2b4282;
-  --gold: #7a5c14;
-  --chip: #dde5f6;
-  /* figures stay dark in both lights, like screens set into the page */
-  --panel: #0a1230;
-  --panel-rim: #c5d2f0;
-  --pyrite: #f1d98f;
-  --notch: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
-  --notch-lg: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
-  color-scheme: light;
-}
-.dark {
-  /* lapis night (default) */
   --paper: #070c22;
   --paper-2: #0d1640;
   --ink: #c9d4f0;
@@ -41,6 +20,12 @@
   --rim: #c5d2f0;
   --gold: #f1d98f;
   --chip: #111f50;
+  /* figures: framed dark panels */
+  --panel: #0a1230;
+  --panel-rim: #c5d2f0;
+  --pyrite: #f1d98f;
+  --notch: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+  --notch-lg: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
   color-scheme: dark;
 }
 
@@ -125,8 +110,6 @@ a.px-tag:hover { background: #fff0c2; }
 .site-nav { position: relative; display: flex; align-items: center; justify-content: space-between; padding-block: 20px; }
 .site-nav a.nav-link { font: 600 17px/1 var(--font-pixel), ui-monospace, monospace; color: #c9d4f0; text-decoration: none; text-shadow: 0 1px 0 #03040e, 0 0 8px #03040e, 0 0 3px #03040e; }
 .site-nav a.nav-link:hover, .site-nav a.nav-link[aria-current="page"] { color: var(--pyrite); }
-.icon-btn { display: grid; place-items: center; width: 34px; height: 34px; color: #c9d4f0; filter: drop-shadow(0 0 3px #03040e) drop-shadow(0 0 6px #03040e); }
-.icon-btn:hover { color: var(--pyrite); }
 
 /* --- long-form reading -------------------------------------------------- */
 .prose-lapis {

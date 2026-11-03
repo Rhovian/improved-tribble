@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Literata, Pixelify_Sans } from "next/font/google";
-import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import "./globals.css";
 
@@ -47,19 +46,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${pixel.variable} ${serif.variable} ${mono.variable}`}>
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('theme');if(t!=='light'){document.documentElement.classList.add('dark')}}catch(e){document.documentElement.classList.add('dark')}})()`,
-          }}
-        />
-      </head>
+    <html lang="en" className={`${pixel.variable} ${serif.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <ThemeProvider>
-          <Header />
-          <main className="flex-1">{children}</main>
-        </ThemeProvider>
+        <Header />
+        <main className="flex-1">{children}</main>
       </body>
     </html>
   );

@@ -5,10 +5,9 @@ module.exports = {
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
-  darkMode: "class",
   theme: {
     extend: {
-      // the scene's palette, as CSS variables that switch between night and snow
+      // the scene's palette, as CSS variables
       colors: {
         paper: "var(--paper)",
         "paper-2": "var(--paper-2)",
