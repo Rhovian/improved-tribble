@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 545" width="900" height="545">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#141416"/>
-      <stop offset="100%" stop-color="#141416"/>
+      <stop offset="0%" stop-color="#0a1230"/>
+      <stop offset="100%" stop-color="#0a1230"/>
     </linearGradient>
     <filter id="glow">
       <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -28,8 +28,8 @@
 
     <!-- Callout box gradient -->
     <linearGradient id="calloutGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#1e1e24" stop-opacity="0.95"/>
-      <stop offset="100%" stop-color="#18181c" stop-opacity="0.95"/>
+      <stop offset="0%" stop-color="#131f48" stop-opacity="0.95"/>
+      <stop offset="100%" stop-color="#0e1738" stop-opacity="0.95"/>
     </linearGradient>
   </defs>
 
