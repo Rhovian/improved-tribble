@@ -37,6 +37,8 @@ export interface DioramaOptions {
    * GIF) whose ends are blended together, so the sky doesn't jump each loop.
    */
   skyTime?: number;
+  /** Put the moon at this world position instead of framing it automatically. */
+  moon?: { x: number; y: number };
 }
 
 export interface Diorama {
@@ -430,9 +432,9 @@ export function createDiorama(canvas: CanvasLike, opts: DioramaOptions = {}): Di
   function buildSky() {
     sky = new Layer(W, H, camX, camY);
     twinkles = [];
-    moonX = Math.min(Math.max(400, camX + 44), camX + W - 44);
+    moonX = opts.moon?.x ?? Math.min(Math.max(400, camX + 44), camX + W - 44);
     // on tall screens keep the moon low enough to leave the upper sky for page text
-    moonY = Math.round(58 + Math.min(0, camY) * 0.12);
+    moonY = opts.moon?.y ?? Math.round(58 + Math.min(0, camY) * 0.12);
     const mx = moonX, my = moonY;
     // faint Milky Way: a band rising from the forest towards the upper right
     const band = (x: number, y: number) => {

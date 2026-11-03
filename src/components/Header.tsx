@@ -4,72 +4,63 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTheme } from "./ThemeProvider";
 
+/** A 13x13 pixel icon from a predicate, drawn with crisp squares. */
+function PixelIcon({ on }: { on: (x: number, y: number) => boolean }) {
+  const cells: [number, number][] = [];
+  for (let y = 0; y < 13; y++) for (let x = 0; x < 13; x++) if (on(x, y)) cells.push([x, y]);
+  return (
+    <svg width="20" height="20" viewBox="0 0 13 13" shapeRendering="crispEdges" aria-hidden="true" fill="currentColor">
+      {cells.map(([x, y]) => (
+        <rect key={`${x},${y}`} x={x} y={y} width="1" height="1" />
+      ))}
+    </svg>
+  );
+}
+const dist = (x: number, y: number, cx: number, cy: number) => Math.hypot(x - cx, y - cy);
+// crescent moon: a disc with a bite taken out
+const moon = (x: number, y: number) => dist(x, y, 6, 6) <= 5.6 && dist(x, y, 9, 4) > 4.6;
+// sun: a disc with eight rays
+const sun = (x: number, y: number) => {
+  const r = dist(x, y, 6, 6);
+  if (r <= 2.6) return true;
+  const dx = x - 6, dy = y - 6;
+  const onRay = dx === 0 || dy === 0 || Math.abs(dx) === Math.abs(dy);
+  return onRay && r >= 4 && r <= 6.2;
+};
+
+/**
+ * Inner pages' header: the gold "Joseph" name tag (home) and the nav, over a
+ * strip of the landing scene. Hidden on the home page, which is the scene.
+ */
 export function Header() {
   const { theme, toggleTheme, mounted } = useTheme();
   const pathname = usePathname();
 
-  // the home page is just the scene and its dialogue: no nav bar
   if (pathname === "/") return null;
 
+  const night = !mounted || theme === "dark";
+  const onBlog = pathname === "/blog" || pathname.startsWith("/blog/");
+  // line the header up with the page's own column
+  const width = onBlog ? "max-w-3xl" : "max-w-5xl";
+
   return (
-    <header className="border-b border-zinc-200 dark:border-zinc-800">
-      <nav className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-6 ml-auto">
-          {pathname !== "/" && (
-            <Link
-              href="/"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-            >
-              Home
-            </Link>
-          )}
-
-
-          {pathname !== "/blog" && !pathname.startsWith("/blog/") && (
-            <Link
-              href="/blog"
-              className="text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
-            >
-              Blog
-            </Link>
-          )}
-
+    <header className="site-header">
+      <nav className={`site-nav mx-auto ${width} px-4`} aria-label="Site">
+        <Link href="/" className="px-tag" aria-label="Joseph, home">
+          Joseph
+        </Link>
+        <div className="flex items-center gap-5">
+          <Link href="/blog" className="nav-link" aria-current={pathname === "/blog" ? "page" : onBlog ? "location" : undefined}>
+            Blog
+          </Link>
           <button
+            type="button"
             onClick={toggleTheme}
-            className="p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-            aria-label="Toggle theme"
+            className="icon-btn"
+            aria-label={night ? "Switch to the daytime (light) theme" : "Switch to the night (dark) theme"}
+            title={night ? "Day" : "Night"}
           >
-            {mounted && theme === "dark" ? (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-                />
-              </svg>
-            ) : (
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z"
-                />
-              </svg>
-            )}
+            <PixelIcon on={night ? sun : moon} />
           </button>
         </div>
       </nav>

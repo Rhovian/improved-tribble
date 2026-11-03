@@ -7,7 +7,24 @@ module.exports = {
   ],
   darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      // the scene's palette, as CSS variables that switch between night and snow
+      colors: {
+        paper: "var(--paper)",
+        "paper-2": "var(--paper-2)",
+        ink: "var(--ink)",
+        "ink-strong": "var(--ink-strong)",
+        muted: "var(--muted)",
+        rule: "var(--rule)",
+        rim: "var(--rim)",
+        gold: "var(--gold)",
+      },
+      fontFamily: {
+        pixel: ["var(--font-pixel)", "ui-monospace", "monospace"],
+        serif: ["var(--font-serif)", "Georgia", "serif"],
+        mono: ["var(--font-mono)", "ui-monospace", "monospace"],
+      },
+    },
   },
   plugins: [require("@tailwindcss/typography")],
 };

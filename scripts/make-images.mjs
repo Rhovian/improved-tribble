@@ -2,6 +2,7 @@
 // file conventions so the meta tags are added automatically:
 //   src/app/opengraph-image.png + twitter-image.png  (1200x630 still of the scene)
 //   src/app/icon.png (32x32) + apple-icon.png (180x180)  (the gold "J" tag)
+//   public/scene-band.png (1400x70)  (horizon strip behind the inner pages' header)
 //
 //   pnpm images:diorama            # optional: --t 224 (moment in the loop)
 import { writeFileSync } from "node:fs";
@@ -21,6 +22,12 @@ for (const name of ["opengraph-image", "twitter-image"]) {
   writeFileSync(join(app, `${name}.png`), ogPng);
   writeFileSync(join(app, `${name}.alt.txt`), alt);
 }
+
+// --- scene band for the top of inner pages: the horizon seen from the cabin,
+// with the moon rising over the sea. 1400x70 art px; pages show it at 2x.
+const BAND = { w: 1400, h: 70 };
+const band = await renderFrame(BAND.w, BAND.h, Number(a.t), { focusX: 300, shiftY: -12, moon: { x: 550, y: 140 } });
+writeFileSync(join(root, "public/scene-band.png"), encodePNG(BAND.w, BAND.h, band));
 
 // --- icon: the dialogue's gold "J" tag on lapis, drawn as 16x16 pixel art
 const ICON = [
@@ -58,4 +65,4 @@ const big = upscale(16, 16, tile(true), 11); // 176x176, centred
 for (let y = 0; y < 176; y++) big.copy(apple, ((y + 2) * 180 + 2) * 4, y * 176 * 4, (y + 1) * 176 * 4);
 writeFileSync(join(app, "apple-icon.png"), encodePNG(180, 180, apple));
 
-console.log("wrote opengraph-image.png, twitter-image.png (1200x630), icon.png (32x32), apple-icon.png (180x180) in src/app");
+console.log("wrote opengraph-image.png, twitter-image.png (1200x630), icon.png (32x32), apple-icon.png (180x180) in src/app; public/scene-band.png (1400x70)");

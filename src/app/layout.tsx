@@ -1,7 +1,15 @@
 import type { Metadata } from "next";
+import { IBM_Plex_Mono, Literata, Pixelify_Sans } from "next/font/google";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Header } from "@/components/Header";
 import "./globals.css";
+
+// pixel: names, titles and UI (as in the landing dialogue); serif: reading;
+// mono: dates, counts, code. Only the pixel face is used on the landing page,
+// so the other two load on demand rather than being preloaded everywhere.
+const pixel = Pixelify_Sans({ subsets: ["latin"], variable: "--font-pixel", display: "swap" });
+const serif = Literata({ subsets: ["latin"], variable: "--font-serif", display: "swap", style: ["normal", "italic"], axes: ["opsz"], preload: false });
+const mono = IBM_Plex_Mono({ subsets: ["latin"], weight: ["400", "500"], variable: "--font-mono", display: "swap", preload: false });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://improved-tribble-three.vercel.app";
 
@@ -39,7 +47,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${pixel.variable} ${serif.variable} ${mono.variable}`}>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -47,7 +55,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="flex min-h-screen flex-col bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 transition-colors">
+      <body className="flex min-h-screen flex-col">
         <ThemeProvider>
           <Header />
           <main className="flex-1">{children}</main>

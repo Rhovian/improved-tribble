@@ -5,60 +5,178 @@
 /* KaTeX styles */
 @import "katex/dist/katex.min.css";
 
+/* ---------------------------------------------------------------------------
+   One world, two lights. The inner pages share the landing scene's palette:
+   lapis night with frost-silver text and pyrite-gold accents (default), or a
+   snowfield by day (lapis ink on snow). Fonts: pixel for names, titles and
+   UI; a bookish serif for reading; mono for dates, counts and code.
+   --------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* snowfield (light) */
+  --paper: #eef2fb;
+  --paper-2: #e1e8f7;
+  --ink: #1d2852;
+  --ink-strong: #0b1438;
+  --muted: #4a5a8a;
+  --rule: #c3cfea;
+  --rim: #2b4282;
+  --gold: #7a5c14;
+  --chip: #dde5f6;
+  /* figures stay dark in both lights, like screens set into the page */
+  --panel: #0a1230;
+  --panel-rim: #c5d2f0;
+  --pyrite: #f1d98f;
+  --notch: polygon(4px 0, calc(100% - 4px) 0, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 0 calc(100% - 4px), 0 4px);
+  --notch-lg: polygon(6px 0, calc(100% - 6px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 6px) 100%, 6px 100%, 0 calc(100% - 6px), 0 6px);
+  color-scheme: light;
 }
-
 .dark {
-  --background: #18181b;
-  --foreground: #ededed;
+  /* lapis night (default) */
+  --paper: #070c22;
+  --paper-2: #0d1640;
+  --ink: #c9d4f0;
+  --ink-strong: #eaf0ff;
+  --muted: #8a9cc9;
+  --rule: #1b2d66;
+  --rim: #c5d2f0;
+  --gold: #f1d98f;
+  --chip: #111f50;
+  color-scheme: dark;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
 }
+::selection { background: rgba(241, 217, 143, 0.35); }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
 
-/* Prose dark mode overrides */
-.prose-invert code:not(pre code) {
-  background-color: #374151;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
+/* --- pixel pieces shared by every page ---------------------------------- */
+.px-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 5px;
+  font: 700 17px/1 var(--font-pixel), ui-monospace, monospace;
+  color: #0b1438;
+  background: var(--pyrite);
+  clip-path: var(--notch);
+  text-decoration: none;
 }
-
-.prose code:not(pre code) {
-  background-color: #f3f4f6;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
+a.px-tag:hover { background: #fff0c2; }
+.px-panel {
+  position: relative;
+  padding: 26px 26px 22px;
+  background: var(--paper-2);
+  clip-path: var(--notch-lg);
+  box-shadow: inset 0 0 0 2px var(--paper), inset 0 0 0 4px var(--rim), inset 0 0 0 6px var(--rule);
 }
-
-/* Blog images - prevent oversized images from dominating the page */
-.prose img {
-  max-width: 60%;
-  margin-left: auto;
-  margin-right: auto;
+.px-chip {
+  display: inline-block;
+  padding: 4px 8px 3px;
+  font: 500 12px/1 var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.02em;
+  color: var(--ink-strong);
+  background: var(--chip);
+  clip-path: var(--notch);
 }
-.prose img.img-wide {
-  max-width: 85%;
+.kicker {
+  font: 500 12px/1.2 var(--font-mono), ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--gold);
 }
-.prose img.img-full {
-  max-width: 100%;
-}
-
-/* KaTeX display math centering */
-.prose .katex-display {
+.meta { font: 400 14px/1.4 var(--font-mono), ui-monospace, monospace; color: var(--muted); }
+.pixel-title { font-family: var(--font-pixel), ui-monospace, monospace; font-weight: 700; color: var(--ink-strong); text-wrap: balance; letter-spacing: 0.01em; }
+/* a choice in a game menu: the gold cursor shows on hover and focus */
+.px-choice {
+  position: relative;
   display: block;
-  text-align: center;
-  margin: 1.5em 0;
+  padding-left: 22px;
+  color: var(--ink-strong);
+  text-decoration: none;
 }
+.px-choice::before {
+  content: "\25B8";
+  position: absolute;
+  left: 2px;
+  color: var(--gold);
+  font-family: var(--font-pixel), ui-monospace, monospace;
+  opacity: 0;
+}
+.px-choice:hover::before, .px-choice:focus-visible::before { opacity: 1; }
+.px-choice:focus-visible { outline: none; }
+.px-choice:hover .px-choice-title, .px-choice:focus-visible .px-choice-title { color: var(--gold); }
+.px-choice-title { font-family: var(--font-pixel), ui-monospace, monospace; font-weight: 600; color: var(--ink-strong); }
+.is-locked { color: var(--muted); }
 
-/* KaTeX dark mode */
-.dark .katex {
-  color: #ededed;
+/* --- inner pages: header over a strip of the scene ---------------------- */
+.site-header { position: relative; height: 140px; }
+.site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #070c22 url("/scene-band.png") center bottom / 2800px 140px repeat-x;
+  image-rendering: pixelated;
+  -webkit-mask-image: linear-gradient(#000 45%, transparent);
+  mask-image: linear-gradient(#000 45%, transparent);
 }
+.site-nav { position: relative; display: flex; align-items: center; justify-content: space-between; padding-block: 20px; }
+.site-nav a.nav-link { font: 600 17px/1 var(--font-pixel), ui-monospace, monospace; color: #c9d4f0; text-decoration: none; text-shadow: 0 1px 0 #03040e, 0 0 8px #03040e, 0 0 3px #03040e; }
+.site-nav a.nav-link:hover, .site-nav a.nav-link[aria-current="page"] { color: var(--pyrite); }
+.icon-btn { display: grid; place-items: center; width: 34px; height: 34px; color: #c9d4f0; filter: drop-shadow(0 0 3px #03040e) drop-shadow(0 0 6px #03040e); }
+.icon-btn:hover { color: var(--pyrite); }
+
+/* --- long-form reading -------------------------------------------------- */
+.prose-lapis {
+  --tw-prose-body: var(--ink);
+  --tw-prose-headings: var(--ink-strong);
+  --tw-prose-lead: var(--ink);
+  --tw-prose-links: var(--gold);
+  --tw-prose-bold: var(--ink-strong);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-hr: var(--rule);
+  --tw-prose-quotes: var(--ink-strong);
+  --tw-prose-quote-borders: var(--gold);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-code: var(--ink-strong);
+  --tw-prose-pre-code: #c9d4f0;
+  --tw-prose-pre-bg: var(--panel);
+  --tw-prose-th-borders: var(--rule);
+  --tw-prose-td-borders: var(--rule);
+  max-width: 68ch;
+  font-size: 1.125rem;
+  line-height: 1.75;
+}
+.prose-lapis :where(h2, h3, h4) { font-family: var(--font-pixel), ui-monospace, monospace; font-weight: 600; letter-spacing: 0.01em; text-wrap: balance; }
+.prose-lapis h2 { font-size: 1.75rem; margin-top: 2.2em; }
+.prose-lapis h3 { font-size: 1.3rem; }
+.prose-lapis a { text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.prose-lapis a:hover { color: var(--ink-strong); }
+.prose-lapis :not(pre) > code { padding: 0.12em 0.36em; font-family: var(--font-mono), ui-monospace, monospace; font-size: 0.86em; font-weight: 500; background: var(--chip); }
+.prose-lapis :not(pre) > code::before, .prose-lapis :not(pre) > code::after { content: none; }
+.prose-lapis pre { font-family: var(--font-mono), ui-monospace, monospace; clip-path: var(--notch-lg); border-radius: 0; }
+.prose-lapis hr { border: 0; margin: 3em 0; height: auto; overflow: visible; text-align: center; line-height: 1; }
+/* a section break: three pixel squares */
+.prose-lapis hr::after { content: ""; display: inline-block; width: 6px; height: 6px; margin-right: 36px; background: var(--muted); box-shadow: 18px 0 var(--muted), 36px 0 var(--muted); }
+.prose-lapis .katex { color: var(--ink-strong); }
+.prose-lapis .katex-display { display: block; text-align: center; margin: 1.5em 0; overflow-x: auto; overflow-y: hidden; }
+/* figures: framed like the dialogue box, dark in both lights */
+.prose-lapis img {
+  display: block;
+  max-width: 60%;
+  height: auto;
+  margin-inline: auto;
+  padding: 8px;
+  background: var(--panel);
+  clip-path: var(--notch-lg);
+  box-shadow: inset 0 0 0 2px #0b1438, inset 0 0 0 4px var(--panel-rim), inset 0 0 0 6px #1b2d66;
+}
+.prose-lapis img.img-wide { max-width: 85%; }
+.prose-lapis img.img-full { max-width: 100%; }
+@media (max-width: 640px) { .prose-lapis img { max-width: 100%; } }
 
 /* ---------------------------------------------------------------------------
    Home: the introduction as a game dialogue box over the night scene.
@@ -183,3 +301,10 @@ body {
 .scene-toggle:hover, .scene-toggle:focus-visible { opacity: 1; color: #f1d98f; outline: none; box-shadow: inset 0 0 0 2px #f1d98f; }
 .scene-toggle[aria-pressed="true"] { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .scene-toggle { display: none; } }
+
+/* series progress: one notched segment per part */
+.series-seg { display: block; height: 10px; clip-path: var(--notch); background: var(--rule); }
+.series-seg.is-done { background: var(--rim); }
+.series-seg.is-current { background: var(--gold); }
+.series-seg.is-todo { background: transparent; box-shadow: inset 0 0 0 2px var(--rule); }
+a:hover > .series-seg.is-done, a:focus-visible > .series-seg.is-done { background: var(--gold); opacity: 0.7; }
