@@ -330,10 +330,11 @@ function createDiorama(canvas, opts = {}) {
         buildVignette();
     }
     function buildSky() {
+        var _a, _b, _c, _d;
         sky = new Layer(W, H, camX, camY);
         twinkles = [];
-        moonX = Math.min(Math.max(400, camX + 44), camX + W - 44);
-        moonY = Math.round(58 + Math.min(0, camY) * 0.12);
+        moonX = (_b = (_a = opts.moon) === null || _a === void 0 ? void 0 : _a.x) !== null && _b !== void 0 ? _b : Math.min(Math.max(400, camX + 44), camX + W - 44);
+        moonY = (_d = (_c = opts.moon) === null || _c === void 0 ? void 0 : _c.y) !== null && _d !== void 0 ? _d : Math.round(58 + Math.min(0, camY) * 0.12);
         const mx = moonX, my = moonY;
         const band = (x, y) => {
             const d = (y - (140 - 0.35 * x)) / Math.hypot(1, 0.35);
