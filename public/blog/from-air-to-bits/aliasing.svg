@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 545" width="900" height="545">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#141416"/>
-      <stop offset="100%" stop-color="#141416"/>
+      <stop offset="0%" stop-color="#0a1230"/>
+      <stop offset="100%" stop-color="#0a1230"/>
     </linearGradient>
     <filter id="glow">
       <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
@@ -104,7 +104,7 @@
 
   <!-- "Identical samples" callout -->
   <g>
-    <rect x="345" y="96" width="210" height="30" rx="8" fill="#141416" stroke="#55efc4" stroke-width="0.8" opacity="0.8"/>
+    <rect x="345" y="96" width="210" height="30" rx="8" fill="#0a1230" stroke="#55efc4" stroke-width="0.8" opacity="0.8"/>
     <text x="450" y="116" text-anchor="middle" fill="#55efc4" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Samples are identical on both</text>
     <line x1="450" y1="126" x2="436" y2="155" stroke="#55efc4" stroke-width="0.6" opacity="0.4" stroke-dasharray="3,3"/>
   </g>
@@ -123,7 +123,7 @@
 
   <!-- FREQUENCY MATH BOX -->
   <g transform="translate(580, 395)">
-    <rect x="0" y="0" width="260" height="72" rx="8" fill="#1a1a1e" stroke="#2a2a3a" stroke-width="0.8"/>
+    <rect x="0" y="0" width="260" height="72" rx="8" fill="#101a40" stroke="#2a2a3a" stroke-width="0.8"/>
     <text x="130" y="22" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="12" font-weight="bold">Alias frequency:</text>
     <text x="130" y="45" text-anchor="middle" fill="#d4a050" font-family="Segoe UI, Arial, sans-serif" font-size="13" font-style="italic">f_alias = f_s − f = 44.1 − 30 = 14.1 kHz</text>
     <text x="130" y="64" text-anchor="middle" fill="#6c7a89" font-family="Segoe UI, Arial, sans-serif" font-size="10">Indistinguishable from a real 14.1 kHz tone</text>

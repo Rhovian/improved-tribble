@@ -24,7 +24,7 @@
   </defs>
 
   <!-- Background -->
-  <rect width="1000" height="520" fill="#18181b" rx="12"/>
+  <rect width="1000" height="520" fill="#0a1230" rx="12"/>
 
   <!-- Title -->
   <text x="500" y="38" text-anchor="middle" fill="#00CEC9" font-family="Segoe UI, Arial, sans-serif" font-size="20" font-weight="bold" letter-spacing="1.5">ACOUSTIC SIGNAL PROPAGATION</text>

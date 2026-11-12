@@ -31,44 +31,29 @@ const projects = [
   },
 ];
 
+/** Projects as an inventory: notched panels in a grid. Placeholder content for now. */
 export default function PortfolioPage() {
   return (
-    <div className="max-w-4xl mx-auto space-y-10 px-4 py-8">
-      <section className="space-y-3">
-        <p className="text-sm font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">
-          Portfolio
-        </p>
-        <h1 className="text-4xl font-bold">Selected work</h1>
-        <p className="max-w-2xl text-lg text-zinc-600 dark:text-zinc-400">
-          A placeholder collection for projects, experiments, and shipped work.
-        </p>
-      </section>
+    <div className="mx-auto max-w-5xl px-4 pb-24 pt-6">
+      <header className="mb-10 max-w-2xl">
+        <p className="kicker">Portfolio</p>
+        <h1 className="pixel-title mt-3 text-5xl">Selected work</h1>
+        <p className="mt-3 text-lg">A placeholder collection for projects, experiments, and shipped work.</p>
+      </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
-          <article
-            key={project.title}
-            className="flex min-h-56 flex-col justify-between rounded-lg border border-zinc-200 p-5 transition-colors hover:border-zinc-400 dark:border-zinc-800 dark:hover:border-zinc-600"
-          >
-            <div>
-              <h2 className="text-xl font-semibold">{project.title}</h2>
-              <p className="mt-3 text-zinc-600 dark:text-zinc-400">
-                {project.description}
-              </p>
-            </div>
-            <div className="mt-6 flex flex-wrap gap-2">
+          <li key={project.title} className="px-panel flex flex-col">
+            <h2 className="pixel-title text-2xl">{project.title}</h2>
+            <p className="mt-3 flex-1 leading-relaxed">{project.description}</p>
+            <div className="mt-5 flex flex-wrap gap-2">
               {project.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-zinc-100 px-2 py-1 text-xs dark:bg-zinc-800"
-                >
-                  {tag}
-                </span>
+                <span key={tag} className="px-chip">{tag}</span>
               ))}
             </div>
-          </article>
+          </li>
         ))}
-      </section>
+      </ul>
     </div>
   );
 }

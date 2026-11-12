@@ -1,9 +1,6 @@
 "use client";
 
-import { Pixelify_Sans } from "next/font/google";
 import { useEffect, useRef, useState } from "react";
-
-const pixel = Pixelify_Sans({ subsets: ["latin"], variable: "--font-pixel", display: "swap" });
 
 const LINE =
   "Hi, I'm Joseph. Developer, writer, and tinkerer. I build things and occasionally write about them.";
@@ -100,7 +97,7 @@ export function HeroDialogue({ anchor }: { anchor: DialogueAnchor | null }) {
 
   return (
     <div
-      className={`hd ${pixel.variable}`}
+      className="hd"
       data-phase={phase}
       style={anchor ? { left: anchor.left, top: anchor.top, width: anchor.width } : { visibility: "hidden" }}
       onPointerEnter={() => setHold(true)}
